@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <>
       <SmoothScroll />
-      <section className="hero" aria-label="Moi">
+      <section className="hero" aria-label="viapp">
         <HeroCopy />
         <HeroStage />
         <Grain />

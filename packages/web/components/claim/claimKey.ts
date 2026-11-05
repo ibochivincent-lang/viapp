@@ -1,7 +1,7 @@
 import type { Hex } from "viem";
 import { readLinkFromLocation } from "@viapp/core/src/client/claim.js";
 
-const STORAGE_PREFIX = "moi:claim:";
+const STORAGE_PREFIX = "viapp:claim:";
 
 export type ClaimKeyResult = { key: Hex | null; storageBlocked: boolean };
 

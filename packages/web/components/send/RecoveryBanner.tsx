@@ -9,7 +9,7 @@ function wrapText(wrap: BannerWrap): string {
   if (wrap.state === "done") return "The gift is wrapped. It can be opened now.";
   if (wrap.state === "failed") return wrap.message ?? "The gift wrap did not go through.";
   if (wrap.phase === "in-wallet") return "Confirm in your wallet";
-  if (wrap.phase === "confirming") return "Confirming on BNB Chain";
+  if (wrap.phase === "confirming") return "Confirming on Stellar";
   return "Wrapping the gift.";
 }
 

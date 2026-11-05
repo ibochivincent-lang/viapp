@@ -242,12 +242,12 @@ export function LiveNumbers() {
       <div className="live-rule" aria-hidden="true" />
       <div className="live-inner">
         <p className="sec-label" id="live-label">
-          LIVE ON BNB CHAIN
+          LIVE ON STELLAR
         </p>
         <div className="live-body">
           {state.status === "failed" ? (
             <div className="live-failed">
-              <p className="live-failed-text">Could not reach BNB Chain just now.</p>
+              <p className="live-failed-text">Could not reach Stellar just now.</p>
               <button type="button" className="gold-link live-retry" onClick={reload}>
                 Try again
               </button>
@@ -274,13 +274,13 @@ export function LiveNumbers() {
           )}
         </div>
         <p className="live-source">
-          Read live from the Moi vault{" "}
+          Read live from the viapp vault{" "}
           <a className="draw-link" href={addressUrl(VAULT)} target="_blank" rel="noopener noreferrer">
             {shortHex(VAULT)}
           </a>{" "}
           ·{" "}
-          <a className="draw-link" href={sourceUrl(VAULT)} target="_blank" rel="noopener noreferrer">
-            source verified on Sourcify
+          <a className="draw-link" href={`https://stellar.expert/explorer/public/contract/${VAULT}`} target="_blank" rel="noopener noreferrer">
+            verified on StellarExpert
           </a>
         </p>
       </div>

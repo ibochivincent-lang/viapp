@@ -1,4 +1,4 @@
-const CONTENT_URL = "https://github.com/ramakrishnanhulk20/Moi/blob/main/packages/web/content/docs/";
+const CONTENT_URL = "https://github.com/ibochivincent-lang/viapp/blob/main/packages/web/content/docs/";
 
 /** The last line of every docs page. `path` is the file's path inside content/docs. */
 export function EditLink({ path }: { path: string }) {

@@ -18,7 +18,7 @@ export type AmountChoice = "1" | "5" | "10" | "25" | "other";
 export type Days = 7 | 30 | 90;
 export type StorageState = "checking" | "ok" | "blocked";
 
-const STORAGE_NOTICE = "This browser is not saving site data, so Moi cannot keep your gift link safe. Allow site data for this site or use another browser.";
+const STORAGE_NOTICE = "This browser is not saving site data, so viapp cannot keep your gift link safe. Allow site data for this site or use another browser.";
 const CONNECT_FIRST = "Connect your wallet first.";
 const CONNECT_BUTTON_ID = "send-connect-button";
 
@@ -39,8 +39,8 @@ export function sendHintFor(state: { running: boolean; storage: StorageState; co
 
 const PRESETS: readonly AmountChoice[] = ["1", "5", "10", "25"];
 const LIFETIMES: readonly Days[] = [7, 30, 90];
-// 0.0005 BNB in wei: under this a wallet cannot pay for the four or five transactions of a send.
-const LOW_BNB = 500_000_000_000_000n;
+// Under 0.5 XLM a wallet cannot pay for the operations of a send.
+const LOW_XLM = 5_000_000n;
 
 /** Brings the Connect button to the middle of the screen and puts the keyboard on it. */
 function showConnectButton() {
@@ -60,17 +60,17 @@ export function ConnectRow({ wallet }: { wallet: WalletView }) {
           {balances === null ? null : (
             <>
               <span className="send-wallet-dot">{" · "}</span>
-              <span>{truncateUnits(balances.usdt, balances.usdtDecimals, 2)} USDT</span>
+              <span>{truncateUnits(balances.usdt, balances.usdtDecimals, 2)} USDC</span>
               <span className="send-wallet-dot">{" · "}</span>
-              <span>{truncateUnits(balances.bnb, 18, 4)} BNB</span>
+              <span>{truncateUnits(balances.xlm, 7, 2)} XLM</span>
             </>
           )}
           <button type="button" className="send-link send-link-small send-wallet-out" onClick={wallet.onDisconnect}>
             Disconnect
           </button>
         </p>
-        {balances !== null && balances.bnb < LOW_BNB ? (
-          <p className="send-pending-text">You need a little BNB for network fees, about five US cents&apos; worth.</p>
+        {balances !== null && balances.xlm < LOW_XLM ? (
+          <p className="send-pending-text">You need a little XLM for network fees, under a US cent&apos;s worth.</p>
         ) : null}
       </div>
     );
@@ -86,15 +86,15 @@ export function ConnectRow({ wallet }: { wallet: WalletView }) {
       >
         Connect your wallet
       </button>
-      <p className="send-hint">Binance Wallet or MetaMask, on BNB Chain. You pay in USDT.</p>
+      <p className="send-hint">Freighter, passkey, or email on Stellar. You pay in USDC.</p>
       {wallet.kind === "unavailable" ? <p className="send-pending-text">Wallet connection is not available right now. Try again later.</p> : null}
     </div>
   );
 }
 
 export type FormProps = {
-  chain: "stellar" | "bnb";
-  onChainChange: (chain: "stellar" | "bnb") => void;
+  chain?: "stellar";
+  onChainChange?: (chain: "stellar") => void;
   stocks: StocksState;
   selected: string | null;
   onSelect: (address: string) => void;
@@ -129,27 +129,6 @@ export function SendFields(props: FormProps) {
 
   return (
     <fieldset className="send-fields" disabled={locked}>
-      <div className="send-block">
-        <div className="send-chips" role="group" aria-label="Network">
-          <button
-            type="button"
-            className="send-chip"
-            aria-pressed={props.chain === "stellar"}
-            onClick={() => props.onChainChange("stellar")}
-          >
-            Stellar
-          </button>
-          <button
-            type="button"
-            className="send-chip"
-            aria-pressed={props.chain === "bnb"}
-            onClick={() => props.onChainChange("bnb")}
-          >
-            Binance Smart Chain
-          </button>
-        </div>
-      </div>
-
       <StockPicker state={props.stocks} selected={props.selected} onSelect={props.onSelect} onReload={props.onReloadStocks} />
 
       <div className="send-block">
@@ -221,15 +200,15 @@ export function SendFields(props: FormProps) {
       <dl className="send-summary">
         <div className="send-summary-row">
           <dt>THE SHARE</dt>
-          <dd>{amount > 0 ? usd(amount) : "0.00"} {props.chain === "stellar" ? "USDC" : "USDT"}</dd>
+          <dd>{amount > 0 ? usd(amount) : "0.00"} USDC</dd>
         </div>
         <div className="send-summary-row">
           <dt>GIFT WRAP</dt>
-          <dd>$0.05 {props.chain === "stellar" ? "(x402)" : "(b402)"}</dd>
+          <dd>$0.05 (x402)</dd>
         </div>
         <div className="send-summary-row">
           <dt>NETWORK FEES</dt>
-          <dd>{props.chain === "stellar" ? "under a cent of XLM" : "a few cents of BNB"}</dd>
+          <dd>under a cent of XLM</dd>
         </div>
       </dl>
 

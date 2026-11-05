@@ -21,7 +21,7 @@ function StatusMark({ row }: { row: Row }) {
       return (
         <>
           <span className="send-spin" aria-hidden="true" />
-          <span className="send-row-text">Confirming on BNB Chain</span>
+          <span className="send-row-text">Confirming on Stellar</span>
         </>
       );
     case "done":
@@ -31,7 +31,7 @@ function StatusMark({ row }: { row: Row }) {
             <path d="M3 8.4 L6.5 11.6 L13 4.4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           {row.hash === null ? null : (
-            <a className="send-link send-link-small send-hash" href={`https://bscscan.com/tx/${row.hash}`} target="_blank" rel="noopener noreferrer">
+            <a className="send-link send-link-small send-hash" href={`https://stellar.expert/explorer/public/tx/${row.hash}`} target="_blank" rel="noopener noreferrer">
               {shortHex(row.hash)}
             </a>
           )}
@@ -55,12 +55,12 @@ function LateHint() {
     const timer = window.setTimeout(() => setLate(true), LATE_AFTER_MS);
     return () => window.clearTimeout(timer);
   }, []);
-  return late ? <p className="send-row-late">BNB Chain can take up to a minute when busy.</p> : null;
+  return late ? <p className="send-row-late">Stellar can take a few seconds when busy.</p> : null;
 }
 
 /**
  * The list of steps a send walks through, one row each, with what each is doing now. A row that
- * stays active for 20 seconds adds a line saying BNB Chain can be slow; the count starts over
+ * stays active for 20 seconds adds a line saying Stellar can be slow; the count starts over
  * whenever the row changes what it is waiting for.
  */
 export function CallSheet({ sheet, stockName }: { sheet: Sheet; stockName: string }) {

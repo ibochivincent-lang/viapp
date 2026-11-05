@@ -43,3 +43,5 @@ docs/RD-PRIVY.md
 target/
 **/target/
 
+.superpowers/
+

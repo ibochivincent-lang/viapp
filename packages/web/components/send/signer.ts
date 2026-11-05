@@ -23,7 +23,7 @@ export async function openWallet(wallet: ConnectedWallet): Promise<SigningWallet
 /**
  * The connected wallet as core's browser flows use it: a viem wallet client over the wallet's own
  * provider, on BNB Chain. `onWallet` hears what the wallet is doing, so the call sheet can show
- * "Confirm in your wallet" before the wallet is asked and "Confirming on BNB Chain" after it
+ * "Confirm in your wallet" before the wallet is asked and "Confirming on Stellar" after it
  * answers: a transaction reports "in-wallet" before and "sent" with its hash after, and a
  * signature reports "in-wallet" before and "confirming" after.
  */

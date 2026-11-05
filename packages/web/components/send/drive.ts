@@ -52,8 +52,8 @@ export async function driveSend(gen: AsyncGenerator<SendStep, void, void>, io: D
             ok: false,
             error: new SendGiftError(
               "unexpected",
-              "This browser would not save the gift key, so Moi stopped before locking anything.",
-              "The stock you bought is in your wallet. The Moi vault may take exactly that amount, and no gift was made.",
+              "This browser would not save the gift key, so viapp stopped before locking anything.",
+              "The stock you bought is in your wallet. The viapp vault may take exactly that amount, and no gift was made.",
               null,
             ),
           };

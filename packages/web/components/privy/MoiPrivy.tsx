@@ -24,7 +24,7 @@ const config = (nonce: string | undefined): PrivyClientConfig => ({
     accentColor: "#F2B13D",
     logo: "/v-mark.svg",
     landingHeader: "Sign in to open your gift",
-    loginMessage: "Moi makes a wallet for you. No seed phrase, no fees.",
+    loginMessage: "viapp makes a wallet for you. No seed phrase, no fees.",
     walletChainType: "ethereum-only",
   },
   scriptNonce: nonce,

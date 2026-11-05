@@ -16,7 +16,7 @@ export default function DocsRootLayout({ children }: { children: ReactNode }) {
           nav={{ title: <Brand />, url: "/", mode: "top" }}
           links={[
             { text: "Send a gift", url: "/send" },
-            { text: "GitHub", url: "https://github.com/ramakrishnanhulk20/Moi", external: true },
+            { text: "GitHub", url: "https://github.com/ibochivincent-lang/viapp", external: true },
           ]}
           themeSwitch={{ enabled: false }}
         >

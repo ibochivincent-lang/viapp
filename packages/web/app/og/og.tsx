@@ -97,7 +97,7 @@ export function ShareCard({ lineOne, lineTwo, meta }: { lineOne: string; lineTwo
     >
       <div style={{ position: "absolute", left: 64, top: 56, display: "flex", alignItems: "center" }}>
         <VMarkSvg width={18} color={GOLD} />
-        <div style={{ marginLeft: 12, fontFamily: "Fraunces", fontWeight: 700, fontSize: 30, color: PAPER }}>Moi</div>
+        <div style={{ marginLeft: 12, fontFamily: "Fraunces", fontWeight: 700, fontSize: 30, color: PAPER }}>viapp</div>
       </div>
 
       <div
@@ -170,7 +170,7 @@ export function ShareCard({ lineOne, lineTwo, meta }: { lineOne: string; lineTwo
           color: MUTED,
         }}
       >
-        REAL SHARES ON BNB CHAIN
+        REAL SHARES ON STELLAR
       </div>
     </div>
   );

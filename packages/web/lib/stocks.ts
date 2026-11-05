@@ -200,12 +200,12 @@ export function tickerEntries(stocks: readonly Stock[]): TickerEntry[] {
   return entries;
 }
 
-/** How many NVDAB shares one dollar buys at the live price: 1 / priceUsd, to four decimals. */
+/** How many NVDA shares one dollar buys at the live price: 1 / priceUsd, to four decimals. */
 export function useShareFigure(): ShareFigure {
   const state = useStocks();
   if (state.status === "loading") return { state: "loading" };
   if (state.status === "failed") return { state: "hidden" };
-  const price = state.stocks.find((stock) => stock.symbol === SHARE_SYMBOL)?.priceUsd ?? null;
+  const price = state.stocks.find((stock) => stock.symbol === "NVDA" || stock.symbol === SHARE_SYMBOL)?.priceUsd ?? null;
   if (price === null) return { state: "hidden" };
   return { state: "ready", text: (1 / price).toFixed(4) };
 }

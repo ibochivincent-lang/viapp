@@ -27,7 +27,7 @@ export type SendPreview = {
 const NAMES: readonly PreviewName[] = ["connected", "buy", "seal", "link", "wrapfail", "error", "recovery", "gifts"];
 
 const ADDRESS: Address = "0x7a3F1c9d52B0e84A6f3dC1a9B7E20c4D5e6F8a91";
-const BALANCES: Balances = { usdt: 42_170_000_000_000_000_000n, usdtDecimals: 18, bnb: 12_300_000_000_000_000n };
+const BALANCES: Balances = { usdt: 42_170_000_000_000_000_000n, usdtDecimals: 18, bnb: 12_300_000_000_000_000n, xlm: 12_300_000_000_000_000n };
 const FAKE_KEY = "0x" + "9f3b2c1d4e5a60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f9".slice(0, 64);
 
 const hash = (seed: string): Hex => `0x${seed.repeat(64).slice(0, 64)}`;
@@ -60,7 +60,7 @@ function linkRun(origin: string, wrap: "running" | "failed"): Run {
         giftId: "12",
         link,
         wrap: "failed",
-        wrapMessage: "The wrapping fee is paid in U, USD1, USDT or USDC on BNB Smart Chain, and this wallet holds too little of each. Add some and try wrapping again; nothing was paid.",
+        wrapMessage: "The wrapping fee is paid in USDC or XLM on Stellar, and this wallet holds too little of each. Add some and try wrapping again; nothing was paid.",
       };
 }
 
@@ -100,8 +100,8 @@ export function previewScenario(search: string, origin: string): SendPreview | n
       const sheet = failSheet(runSteps([{ kind: "quote" }, { kind: "approve-usdt", tx }, { sent: hash("d4") }, { kind: "swap", tx }], "in-wallet"));
       const error = new SendGiftError(
         "quote_refused",
-        "Binance's price for this stock did not pass Moi's checks just now. Try again in a minute.",
-        "Your 5 USDT is still in your wallet. The trading router may spend exactly that amount of it.",
+        "The price feed for this stock did not pass viapp's checks just now. Try again in a minute.",
+        "Your USDC is still in your wallet on Stellar. No funds were spent.",
         null,
       );
       return { name: "error", ...base, run: { phase: "failed", sheet, failure: { heading: "That stopped", message: error.message, stillHeld: error.stillHeld } } };

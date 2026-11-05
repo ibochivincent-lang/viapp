@@ -18,8 +18,8 @@ export type RecoveryIO = {
   removeRecord: (record: StoredPending) => void;
 };
 
-export const RECOVERY_UNREADABLE = "Moi could not check that gift just now. Try again in a minute.";
-const LINK_NOT_SAVED = "Moi found the gift, but this browser would not save its link, so the saved gift key was kept. Try again.";
+export const RECOVERY_UNREADABLE = "viapp could not check that gift just now. Try again in a minute.";
+const LINK_NOT_SAVED = "viapp found the gift, but this browser would not save its link, so the saved gift key was kept. Try again.";
 
 /**
  * Decides what happens to one saved gift key:

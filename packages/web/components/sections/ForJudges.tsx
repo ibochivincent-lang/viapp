@@ -146,9 +146,9 @@ function Ticket({ phase, owned, number }: { phase: TicketPhase; owned: Owned | n
           <span className="jt-shadow" aria-hidden="true" />
           <div className="jt-flip" ref={flip}>
             <div className="jt-face jt-front" aria-hidden="true">
-              <p className="jt-presents">MOI PRESENTS</p>
+              <p className="jt-presents">VIAPP PRESENTS</p>
               <p className="jt-title">Your first stock</p>
-              <p className="jt-fine">BNB CHAIN · ONE PER JUDGE · SEAT: YOURS</p>
+              <p className="jt-fine">STELLAR NETWORK · ONE PER JUDGE · SEAT: YOURS</p>
               <p className="jt-number" data-state={number.status}>
                 {number.status === "ready" ? `NO. ${number.value}` : number.status === "loading" ? <span className="jt-number-skeleton" /> : null}
               </p>
@@ -175,8 +175,8 @@ function TicketBack({ owned }: { owned: Owned }) {
         </p>
       )}
       {owned.shares === null || owned.name === null ? null : <p className="jt-holding">{`shares of ${owned.name}`}</p>}
-      <a className="jt-link" href={`https://bscscan.com/tx/${owned.txHash}`} target="_blank" rel="noopener noreferrer">
-        SEE IT ON BSCSCAN
+      <a className="jt-link" href={`https://stellar.expert/explorer/testnet/tx/${owned.txHash}`} target="_blank" rel="noopener noreferrer">
+        SEE IT ON STELLAREXPERT
       </a>
     </div>
   );
@@ -289,7 +289,7 @@ type Phase =
 // For these, trying the same claim again can work.
 const RETRY_CODES = new Set(["server_unreachable", "chain_unavailable", "unconfirmed", "declined"]);
 const UNKNOWN_ERROR = "Something went wrong on our side. Try again in a minute.";
-const CHAIN_DOWN = "Moi could not reach the blockchain just now. Try again in a minute.";
+const CHAIN_DOWN = "viapp could not reach the blockchain just now. Try again in a minute.";
 const STILL_WAITING_AFTER_SECONDS = 20;
 const GIFT_TIMEOUT_MS = 15_000;
 const GIFT_TRIES = 3;
@@ -297,7 +297,7 @@ const GIFT_RETRY_MS = 2_000;
 const SHARES_TEXT = /^[0-9]+(\.[0-9]+)?$/;
 const MAX_NAME_CHARS = 64;
 const MAX_SHARES_CHARS = 160;
-const RETURN_KEY = "moi:judges-return";
+const RETURN_KEY = "viapp:judges-return";
 
 const PREVIEW_NAMES = ["ready", "claiming", "done", "error", "retry"] as const;
 type PreviewName = (typeof PREVIEW_NAMES)[number];
@@ -313,7 +313,7 @@ function previewState(name: PreviewName) {
   const address: Address = "0x1234567890abcdef1234567890abcdef12345678";
   const owned: Owned = { shares: "0.0042", name: "NVIDIA", txHash: "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789" };
   const refused = new ClaimFlowError("refused", "That judge code is not right. It is in the submission's instructions for judges.", "bad_judge_code");
-  const unreachable = new ClaimFlowError("server_unreachable", "Moi's server could not be reached. Try again in a minute.");
+  const unreachable = new ClaimFlowError("server_unreachable", "viapp's server could not be reached. Try again in a minute.");
   const phase: Phase =
     name === "claiming"
       ? { kind: "claiming" }
@@ -355,9 +355,9 @@ function ClaimingBlock() {
   return (
     <div className="judges-status" role="status">
       <h3 className="judges-status-title">Claiming your share</h3>
-      <p className="judges-status-body">Prove the wallet is yours in the Privy window. Then Moi delivers the share and pays the fee.</p>
+      <p className="judges-status-body">Prove the wallet is yours in the verification window. Then viapp delivers the share and pays the fee.</p>
       <p className="judges-timer">{`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`}</p>
-      {seconds >= STILL_WAITING_AFTER_SECONDS ? <p className="judges-hint">Still waiting for BNB Chain. This can take up to two minutes.</p> : null}
+      {seconds >= STILL_WAITING_AFTER_SECONDS ? <p className="judges-hint">Still waiting for Stellar. This can take up to a few seconds.</p> : null}
     </div>
   );
 }
@@ -378,7 +378,7 @@ function ErrorBlock({ error, onRetry }: { error: unknown; onRetry: () => void })
 }
 
 function DoneBlock({ owned, address }: { owned: Owned; address: Address }) {
-  const where = `in your wallet ${shortAddress(address)} on BNB Chain.`;
+  const where = `in your wallet ${shortAddress(address)} on Stellar.`;
   return (
     <div className="judges-done" role="status">
       <h3 className="judges-done-title">{"It's yours."}</h3>
@@ -489,7 +489,7 @@ function JudgesStage() {
           { message },
           {
             address: recipient,
-            uiOptions: { title: "Prove this wallet is yours", description: "Free. No transaction. Moi checks it before sending your share.", buttonText: "Sign" },
+            uiOptions: { title: "Prove this wallet is yours", description: "Free. No transaction. viapp checks it before sending your share.", buttonText: "Sign" },
           },
         );
         return signature as Hex;

@@ -25,15 +25,15 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
-  title: { default: "Moi: give someone their first stock", template: "%s · Moi" },
+  title: { default: "viapp: give someone their first stock", template: "%s · viapp" },
   description: "Send a real share of Nvidia, Apple or the S&P 500 as a link. Your friend opens it, signs in with Google, and owns it.",
-  openGraph: { type: "website", siteName: "Moi" },
+  openGraph: { type: "website", siteName: "viapp" },
   twitter: { card: "summary_large_image" },
 };
 
 // A browser that blocks site data throws on the first touch of localStorage, and Privy touches it as
 // its module loads, before React can catch anything, so every page would fail. This runs first and
-// puts a memory-only store in its place; window.__moiStorageBlocked tells the send page nothing can
+// puts a memory-only store in its place; window.__viappStorageBlocked tells the send page nothing can
 // really be saved, so it still refuses to send (storage.ts storageWorks).
 const STORAGE_GUARD = `(function () {
   function memory() {
@@ -49,7 +49,7 @@ const STORAGE_GUARD = `(function () {
   }
   ["localStorage", "sessionStorage"].forEach(function (name) {
     try { void window[name].length; } catch (e) {
-      try { Object.defineProperty(window, name, { value: memory(), configurable: true }); window.__moiStorageBlocked = true; } catch (e2) {}
+      try { Object.defineProperty(window, name, { value: memory(), configurable: true }); window.__viappStorageBlocked = true; } catch (e2) {}
     }
   });
 })();`;

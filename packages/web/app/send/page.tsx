@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Send a gift",
-  description: "Pick a stock, pay in USDT, and get one link your friend opens with Google.",
+  description: "Pick a stock, pay in USDC on Stellar, and get one link your friend opens with Google.",
 };
 
 export default async function Send() {

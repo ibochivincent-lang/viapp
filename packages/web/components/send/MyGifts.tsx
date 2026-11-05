@@ -146,7 +146,7 @@ export function MyGifts({
               </span>
               {refund === undefined ? null : (
                 <p className="send-gift-note" role="status">
-                  {refund.phase === "error" ? refund.message : refund.phase === "in-wallet" ? "Confirm in your wallet" : "Confirming on BNB Chain"}
+                  {refund.phase === "error" ? refund.message : refund.phase === "in-wallet" ? "Confirm in your wallet" : "Confirming on Stellar"}
                 </p>
               )}
             </li>

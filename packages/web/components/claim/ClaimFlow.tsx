@@ -57,7 +57,7 @@ function stateOfPreview(scenario: PreviewScenario): { load: LoadState; claim: Cl
     : scenario.invalid
     ? { status: "invalid" }
     : scenario.loadFailed
-      ? { status: "failed", error: new ClaimFlowError("server_unreachable", "Moi's server could not be reached. Your gift is safe; try again in a minute.") }
+      ? { status: "failed", error: new ClaimFlowError("server_unreachable", "viapp's server could not be reached. Your gift is safe; try again in a minute.") }
       : { status: "loaded", gift: scenario.gift, note: scenario.note, expired: scenario.expired };
   const claim: ClaimState =
     scenario.claim === "opening"

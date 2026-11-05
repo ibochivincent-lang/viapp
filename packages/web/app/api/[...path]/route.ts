@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { EnvError } from "@viapp/core/src/env.js";
 import { clientFromHeaders, json, MAX_BODY_BYTES, route, type MoiRequest, type MoiResponse, type ServerDeps } from "@viapp/core/src/http.js";
+import { handleStocks } from "@viapp/core/src/stocks.js";
 import { BootError, createServerDeps } from "@viapp/core/src/server-deps.js";
 
 export const runtime = "nodejs";
@@ -87,13 +88,19 @@ async function readCappedBody(request: NextRequest): Promise<string | null> {
 async function handle(request: NextRequest): Promise<Response> {
   let answer: MoiResponse;
   try {
+    const path = pathOf(request.url);
+    if (path === "/api/stocks" && !request.url.includes("chain=bnb")) {
+      const res = await handleStocks({ chain: "stellar" });
+      answer = json(res.status, res.body);
+      return new Response(answer.body, { status: answer.status, headers: answer.headers });
+    }
     const deps = await serverDeps();
     if (deps === null) {
       answer = json(503, { ok: false, error: "server_not_configured" });
     } else {
       const headers = plainHeaders(request.headers);
       const place = clientFromHeaders(headers, PLATFORM, { socketIp: LOCAL_SOCKET_IP, devCountry: process.env.MOI_DEV_COUNTRY ?? null });
-      const moiRequest: MoiRequest = { method: request.method, path: pathOf(request.url), headers, body: await readCappedBody(request), ...place };
+      const moiRequest: MoiRequest = { method: request.method, path, headers, body: await readCappedBody(request), ...place };
       answer = await route(deps, moiRequest);
     }
   } catch {

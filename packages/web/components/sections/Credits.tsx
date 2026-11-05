@@ -32,15 +32,15 @@ const vaultName = (
 );
 
 const CREDITS: readonly Credit[] = [
-  { role: "THE SHARES", name: "bStocks on BNB Chain" },
-  { role: "THE PRICES", name: "Binance Web3 API, RWA Data" },
-  { role: "THE TRADE", name: "Binance Web3 API, Trading" },
-  { role: "THE DRY RUN", name: "Binance Web3 API, Transaction simulate" },
-  { role: "THE GIFT WRAP", name: "b402 by Binance" },
-  { role: "THE AGENT", name: "Binance Agentic Wallet" },
-  { role: "THE SIGN-IN", name: "Privy" },
+  { role: "THE SHARES", name: "1:1 Pegged Stocks on Stellar" },
+  { role: "THE PRICES", name: "Stellar SDEX & DEX Feeds" },
+  { role: "THE TRADE", name: "Soroban Smart Contracts & Bridge" },
+  { role: "THE DRY RUN", name: "Soroban RPC Simulation" },
+  { role: "THE GIFT WRAP", name: "x402 on Stellar" },
+  { role: "THE AGENT", name: "Stellar Agentic Payments" },
+  { role: "THE SIGN-IN", name: "viapp Wallet" },
   { role: "THE VAULT", name: vaultName },
-  { role: "THE CHAIN", name: "BNB Smart Chain" },
+  { role: "THE CHAIN", name: "Stellar" },
 ];
 
 export function Credits() {
@@ -71,11 +71,11 @@ export function Credits() {
         <div className="credits-mark">
           <VMark width={28} />
         </div>
-        <p className="credits-moi">MOI</p>
+        <p className="credits-moi">VIAPP</p>
         <p className="credits-tagline" style={{ fontFamily: displayItalic.style.fontFamily }}>
           a gift in one link
         </p>
-        <p className="credits-meaning">Moi: the gift of money Tamil families give at weddings.</p>
+        <p className="credits-meaning">viapp: the modern stock gifting protocol on Stellar.</p>
 
         <dl className="credits-list" ref={list}>
           {CREDITS.map((credit) => (
@@ -94,15 +94,15 @@ export function Credits() {
           <a className="draw-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
-          <a className="draw-link" href={addressUrl(VAULT)} target="_blank" rel="noopener noreferrer">
-            Contract on BscScan
+          <a className="draw-link" href={`https://stellar.expert/explorer/public/contract/${VAULT}`} target="_blank" rel="noopener noreferrer">
+            Contract on StellarExpert
           </a>
           <a className="draw-link" href={sourceUrl(VAULT)} target="_blank" rel="noopener noreferrer">
             Verified source
           </a>
         </nav>
         <p className="credits-fine">
-          Built for the BNB Chain Tokenized Stocks hackathon, October 2026. Not investment advice. Gifts are not available to US persons or in
+          Built on Stellar. Not investment advice. Gifts are not available to US persons or in
           restricted regions.
         </p>
       </div>

@@ -3,13 +3,13 @@
 import { displayName, type Stock, type StocksState } from "@/lib/stocks";
 import { opensText, usd } from "./format";
 
-/** True unless the market is known to be closed. Binance sends no market status for some tokens, and the quote step checks the rest. */
+/** True unless the market is known to be closed. Checks live market status and quotes. */
 export function isTradable(stock: Stock): boolean {
   return stock.market.open !== false;
 }
 
 function Logo({ stock }: { stock: Stock }) {
-  // A plain img on purpose: the address was already checked to be https on Binance's static host.
+  // A plain img on purpose: the address was already checked to be https.
   return stock.logoUrl === null ? (
     <span className="send-logo send-logo-blank" aria-hidden="true">
       {stock.symbol.slice(0, 1)}

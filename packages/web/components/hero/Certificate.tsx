@@ -156,7 +156,7 @@ export function Certificate({ figure: given, holding, worth }: CertificateProps 
 
   return (
     <div className="cert" ref={root}>
-      <svg className="cert-svg" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={holding === undefined ? "A Moi certificate: a friend owns shares of NVIDIA Corporation" : `A Moi certificate: a friend owns ${holding}`}>
+      <svg className="cert-svg" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={holding === undefined ? "A viapp certificate: a friend owns shares of NVIDIA Corporation" : `A viapp certificate: a friend owns ${holding}`}>
         <defs>
           <clipPath id="cert-band-clip">
             <path d={BAND_CLIP} clipRule="evenodd" />
@@ -199,7 +199,7 @@ export function Certificate({ figure: given, holding, worth }: CertificateProps 
 
         <path d={V_MARK_PATH} transform="translate(425.8 97) scale(1.18)" className="cert-vmark" />
         <text x={440 + 5.7} y={158} textAnchor="middle" className="cert-moi">
-          MOI
+          VIAPP
         </text>
 
         <text x={440} y={190} textAnchor="middle" className="cert-mono cert-mono-12">
@@ -236,7 +236,7 @@ export function Certificate({ figure: given, holding, worth }: CertificateProps 
           HELD ON
         </text>
         <text x={190} y={444} textAnchor="middle" className="cert-mono cert-mono-10">
-          BNB CHAIN
+          STELLAR
         </text>
         <text x={690} y={426} textAnchor="middle" className="cert-mono cert-mono-10">
           CLAIMED
@@ -250,7 +250,7 @@ export function Certificate({ figure: given, holding, worth }: CertificateProps 
         <circle cx={SEAL.x} cy={SEAL.y} r={21} className="cert-seal-ring" />
         <text className="cert-seal-text">
           <textPath href="#cert-seal-arc" textLength={158} lengthAdjust="spacing">
-            MOI · MOI · MOI · MOI ·
+            VIAPP · VIAPP · VIAPP · VIAPP ·
           </textPath>
         </text>
         <path d={V_MARK_PATH} transform={`translate(${SEAL.x - 13.2} ${SEAL.y - 8}) scale(1.2)`} className="cert-seal-v" />

@@ -96,9 +96,9 @@ export function ClaimView({ view }: { view: View }) {
   return (
     <div className="claim-page" data-scene={scene === null ? "none" : "shown"}>
       <header className="claim-bar">
-        <Link className="claim-brand" href="/" prefetch={false} aria-label="Moi, home">
+        <Link className="claim-brand" href="/" prefetch={false} aria-label="viapp, home">
           <VMark width={12} />
-          <span className="claim-wordmark">Moi</span>
+          <span className="claim-wordmark">viapp</span>
         </Link>
       </header>
       {scene === null ? null : <ClaimStage state={scene} certificate={certificate} />}
@@ -127,7 +127,7 @@ function Panel({ view }: { view: View }) {
           <p className="claim-body">It may have been cut short or changed. Ask the sender to send it again, whole.</p>
           <p className="claim-links">
             <Link className="claim-link" href="/" prefetch={false}>
-              What is Moi?
+              What is viapp?
             </Link>
           </p>
         </>
@@ -223,7 +223,7 @@ function SignIn({ signIn }: { signIn: SignInView }) {
               Sign in to open it
             </button>
           )}
-          <p className="claim-fine">Use Google or email. Moi makes a wallet for you: no seed phrase, no fees.</p>
+          <p className="claim-fine">Use Google or email. viapp makes a wallet for you: no seed phrase, no fees.</p>
           {signIn.storageBlocked ? (
             <p className="claim-fine">This browser blocks storage, so use email to sign in, or the link will need opening again.</p>
           ) : null}
@@ -262,7 +262,7 @@ function SignedIn({ signIn }: { signIn: Extract<SignInView, { kind: "signedIn" }
       </button>
       {why ? (
         <p className="claim-fine claim-why-text">
-          {"The share's issuer allows these gifts only outside the US and restricted regions. Moi also checks the country your connection comes from."}
+          {"The share's issuer allows these gifts only outside the US and restricted regions. viapp also checks the country your connection comes from."}
         </p>
       ) : null}
       <button type="button" className="claim-primary claim-open" disabled={!signIn.declared} onClick={signIn.onOpen}>
@@ -282,9 +282,9 @@ function OpeningPanel() {
   return (
     <>
       <h1 className="claim-h claim-h-opening">Opening your gift</h1>
-      <p className="claim-body">Moi is moving the share into your wallet and paying the network fee. BNB Chain usually confirms in a few seconds.</p>
+      <p className="claim-body">viapp is moving the share into your wallet and paying the network fee. Stellar usually confirms in a few seconds.</p>
       <p className="claim-timer">{`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`}</p>
-      {seconds >= STILL_WAITING_AFTER_SECONDS ? <p className="claim-fine">Still waiting for BNB Chain. This can take up to two minutes.</p> : null}
+      {seconds >= STILL_WAITING_AFTER_SECONDS ? <p className="claim-fine">Still waiting for Stellar. This can take up to a few seconds.</p> : null}
     </>
   );
 }
@@ -294,7 +294,7 @@ function OpenedPanel({ view }: { view: Extract<View, { screen: "opened" }> }) {
   return (
     <>
       <h1 className="claim-h claim-h-big">{"It's yours."}</h1>
-      <p className="claim-body claim-body-ink">{`${formatShares(gift.shares)} shares of ${displayName(gift.name)} are in your wallet ${shortAddress(address)} on BNB Chain.`}</p>
+      <p className="claim-body claim-body-ink">{`${formatShares(gift.shares)} shares of ${displayName(gift.name)} are in your wallet ${shortAddress(address)} on Stellar.`}</p>
       {note !== null && note !== "" ? (
         <blockquote className="claim-note">
           <p className="claim-note-text" style={{ fontFamily: displayItalic.style.fontFamily }}>
@@ -304,11 +304,11 @@ function OpenedPanel({ view }: { view: Extract<View, { screen: "opened" }> }) {
         </blockquote>
       ) : null}
       <p className="claim-links">
-        <a className="claim-link" href={`https://bscscan.com/tx/${txHash}`} target="_blank" rel="noopener noreferrer">
-          See it on BscScan
+        <a className="claim-link" href={`https://stellar.expert/explorer/public/tx/${txHash}`} target="_blank" rel="noopener noreferrer">
+          See it on StellarExpert
         </a>
         <Link className="claim-link" href="/" prefetch={false}>
-          What is Moi?
+          What is viapp?
         </Link>
       </p>
       <Link className="claim-secondary" href="/send" prefetch={false}>

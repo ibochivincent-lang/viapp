@@ -32,14 +32,14 @@ import { isTradable } from "./StockPicker";
 import { addLink, addPending, dropDeclined, listLinks, listPending, removePending, storageChecked } from "./storage";
 import "./send.css";
 
-const WALLET_LIST = ["binance", "metamask", "detected_ethereum_wallets", "wallet_connect"] as const;
+const WALLET_LIST = ["detected_ethereum_wallets", "metamask", "wallet_connect"] as const;
 const MAX_USD = Number(MAX_GIFT_USD);
 const MIN_USD = Number(MIN_GIFT_USD);
-const DEFAULT_SYMBOL = "NVDAB";
+const DEFAULT_SYMBOL = "NVDA";
 
 const nothingToWatch = () => () => undefined;
 
-const SWITCH_REFUSED = new SendGiftError("wallet_failed", "Your wallet did not switch to BNB Chain, so nothing was sent.", "Nothing was spent.", null);
+const SWITCH_REFUSED = new SendGiftError("wallet_failed", "Your wallet did not switch to Stellar, so nothing was sent.", "Nothing was spent.", null);
 
 type Held = { address: string; balances: Balances };
 
@@ -58,7 +58,7 @@ async function signerFor(wallet: ConnectedWallet, onWallet: (phase: WalletPhase,
 }
 
 /**
- * The send page. A sender connects Binance Wallet or MetaMask, picks a stock, an amount and a note,
+ * The send page. A sender connects their Stellar wallet, picks a stock, an amount and a note,
  * and walks sendGift's steps on a call sheet to a link. The gift key is saved before createGift is
  * asked for and the link before the key is dropped, so a closed tab never loses a gift. Nothing here
  * logs, sends or puts the claim key in an address (C12).
@@ -70,8 +70,8 @@ export function SendPage() {
   // A wallet that cannot be disconnected from a page, such as MetaMask, stays in Privy's list after wallet.disconnect(), so the page also remembers that the sender asked to leave.
   const [left, setLeft] = useState<string | null>(null);
   const { connectWallet } = useConnectWallet({ onSuccess: () => setLeft(null) });
-  const [chain, setChain] = useState<"stellar" | "bnb">("stellar");
-  const stocks = useStocks(chain);
+  const chain = "stellar" as const;
+  const stocks = useStocks("stellar");
 
   const [preview, setPreview] = useState<SendPreview | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -333,11 +333,6 @@ export function SendPage() {
               {showBanner ? <RecoveryBanner lines={lines} busy={bannerBusy} wrap={bannerWrap} onFind={() => void find()} onWrap={(giftId) => void wrapRecovered(giftId)} /> : null}
               <ConnectRow wallet={wallet} />
               <SendFields
-                chain={chain}
-                onChainChange={(nextChain) => {
-                  setChain(nextChain);
-                  setSelected(null);
-                }}
                 stocks={stocks}
                 selected={stock === null ? null : stock.address}
                 onSelect={setSelected}

@@ -28,14 +28,14 @@ const OWN_SCENE_FRACTION = 0.5;
 const SCREEN_CAP_FRACTION = 0.9;
 
 const CHIPS = [
-  { symbol: "NVDAB", label: "NVIDIA" },
-  { symbol: "AAPLB", label: "APPLE" },
-  { symbol: "SPYB", label: "SPY" },
+  { symbol: "NVDA", label: "NVIDIA" },
+  { symbol: "AAPL", label: "APPLE" },
+  { symbol: "SPY", label: "SPY" },
 ] as const;
 
 type ProofLineProps = { words: string; hash: string };
 
-/** "ON CHAIN", a dot, what happened, and the transaction hash as a link to BscScan. */
+/** "ON CHAIN", a dot, what happened, and the transaction hash as a link to StellarExpert. */
 export function ProofLine({ words, hash }: ProofLineProps) {
   return (
     <p className="proof">
@@ -145,7 +145,7 @@ const SCENES: readonly Scene[] = [
     number: "01",
     label: "SCENE ONE · THE BUY",
     heading: "Pick a stock. Pick an amount.",
-    body: "Moi asks Binance for a live price, dry-runs the trade first, then buys the real share with your USDT. Nvidia, Apple, Tesla, the S&P 500 and more.",
+    body: "viapp gets live quotes, secures the trade, and backs the real share with your USDC or XLM on Stellar. Nvidia, Apple, Tesla, the S&P 500 and more.",
     proof: { words: "the first buy, 7 Oct 2026", hash: PROOF.firstBuy },
     art: SceneOne,
   },
@@ -153,7 +153,7 @@ const SCENES: readonly Scene[] = [
     number: "02",
     label: "SCENE TWO · THE SEAL",
     heading: "Locked in a vault, under a key only the link holds.",
-    body: "The share goes into Moi's vault on BNB Chain. Moi cannot touch it: only the link's key releases it, to the person who opens it. If nobody opens it before it expires, the sender can take it back. The 5-cent gift wrap is paid with b402.",
+    body: "The share goes into viapp's GiftVault on Stellar. viapp cannot touch it: only the link's key releases it, to the person who opens it. If nobody opens it before it expires, the sender can take it back. The 5-cent gift wrap is paid with x402.",
     proof: { words: "gift 1 locked", hash: PROOF.gift1Locked },
     art: SceneTwo,
   },
@@ -161,7 +161,7 @@ const SCENES: readonly Scene[] = [
     number: "03",
     label: "SCENE THREE · THE CLAIM",
     heading: "Your friend opens it with Google.",
-    body: "No wallet app, no seed phrase, no gas. They sign in, tap open, and the share lands in a wallet made for them. Moi pays the network fee.",
+    body: "No wallet app, no seed phrase, no gas. They sign in, tap open, and the share lands in a wallet made for them on Stellar. viapp pays the network fee.",
     proof: { words: "claimed into a brand-new wallet", hash: PROOF.gift1Claimed },
     art: SceneThree,
   },

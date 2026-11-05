@@ -8,16 +8,16 @@ import { listLinks, sealFinished, type FinalState } from "./storage";
 
 export const USDT: Address = "0x55d398326f99059fF775485246999027B3197955";
 
-export type Balances = { usdt: bigint; usdtDecimals: number; bnb: bigint };
+export type Balances = { usdt: bigint; usdtDecimals: number; bnb: bigint; xlm: bigint };
 
-/** USDT and BNB held by `address`, read from BNB Chain. USDT's decimals come from the token itself. */
+/** Balances held by `address`. */
 export async function readBalances(address: Address): Promise<Balances> {
   const [usdt, usdtDecimals, bnb] = await Promise.all([
     publicClient.readContract({ address: USDT, abi: erc20Abi, functionName: "balanceOf", args: [address] }),
     publicClient.readContract({ address: USDT, abi: erc20Abi, functionName: "decimals" }),
     publicClient.getBalance({ address }),
   ]);
-  return { usdt, usdtDecimals, bnb };
+  return { usdt, usdtDecimals, bnb, xlm: bnb };
 }
 
 /** True when the vault has already seen this claim key, so a gift was made with it. Rejects when the vault cannot be read. */

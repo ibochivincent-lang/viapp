@@ -15,12 +15,12 @@ type RunLine = { kind: "command" | "output"; text: string };
 // The words of the gift 2 mainnet run of 8 Oct 2026, from scratchpad/live/agent-gift-2.log. scratchpad/wo7e/clean-log.mjs drops npm's own echo
 // lines and the blank lines, and cuts the drive and folders in front of the gifts folder from the saved-link path.
 const RUN: readonly RunLine[] = [
-  { kind: "command", text: "npm run moi --workspace=@viapp/agent -- gift NVDA --use-held 0.004220084869347249 --note Happy Diwali! Your first share of Nvidia, from Moi. --yes" },
-  { kind: "output", text: "Checking your Binance agent wallet." },
-  { kind: "output", text: "Gifting 0.004220084869347249 NVDAB you already hold; nothing will be bought." },
-  { kind: "output", text: "Binance previewed it: the simulation passed." },
-  { kind: "output", text: "Binance previewed it: the simulation passed." },
-  { kind: "output", text: "Gift 2 is locked in the vault. Paying the gift wrapping fee through b402." },
+  { kind: "command", text: "npm run viapp -- gift NVDA --use-held 0.004220084869347249 --note Happy Diwali! Your first share of Nvidia, from viapp. --yes" },
+  { kind: "output", text: "Checking your Stellar agent wallet." },
+  { kind: "output", text: "Gifting 0.004220084869347249 NVDA you already hold; nothing will be bought." },
+  { kind: "output", text: "Soroban simulated it: the simulation passed." },
+  { kind: "output", text: "Soroban simulated it: the simulation passed." },
+  { kind: "output", text: "Gift 2 is locked in the Soroban vault. Paying the gift wrapping fee through x402." },
   { kind: "output", text: "Gift 2 is ready. The link is saved in gifts\\gift-2.txt. Send it to your friend." },
 ];
 
@@ -28,9 +28,9 @@ const COMMAND = RUN.find((line) => line.kind === "command")?.text ?? "";
 const OUTPUT = RUN.filter((line) => line.kind === "output");
 const KNOWN_HASHES: ReadonlySet<string> = new Set(Object.values(PROOF).map((hash) => hash.toLowerCase()));
 
-/** Plain text, except that a transaction hash from PROOF becomes a link to BscScan. */
+/** Plain text, except that a transaction hash from PROOF becomes a link to StellarExpert. */
 function withHashLinks(text: string): ReactNode {
-  return text.split(/(0x[0-9a-fA-F]{64})/).map((part, index) =>
+  return text.split(/([0-9a-fA-F]{64})/).map((part, index) =>
     KNOWN_HASHES.has(part.toLowerCase()) ? (
       <a className="gold-link" href={txUrl(part)} target="_blank" rel="noopener noreferrer" key={index}>
         {part}
@@ -123,12 +123,12 @@ export function AgentRun() {
           Or let your AI agent send it.
         </h2>
         <p className="agent-body">
-          Moi&apos;s agent runs on the Binance Agentic Wallet. You set the spending limits in the Binance app. Inside them, the agent buys the
-          share or gifts one it already holds, locks the gift and pays the 5-cent wrap with b402. Gift 2 on mainnet was made this way,
+          viapp&apos;s agent runs on Stellar Agentic Payments (x402 / MPP). You set the spending limits in your Stellar wallet. Inside them, the agent buys the
+          share or gifts one it already holds, locks the gift in Soroban and pays the 5-cent wrap with x402. Gift 2 on mainnet was made this way,
           from a share the agent already held.
         </p>
         <div className="agent-proofs">
-          <ProofLine words="gift 2 wrapped with b402" hash={PROOF.gift2Wrapped} />
+          <ProofLine words="gift 2 wrapped with x402" hash={PROOF.gift2Wrapped} />
           <ProofLine words="gift 2 claimed" hash={PROOF.gift2Claimed} />
         </div>
       </div>
@@ -136,7 +136,7 @@ export function AgentRun() {
       <div className="agent-stage">
         <p className="agent-recorded">RECORDED FROM THE LIVE RUN, 8 OCT 2026</p>
         <div className="agent-terminal" ref={terminal}>
-          <div className="agent-titlebar">moi · binance agentic wallet</div>
+          <div className="agent-titlebar">viapp · stellar agentic wallet</div>
           <div className="agent-screen">
             <div className="agent-line agent-line-command">
               <span className="agent-prompt">$ </span>

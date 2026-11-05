@@ -15,11 +15,11 @@ export type FinalState = "Claimed" | "Refunded";
 /** A sent gift. `link` is null once the gift is Claimed or Refunded: the key has done its job and is erased. */
 export type StoredLink = { giftId: string; link: string | null; symbol: string; createdAt: number; final?: FinalState };
 
-const PENDING_PREFIX = "moi:pending:";
-const LINKS_PREFIX = "moi:links:";
-const PROBE_KEY = "moi:probe";
+const PENDING_PREFIX = "viapp:pending:";
+const LINKS_PREFIX = "viapp:links:";
+const PROBE_KEY = "viapp:probe";
 
-const ADDRESS_TEXT = /^0x[0-9a-fA-F]{40}$/;
+const ADDRESS_TEXT = /^(0x[0-9a-fA-F]{40}|G[A-Z0-9]{55})$/;
 const KEY_TEXT = /^0x[0-9a-fA-F]{64}$/;
 const HEX_TEXT = /^0x([0-9a-fA-F]{2})*$/;
 
@@ -42,7 +42,8 @@ function area(): Storage | null {
 /** True when this browser lets the page write, read back and delete a value. */
 export function storageWorks(): boolean {
   // The layout's guard swapped in a memory-only store, which loses everything on reload.
-  if ((globalThis as { __moiStorageBlocked?: boolean }).__moiStorageBlocked === true) return false;
+  const global = globalThis as { __viappStorageBlocked?: boolean; __moiStorageBlocked?: boolean };
+  if (global.__viappStorageBlocked === true || global.__moiStorageBlocked === true) return false;
   try {
     const storage = area();
     if (storage === null) return false;
