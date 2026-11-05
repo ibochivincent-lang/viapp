@@ -1,4 +1,4 @@
-import type { PendingGift } from "@moi/core/src/client/send.js";
+import type { PendingGift } from "@viapp/core/src/client/send.js";
 
 /**
  * What this browser keeps for a sender, in localStorage. Every access is inside try/catch because a

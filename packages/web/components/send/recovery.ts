@@ -1,4 +1,4 @@
-import { SendGiftError, type PendingGift } from "@moi/core/src/client/send.js";
+import { SendGiftError, type PendingGift } from "@viapp/core/src/client/send.js";
 import type { StoredPending } from "./storage";
 
 /** What looking for one saved gift key came to. */

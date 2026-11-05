@@ -1,6 +1,6 @@
 import type { ConnectedWallet } from "@privy-io/react-auth";
 import { createWalletClient, custom, getAddress, type Address, type EIP1193Provider, type Hex } from "viem";
-import type { WalletSigner } from "@moi/core/src/client/x402.js";
+import type { WalletSigner } from "@viapp/core/src/client/x402.js";
 import { bsc } from "@/lib/chain";
 
 /** What the wallet is doing for the step on screen. "sent" carries the transaction hash. */

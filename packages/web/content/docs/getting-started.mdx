@@ -80,7 +80,7 @@ Counts on 8 October 2026:
 | `packages/agent` | 59 passed |
 | `packages/contracts` (forge) | 127 passed in 8 suites, 0 failed |
 
-`npm test` type-checks first and then runs the core and agent tests. The 3 skipped core tests are fork tests. Turn them on by setting `MOI_FORK_TESTS=1`. Then `npm run test:fork --workspace=@moi/core` runs the claim fork test, and `npx vitest run test/prove.fork.test.ts` from `packages/core` runs the prove fork test. Both need Foundry's `anvil` and network access. The forge run includes 10 fork tests and 19 attack tests that read BNB Chain mainnet through the nodes named in `foundry.toml`, so it needs a network connection. The forge fuzz tests run 10,000 cases each.
+`npm test` type-checks first and then runs the core and agent tests. The 3 skipped core tests are fork tests. Turn them on by setting `MOI_FORK_TESTS=1`. Then `npm run test:fork --workspace=@viapp/core` runs the claim fork test, and `npx vitest run test/prove.fork.test.ts` from `packages/core` runs the prove fork test. Both need Foundry's `anvil` and network access. The forge run includes 10 fork tests and 19 attack tests that read BNB Chain mainnet through the nodes named in `foundry.toml`, so it needs a network connection. The forge fuzz tests run 10,000 cases each.
 
 ### Prove it against the live network
 
@@ -104,7 +104,7 @@ Before it sends anything, the live run refuses to start unless the vault lists N
 
 ```bash
 cd packages/contracts && forge test --match-path "test/attacks/*" --fork-url https://bsc-dataseed.bnbchain.org -vvv
-npm run attacks --workspace=@moi/core
+npm run attacks --workspace=@viapp/core
 ```
 
 The first command attacks the real vault on a fork of mainnet: 19 attacks. The second attacks the server code in process against a fresh vault on an anvil fork: 41 attacks. Foundry's `anvil` and a built `packages/contracts/out` must exist, and the run forks from Blast's public archive node. Set `MOI_ATTACK_FORK_URL` to use another archive node. Both runs refuse every attack. The [security page](/docs/security) explains what they cover.
@@ -131,7 +131,7 @@ Copy `.env.example` to `.env` at the repo root and fill it in. Never commit it. 
 | `MOI_PUBLIC_ORIGIN` | The site address printed in gift links. Use https in production. The example is `http://localhost:3000`. | Your site address |
 | `MOI_SERVER_ORIGIN` | Where the sender agent reaches Moi's server to wrap gifts. | Your site address |
 | `MOI_JUDGE_SEED` | A secret 32-byte seed, written as 0x and 64 hex characters, that the server derives each judge gift's claim key from. | Any secure random generator. Keep it secret |
-| `MOI_JUDGE_POOL` | The judge gifts the server may hand out, as `giftId:index` pairs. | Printed by `npm run judge-gifts --workspace=@moi/core` |
+| `MOI_JUDGE_POOL` | The judge gifts the server may hand out, as `giftId:index` pairs. | Printed by `npm run judge-gifts --workspace=@viapp/core` |
 | `MOI_JUDGE_COUNT`, `MOI_JUDGE_STOCK`, `MOI_JUDGE_USD_EACH` | How many judge gifts to make, which stock token, and how many dollars each. The defaults are 10, NVDAB and 1. | You choose them |
 | `MOI_JUDGE_START` | Resumes a stopped judge-gift run from this key index. The default is 0. | You choose it |
 | `MOI_JUDGE_CODE` | The code judges type on the judge button. | You choose it. The server checks its format |
@@ -140,4 +140,4 @@ Copy `.env.example` to `.env` at the repo root and fill it in. Never commit it. 
 
 Three switches change what a script does: `MOI_LIVE=1` for `prove` and `slice`, `MOI_FORK_TESTS=1` for the fork tests, and `MOI_ATTACK_FORK_URL` for the attack run.
 
-To run the website on your machine, use `npm run dev --workspace=@moi/web`. It serves on `http://127.0.0.1:3000`.
+To run the website on your machine, use `npm run dev --workspace=@viapp/web`. It serves on `http://127.0.0.1:3000`.

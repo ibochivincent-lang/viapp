@@ -1,7 +1,7 @@
 "use client";
 
-import { MAX_NOTE_PLAINTEXT_BYTES } from "@moi/core/src/gift.js";
-import { MAX_GIFT_USD, MIN_GIFT_USD } from "@moi/core/src/create.js";
+import { MAX_NOTE_PLAINTEXT_BYTES } from "@viapp/core/src/gift.js";
+import { MAX_GIFT_USD, MIN_GIFT_USD } from "@viapp/core/src/create.js";
 import { useEffect, useId, useRef } from "react";
 import type { Stock, StocksState } from "@/lib/stocks";
 import { acceptAmountText, byteLength, clipToBytes, shortHex, truncateUnits, usd } from "./format";
@@ -93,6 +93,8 @@ export function ConnectRow({ wallet }: { wallet: WalletView }) {
 }
 
 export type FormProps = {
+  chain: "stellar" | "bnb";
+  onChainChange: (chain: "stellar" | "bnb") => void;
   stocks: StocksState;
   selected: string | null;
   onSelect: (address: string) => void;
@@ -127,6 +129,27 @@ export function SendFields(props: FormProps) {
 
   return (
     <fieldset className="send-fields" disabled={locked}>
+      <div className="send-block">
+        <div className="send-chips" role="group" aria-label="Network">
+          <button
+            type="button"
+            className="send-chip"
+            aria-pressed={props.chain === "stellar"}
+            onClick={() => props.onChainChange("stellar")}
+          >
+            Stellar
+          </button>
+          <button
+            type="button"
+            className="send-chip"
+            aria-pressed={props.chain === "bnb"}
+            onClick={() => props.onChainChange("bnb")}
+          >
+            Binance Smart Chain
+          </button>
+        </div>
+      </div>
+
       <StockPicker state={props.stocks} selected={props.selected} onSelect={props.onSelect} onReload={props.onReloadStocks} />
 
       <div className="send-block">
@@ -198,15 +221,15 @@ export function SendFields(props: FormProps) {
       <dl className="send-summary">
         <div className="send-summary-row">
           <dt>THE SHARE</dt>
-          <dd>{amount > 0 ? usd(amount) : "0.00"} USDT</dd>
+          <dd>{amount > 0 ? usd(amount) : "0.00"} {props.chain === "stellar" ? "USDC" : "USDT"}</dd>
         </div>
         <div className="send-summary-row">
           <dt>GIFT WRAP</dt>
-          <dd>$0.05 (b402)</dd>
+          <dd>$0.05 {props.chain === "stellar" ? "(x402)" : "(b402)"}</dd>
         </div>
         <div className="send-summary-row">
           <dt>NETWORK FEES</dt>
-          <dd>a few cents of BNB</dd>
+          <dd>{props.chain === "stellar" ? "under a cent of XLM" : "a few cents of BNB"}</dd>
         </div>
       </dl>
 

@@ -15,7 +15,7 @@ type RunLine = { kind: "command" | "output"; text: string };
 // The words of the gift 2 mainnet run of 8 Oct 2026, from scratchpad/live/agent-gift-2.log. scratchpad/wo7e/clean-log.mjs drops npm's own echo
 // lines and the blank lines, and cuts the drive and folders in front of the gifts folder from the saved-link path.
 const RUN: readonly RunLine[] = [
-  { kind: "command", text: "npm run moi --workspace=@moi/agent -- gift NVDA --use-held 0.004220084869347249 --note Happy Diwali! Your first share of Nvidia, from Moi. --yes" },
+  { kind: "command", text: "npm run moi --workspace=@viapp/agent -- gift NVDA --use-held 0.004220084869347249 --note Happy Diwali! Your first share of Nvidia, from Moi. --yes" },
   { kind: "output", text: "Checking your Binance agent wallet." },
   { kind: "output", text: "Gifting 0.004220084869347249 NVDAB you already hold; nothing will be bought." },
   { kind: "output", text: "Binance previewed it: the simulation passed." },

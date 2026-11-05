@@ -19,7 +19,7 @@ export function SiteNav({ page = "landing" }: { page?: "landing" | "send" }) {
   const brand = (
     <>
       <VMark width={12} />
-      <span className="site-wordmark">Moi</span>
+      <span className="site-wordmark">viapp</span>
     </>
   );
 
@@ -50,7 +50,7 @@ export function SiteNav({ page = "landing" }: { page?: "landing" | "send" }) {
   return (
     <nav className="site-nav" aria-label="Main">
       {onSend ? (
-        <Link className="site-brand site-brand-link" href="/" aria-label="Moi, home">
+        <Link className="site-brand site-brand-link" href="/" aria-label="viapp, home">
           {brand}
         </Link>
       ) : (

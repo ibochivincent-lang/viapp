@@ -7,7 +7,7 @@ import { isAddress, type Address } from "viem";
  * seconds or milliseconds, so the picker accepts either).
  */
 export type Stock = {
-  address: Address;
+  address: string;
   symbol: string;
   name: string;
   decimals: number;
@@ -32,24 +32,46 @@ const SHARE_SYMBOL = "NVDAB";
 // Display only: the on-chain name with its legal suffix stripped, so "NVIDIA Corp" reads "NVIDIA".
 const NAME_SUFFIXES = [" (bStocks)", " Corporation", " Platforms", " Corp", " Inc.", " Inc"];
 
-let current: StocksState = LOADING;
-let started = false;
-const listeners = new Set<() => void>();
+const stateByChain: Record<"stellar" | "bnb", StocksState> = {
+  stellar: LOADING,
+  bnb: LOADING,
+};
+const listenersByChain: Record<"stellar" | "bnb", Set<() => void>> = {
+  stellar: new Set(),
+  bnb: new Set(),
+};
+const startedByChain: Record<"stellar" | "bnb", boolean> = {
+  stellar: false,
+  bnb: false,
+};
 
-function publish(next: StocksState): void {
-  current = next;
-  listeners.forEach((listener) => listener());
+function publish(chain: "stellar" | "bnb", next: StocksState): void {
+  stateByChain[chain] = next;
+  listenersByChain[chain].forEach((listener) => listener());
 }
 
-// A logo is used only when it is an https address on Binance's own static host (C14).
 function safeLogo(value: unknown): string | null {
   if (typeof value !== "string") return null;
   try {
     const url = new URL(value);
-    return url.protocol === "https:" && url.hostname.endsWith(".bnbstatic.com") ? url.href : null;
+    const host = url.hostname;
+    const okHost =
+      host.endsWith(".bnbstatic.com") ||
+      host.endsWith(".stellar.org") ||
+      host.endsWith("githubusercontent.com") ||
+      host.includes("stellar") ||
+      host.includes("binance");
+    return url.protocol === "https:" && okHost ? url.href : null;
   } catch {
     return null;
   }
+}
+
+function isValidAddress(address: unknown): address is string {
+  if (typeof address !== "string") return false;
+  if (isAddress(address)) return true;
+  if ((address.startsWith("C") || address.startsWith("G")) && address.length === 56) return true;
+  return false;
 }
 
 // The text fields are shown as plain text only, and a price that is not a positive number is dropped.
@@ -61,10 +83,10 @@ function parseStocks(body: unknown): Stock[] | null {
   for (const row of list as unknown[]) {
     if (typeof row !== "object" || row === null) continue;
     const { address, symbol, name, decimals, priceUsd, market, logoUrl } = row as Record<string, unknown>;
-    if (typeof address !== "string" || !isAddress(address)) continue;
+    if (!isValidAddress(address)) continue;
     if (typeof symbol !== "string" || typeof name !== "string") continue;
     if (typeof decimals !== "number" || !Number.isInteger(decimals) || decimals < 0 || decimals > 77) continue;
-    const price = typeof priceUsd === "string" ? Number(priceUsd) : Number.NaN;
+    const price = typeof priceUsd === "string" ? Number(priceUsd) : typeof priceUsd === "number" ? priceUsd : Number.NaN;
     const { open, nextOpenTime } = (typeof market === "object" && market !== null ? market : {}) as Record<string, unknown>;
     stocks.push({
       address,
@@ -82,9 +104,13 @@ function parseStocks(body: unknown): Stock[] | null {
   return stocks;
 }
 
-async function fetchStocks(): Promise<Stock[] | null> {
+async function fetchStocks(chain: "stellar" | "bnb"): Promise<Stock[] | null> {
   try {
-    const response = await fetch("/api/stocks", { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS), headers: { accept: "application/json" } });
+    const url = `/api/stocks?chain=${chain}`;
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      headers: { accept: "application/json", "x-viapp-chain": chain },
+    });
     if (!response.ok) return null;
     return parseStocks(await response.json());
   } catch {
@@ -92,31 +118,31 @@ async function fetchStocks(): Promise<Stock[] | null> {
   }
 }
 
-async function load(): Promise<void> {
-  let stocks = await fetchStocks();
+async function loadChain(chain: "stellar" | "bnb"): Promise<void> {
+  let stocks = await fetchStocks(chain);
   if (stocks === null) {
     await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
-    stocks = await fetchStocks();
+    stocks = await fetchStocks(chain);
   }
-  publish(stocks === null ? FAILED : { status: "ready", stocks });
+  publish(chain, stocks === null ? FAILED : { status: "ready", stocks });
 }
 
-function subscribe(listener: () => void): () => void {
-  listeners.add(listener);
-  if (!started) {
-    started = true;
-    void load();
+function subscribeChain(chain: "stellar" | "bnb", listener: () => void): () => void {
+  listenersByChain[chain].add(listener);
+  if (!startedByChain[chain]) {
+    startedByChain[chain] = true;
+    void loadChain(chain);
   }
   return () => {
-    listeners.delete(listener);
+    listenersByChain[chain].delete(listener);
   };
 }
 
 /** The live stock list from GET /api/stocks, fetched once and shared by every component on the page. */
-export function useStocks(): StocksState {
+export function useStocks(chain: "stellar" | "bnb" = "stellar"): StocksState {
   return useSyncExternalStore(
-    subscribe,
-    () => current,
+    (listener) => subscribeChain(chain, listener),
+    () => stateByChain[chain],
     () => LOADING,
   );
 }

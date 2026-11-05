@@ -1,10 +1,10 @@
 "use client";
 
 import "@/components/claim/zodNoEval";
-import { giftVaultAbi } from "@moi/core/src/generated/giftVaultAbi.js";
-import { ClaimFlowError } from "@moi/core/src/client/claim.js";
-import { claimJudgeGift } from "@moi/core/src/client/judge.js";
-import { callMoi } from "@moi/core/src/client/send.js";
+import { giftVaultAbi } from "@viapp/core/src/generated/giftVaultAbi.js";
+import { ClaimFlowError } from "@viapp/core/src/client/claim.js";
+import { claimJudgeGift } from "@viapp/core/src/client/judge.js";
+import { callMoi } from "@viapp/core/src/client/send.js";
 import { getEmbeddedConnectedWallet, usePrivy, useSignMessage, useWallets } from "@privy-io/react-auth";
 import gsap from "gsap";
 import { Fraunces } from "next/font/google";

@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
-import { EnvError } from "@moi/core/src/env.js";
-import { clientFromHeaders, json, MAX_BODY_BYTES, route, type MoiRequest, type MoiResponse, type ServerDeps } from "@moi/core/src/http.js";
-import { BootError, createServerDeps } from "@moi/core/src/server-deps.js";
+import { EnvError } from "@viapp/core/src/env.js";
+import { clientFromHeaders, json, MAX_BODY_BYTES, route, type MoiRequest, type MoiResponse, type ServerDeps } from "@viapp/core/src/http.js";
+import { BootError, createServerDeps } from "@viapp/core/src/server-deps.js";
 
 export const runtime = "nodejs";
 // C49: a wrap polls its settlement for 25 seconds and may wait on b402 for 25 more per call, so a

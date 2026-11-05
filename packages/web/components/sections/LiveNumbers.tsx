@@ -1,6 +1,6 @@
 "use client";
 
-import { giftVaultAbi } from "@moi/core/src/generated/giftVaultAbi.js";
+import { giftVaultAbi } from "@viapp/core/src/generated/giftVaultAbi.js";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { Grain } from "@/components/hero/Grain";
 import { useMediaQuery } from "@/components/hero/useMediaQuery";

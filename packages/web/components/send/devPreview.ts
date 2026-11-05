@@ -1,4 +1,4 @@
-import { SendGiftError, type SendStep, type WrapStep } from "@moi/core/src/client/send.js";
+import { SendGiftError, type SendStep, type WrapStep } from "@viapp/core/src/client/send.js";
 import type { Address, Hex } from "viem";
 import type { GiftsFixture } from "./MyGifts";
 import type { Balances } from "./reads";

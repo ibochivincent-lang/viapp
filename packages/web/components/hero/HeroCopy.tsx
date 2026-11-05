@@ -47,7 +47,7 @@ export function HeroCopy() {
           >
             <span className="hero-meta-part">A GIFT IN ONE LINK</span>
             <span className="hero-meta-gap">{"  ·  "}</span>
-            <span className="hero-meta-part">REAL SHARES ON BNB CHAIN</span>
+            <span className="hero-meta-part">REAL SHARES ON STELLAR &amp; BNB CHAIN</span>
             <span className="hero-meta-gap">{"  ·  "}</span>
             <span className="hero-meta-part">CLAIMED IN 30 SECONDS</span>
           </motion.p>

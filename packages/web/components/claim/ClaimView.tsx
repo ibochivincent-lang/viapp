@@ -4,7 +4,7 @@ import { Fraunces } from "next/font/google";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { Address, Hex } from "viem";
-import type { GiftView } from "@moi/core/src/client/claim.js";
+import type { GiftView } from "@viapp/core/src/client/claim.js";
 import { Grain } from "@/components/hero/Grain";
 import { VMark } from "@/components/hero/VMark";
 import { displayName, formatShares } from "@/lib/stocks";

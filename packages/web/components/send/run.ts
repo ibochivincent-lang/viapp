@@ -1,4 +1,4 @@
-import { SendGiftError, type SendStep } from "@moi/core/src/client/send.js";
+import { SendGiftError, type SendStep } from "@viapp/core/src/client/send.js";
 import type { Hex } from "viem";
 import type { Failure } from "./ErrorPanel";
 import type { WrapProgress } from "./LinkCard";

@@ -2,9 +2,9 @@
 
 import "@/components/claim/zodNoEval";
 import { useConnectWallet, usePrivy, useWallets, type ConnectedWallet } from "@privy-io/react-auth";
-import { recoverPendingGift, sendGift, SendGiftError, wrapGift, type SendGiftDeps, type WrapGiftDeps } from "@moi/core/src/client/send.js";
-import type { WalletSigner } from "@moi/core/src/client/x402.js";
-import { MAX_GIFT_USD, MIN_GIFT_USD } from "@moi/core/src/create.js";
+import { recoverPendingGift, sendGift, SendGiftError, wrapGift, type SendGiftDeps, type WrapGiftDeps } from "@viapp/core/src/client/send.js";
+import type { WalletSigner } from "@viapp/core/src/client/x402.js";
+import { MAX_GIFT_USD, MIN_GIFT_USD } from "@viapp/core/src/create.js";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { getAddress, type Address } from "viem";
 import { Grain } from "@/components/hero/Grain";
@@ -70,7 +70,8 @@ export function SendPage() {
   // A wallet that cannot be disconnected from a page, such as MetaMask, stays in Privy's list after wallet.disconnect(), so the page also remembers that the sender asked to leave.
   const [left, setLeft] = useState<string | null>(null);
   const { connectWallet } = useConnectWallet({ onSuccess: () => setLeft(null) });
-  const stocks = useStocks();
+  const [chain, setChain] = useState<"stellar" | "bnb">("stellar");
+  const stocks = useStocks(chain);
 
   const [preview, setPreview] = useState<SendPreview | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -332,6 +333,11 @@ export function SendPage() {
               {showBanner ? <RecoveryBanner lines={lines} busy={bannerBusy} wrap={bannerWrap} onFind={() => void find()} onWrap={(giftId) => void wrapRecovered(giftId)} /> : null}
               <ConnectRow wallet={wallet} />
               <SendFields
+                chain={chain}
+                onChainChange={(nextChain) => {
+                  setChain(nextChain);
+                  setSelected(null);
+                }}
                 stocks={stocks}
                 selected={stock === null ? null : stock.address}
                 onSelect={setSelected}

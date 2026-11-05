@@ -1,4 +1,4 @@
-import { SendGiftError, type PendingGift, type SendStep, type WrapStep } from "@moi/core/src/client/send.js";
+import { SendGiftError, type PendingGift, type SendStep, type WrapStep } from "@viapp/core/src/client/send.js";
 import type { Hex } from "viem";
 
 /** What the send run does besides drawing the call sheet. Each saving call says whether the browser kept the value. */

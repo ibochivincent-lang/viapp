@@ -1,9 +1,9 @@
-import { callMoi } from "@moi/core/src/client/send.js";
-import { giftVaultAbi } from "@moi/core/src/generated/giftVaultAbi.js";
+import { callMoi } from "@viapp/core/src/client/send.js";
+import { giftVaultAbi } from "@viapp/core/src/generated/giftVaultAbi.js";
 import { encodeFunctionData, erc20Abi, type Address, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { publicClient, VAULT } from "@/lib/chain";
-import type { WalletSigner } from "@moi/core/src/client/x402.js";
+import type { WalletSigner } from "@viapp/core/src/client/x402.js";
 import { listLinks, sealFinished, type FinalState } from "./storage";
 
 export const USDT: Address = "0x55d398326f99059fF775485246999027B3197955";

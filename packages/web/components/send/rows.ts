@@ -1,4 +1,4 @@
-import type { SendStep, WrapStep } from "@moi/core/src/client/send.js";
+import type { SendStep, WrapStep } from "@viapp/core/src/client/send.js";
 import type { Hex } from "viem";
 import type { WalletPhase } from "./signer";
 

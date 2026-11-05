@@ -1,5 +1,5 @@
 import type { Address, Hex } from "viem";
-import type { GiftView } from "@moi/core/src/client/claim.js";
+import type { GiftView } from "@viapp/core/src/client/claim.js";
 
 /**
  * Development only. ClaimFlow reads this when the address carries ?preview=<name>, so each screen of

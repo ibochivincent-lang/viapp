@@ -3,7 +3,7 @@
 import { getEmbeddedConnectedWallet, usePrivy, useWallets } from "@privy-io/react-auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Address, Hex } from "viem";
-import { claimGift, ClaimFlowError, loadGift, type GiftView } from "@moi/core/src/client/claim.js";
+import { claimGift, ClaimFlowError, loadGift, type GiftView } from "@viapp/core/src/client/claim.js";
 import { useSignInAvailable } from "@/components/privy/MoiPrivy";
 import { publicClient, VAULT } from "@/lib/chain";
 import { useStocks } from "@/lib/stocks";
