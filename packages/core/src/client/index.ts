@@ -29,3 +29,19 @@ export { claimGift, ClaimFlowError, confirmClaimed, loadGift, readLinkFromLocati
 export type { ClaimFlowErrorCode, GiftView, LoadedGift } from "./claim.js";
 
 export { claimJudgeGift } from "./judge.js";
+
+export {
+  buildClaimOp,
+  buildClaimTx,
+  buildCreateGiftOp,
+  buildCreateGiftTx,
+  buildRefundOp,
+  buildRefundTx,
+} from "./stellar.js";
+export type {
+  BuildTxOptions,
+  ClaimGiftParams,
+  CreateGiftParams,
+  RefundGiftParams,
+} from "./stellar.js";
+
