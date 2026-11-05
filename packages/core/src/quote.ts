@@ -8,6 +8,7 @@ import { buildApproveVaultTx, MAX_GIFT_USD, MIN_GIFT_USD } from "./create.js";
 import { checkEligibility } from "./eligibility.js";
 import { readListedTokens } from "./vault.js";
 import { Web3ApiError, type Web3Api } from "./web3api.js";
+import { handleStellarQuote, type StellarQuoteResponse } from "./quote-stellar.js";
 
 /** Every error a quote request can get back. Short, fixed, and never built from upstream text (C19). */
 export type QuoteErrorCode =
@@ -112,11 +113,31 @@ function errorCode(err: unknown): QuoteErrorCode {
  * Every handed-out transaction is {to, data, value: "0"} with no gas fields (C34). Sends nothing.
  * Never throws, and never returns upstream or chain text.
  */
+export type UnifiedQuoteResponse = QuoteResponse | StellarQuoteResponse;
+
 export async function handleQuote(
-  deps: { api: Web3Api; client: PublicClient; vault: Address; devAllowUnknownCountry?: boolean },
+  deps: {
+    api?: Web3Api;
+    client?: PublicClient;
+    vault?: Address;
+    devAllowUnknownCountry?: boolean;
+    stellarPassphrase?: string;
+  },
   body: unknown,
   ctx: { country?: string | null; region?: string | null },
-): Promise<QuoteResponse> {
+): Promise<UnifiedQuoteResponse> {
+  const parsedBody = typeof body === "object" && body !== null ? (body as Record<string, unknown>) : {};
+  const isStellar =
+    parsedBody.chain === "stellar" ||
+    (typeof parsedBody.wallet === "string" && parsedBody.wallet.startsWith("G"));
+
+  if (isStellar) {
+    const stock = typeof parsedBody.stock === "string" ? parsedBody.stock : "";
+    const usdAmount = typeof parsedBody.usdAmount === "string" ? parsedBody.usdAmount : "";
+    const wallet = typeof parsedBody.wallet === "string" ? parsedBody.wallet : "";
+    const networkPassphrase = deps.stellarPassphrase ?? "Test SDF Network ; September 2015";
+    return handleStellarQuote({ stock, usdAmount, wallet, networkPassphrase });
+  }
   // WHY true for the declaration: the "not a US person, not in a restricted place" statement is
   // the friend's, recorded on the claim page before a claim. A sender asking for a quote signs
   // every transaction in their own wallet, so only the place gate applies here, and passing true

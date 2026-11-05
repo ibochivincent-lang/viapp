@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CHAIN_ID, readTokenInfo, UI_MULTIPLIER_ONE } from "./chain.js";
 import { readListedTokens } from "./vault.js";
 import type { Web3Api } from "./web3api.js";
+import { getStellarStocks, type StellarStock } from "./stocks-stellar.js";
 
 /**
  * One stock a sender can gift. Every address, decimals and multiplier is read from chain; price,
@@ -206,12 +207,32 @@ export function createStocksCache(ttlMs = 60_000): (deps: StocksDeps) => Promise
  * Never throws and never returns upstream or chain text (C19): any failure is 502
  * upstream_unavailable.
  */
+export type UnifiedStocksResponse =
+  | StocksResponse
+  | { status: 200; body: { stocks: StellarStock[]; asOf: number; chain: "stellar" } };
+
 export async function handleStocks(
-  deps: StocksDeps & { getStocks?: (deps: StocksDeps) => Promise<GiftStock[]>; now?: () => number },
-): Promise<StocksResponse> {
+  deps: Partial<StocksDeps> & {
+    getStocks?: (deps: StocksDeps) => Promise<GiftStock[]>;
+    now?: () => number;
+    chain?: "stellar" | "bnb";
+    stellarPassphrase?: string;
+  },
+): Promise<UnifiedStocksResponse> {
+  if (deps.chain === "stellar") {
+    const passphrase = deps.stellarPassphrase ?? "Test SDF Network ; September 2015";
+    return {
+      status: 200,
+      body: {
+        chain: "stellar",
+        stocks: getStellarStocks(passphrase),
+        asOf: (deps.now ?? Date.now)(),
+      },
+    };
+  }
   try {
     const getStocks = deps.getStocks ?? getGiftableStocks;
-    const stocks = await getStocks({ client: deps.client, vault: deps.vault, api: deps.api });
+    const stocks = await getStocks({ client: deps.client!, vault: deps.vault!, api: deps.api! });
     return { status: 200, body: { stocks, asOf: (deps.now ?? Date.now)() } };
   } catch {
     return { status: 502, body: { ok: false, error: "upstream_unavailable" } };
