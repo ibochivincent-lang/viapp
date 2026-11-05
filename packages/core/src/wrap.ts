@@ -39,6 +39,13 @@ export const WRAP_ASSETS: readonly WrapAsset[] = Object.freeze(
 );
 
 export const WRAP_NETWORK = "eip155:56";
+export const STELLAR_WRAP_NETWORK = "stellar:testnet";
+export const STELLAR_WRAP_ASSET = Object.freeze({
+  symbol: "USDC",
+  contractId: "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+  decimals: 7,
+  name: "USD Coin",
+});
 /**
  * How long a buyer's payment signature should stay valid. The Agentic Wallet signs eip3009
  * payments valid for 120 seconds, so a shorter window would only cause expired payments.

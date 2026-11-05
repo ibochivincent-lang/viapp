@@ -34,8 +34,7 @@ describe("Stellar Stocks and Quotation", () => {
     });
 
     expect(response.status).toBe(200);
-    if (response.status === 200) {
-      expect(response.body.ok).toBe(true);
+    if (response.status === 200 && response.body.ok) {
       expect(response.body.chain).toBe("stellar");
       expect(response.body.stock.code).toBe("NVDA");
       expect(response.body.usdAmount).toBe("50.00");

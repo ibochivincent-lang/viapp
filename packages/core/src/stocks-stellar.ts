@@ -3,6 +3,7 @@ import { Asset } from "@stellar/stellar-sdk";
 export type StellarStock = {
   chain: "stellar";
   code: string;
+  symbol: string;
   issuer: string;
   contractId: string;
   name: string;
@@ -160,6 +161,7 @@ export function getStellarStocks(networkPassphrase: string): StellarStock[] {
     }
     return {
       ...item,
+      symbol: item.code,
       contractId,
     };
   });

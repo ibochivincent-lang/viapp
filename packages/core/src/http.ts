@@ -262,7 +262,8 @@ async function dispatch(deps: ServerDeps, req: MoiRequest, seen: Seen): Promise<
 
   switch (matched.spec.name) {
     case "/api/stocks": {
-      const res = await handleStocks({ client: deps.client, vault: deps.vault, api: deps.api, getStocks: deps.getStocks });
+      const chain = req.path.includes("chain=stellar") || req.headers["x-viapp-chain"] === "stellar" ? "stellar" : undefined;
+      const res = await handleStocks({ client: deps.client, vault: deps.vault, api: deps.api, getStocks: deps.getStocks, chain });
       // C23: only a good list may sit in a shared cache; an error or a refusal never does.
       return { status: res.status, body: res.body, publicCache: res.status === 200 };
     }

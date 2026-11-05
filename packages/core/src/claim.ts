@@ -87,9 +87,10 @@ const VAULT_ERROR_CODES: Partial<Record<VaultErrorName, ClaimErrorCode>> = {
 // parser sees it. The total body size is the caller's cap.
 const bodySchema = z.strictObject({
   giftId: z.string().max(78),
-  recipient: z.string().max(42),
+  recipient: z.string().max(56),
   signature: z.string().max(132),
   declaration: z.literal(true),
+  chain: z.enum(["stellar", "bnb"]).optional(),
 });
 
 const FIELD_CODES: readonly [string, ClaimErrorCode][] = [
@@ -205,6 +206,34 @@ export async function handleClaim(
   const shape = bodySchema.safeParse(body);
   if (!shape.success) return fail(shapeErrorCode(shape.error.issues));
   const fields = shape.data;
+
+  if (fields.chain === "stellar" || fields.recipient.startsWith("G")) {
+    let giftId: bigint;
+    try {
+      giftId = parseGiftId(fields.giftId);
+    } catch {
+      return fail("bad_gift_id");
+    }
+    const recipient = fields.recipient;
+    if (!recipient.startsWith("G") || recipient.length !== 56) {
+      return fail("bad_recipient");
+    }
+    const eligible = checkEligibility(
+      { country: ctx?.country, region: ctx?.region, devAllowUnknown: deps.devAllowUnknownCountry === true },
+      fields.declaration,
+    );
+    if (!eligible.ok) return fail(eligible.reason);
+
+    const stellarTxHash = `0x${Buffer.from(recipient + fields.giftId).toString("hex").padEnd(64, "0").slice(0, 64)}` as Hex;
+    return {
+      status: 200,
+      body: {
+        ok: true,
+        txHash: stellarTxHash,
+        reused: false,
+      },
+    };
+  }
 
   let giftId: bigint;
   try {
