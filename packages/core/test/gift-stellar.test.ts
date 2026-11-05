@@ -148,3 +148,4 @@ describe("Stellar Claim Key and Link Protocol", () => {
     expect(isWrongRecipientValid).toBe(false);
   });
 });
+

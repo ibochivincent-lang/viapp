@@ -1,0 +1,14 @@
+[package]
+name = "viapp-gift-vault"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+soroban-sdk = "28.0.0-rc.2"
+
+[dev-dependencies]
+soroban-sdk = { version = "28.0.0-rc.2", features = ["testutils"] }
+ed25519-dalek = { version = "2.2.0", default-features = false }

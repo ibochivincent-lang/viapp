@@ -38,3 +38,8 @@ docs/RD-PRIVY.md
 
 # Fumadocs generated content index
 .source/
+
+# Rust targets
+target/
+**/target/
+

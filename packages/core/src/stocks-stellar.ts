@@ -173,3 +173,4 @@ export function findStellarStock(code: string, networkPassphrase: string): Stell
   const stocks = getStellarStocks(networkPassphrase);
   return stocks.find((s) => s.code === normalized);
 }
+

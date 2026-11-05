@@ -86,3 +86,4 @@ describe("Stellar Stocks and Quotation", () => {
     expect(response.body).toEqual({ ok: false, error: "not_listed" });
   });
 });
+
