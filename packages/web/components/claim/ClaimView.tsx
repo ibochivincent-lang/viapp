@@ -1,6 +1,5 @@
 "use client";
 
-import { Fraunces } from "next/font/google";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { Address, Hex } from "viem";
@@ -11,12 +10,12 @@ import { displayName, formatShares } from "@/lib/stocks";
 import { ClaimStage, type SceneState } from "./ClaimStage";
 
 // The root layout loads Fraunces upright only, so the italic cut is loaded here, as the hero does.
-const displayItalic = Fraunces({
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["opsz", "SOFT", "WONK"],
-  display: "swap",
-});
+const displayItalic = {
+  style: {
+    fontFamily: 'Georgia, "Times New Roman", serif',
+    fontStyle: "italic",
+  },
+};
 
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"] as const;
 const STILL_WAITING_AFTER_SECONDS = 20;

@@ -1,19 +1,16 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Fraunces } from "next/font/google";
 import Link from "next/link";
 import { SiteNav } from "@/components/nav/SiteNav";
 import { LiveTicker } from "./LiveTicker";
 
-// The root layout loads Fraunces upright only, so the italic cut is loaded here. Without it the
-// browser would slant the upright letters and the title would look faked.
-const displayItalic = Fraunces({
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["opsz", "SOFT", "WONK"],
-  display: "swap",
-});
+const displayItalic = {
+  style: {
+    fontFamily: 'Georgia, "Times New Roman", serif',
+    fontStyle: "italic",
+  },
+};
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 

@@ -2,7 +2,6 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Fraunces } from "next/font/google";
 import { useEffect, useRef, type ReactElement } from "react";
 import { Certificate } from "@/components/hero/Certificate";
 import { EnvelopeFallback } from "@/components/hero/EnvelopeFallback";
@@ -12,12 +11,12 @@ import { tickerEntries, useShareFigure, useStocks } from "@/lib/stocks";
 import "./sections.css";
 
 // The root layout loads Fraunces upright only, so the italic cut is loaded here, as the hero does.
-const displayItalic = Fraunces({
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["opsz", "SOFT", "WONK"],
-  display: "swap",
-});
+const displayItalic = {
+  style: {
+    fontFamily: 'Georgia, "Times New Roman", serif',
+    fontStyle: "italic",
+  },
+};
 
 const RISE_SECONDS = 0.6;
 const RISE_PIXELS = 24;

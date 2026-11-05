@@ -46,6 +46,8 @@ class PrivyFailSafe extends Component<{ children: ReactNode; fallback: ReactNode
   }
 }
 
+const FALLBACK_APP_ID = "cl00000000000000000000000";
+
 /**
  * Privy's sign-in, mounted only around the parts of the site that need it. It is not in the root
  * layout on purpose: the claim page must take the claim key out of the address bar before this
@@ -53,14 +55,14 @@ class PrivyFailSafe extends Component<{ children: ReactNode; fallback: ReactNode
  * `nonce` is the response's script nonce from proxy.ts.
  */
 export function MoiPrivy({ nonce, children }: { nonce: string | undefined; children: ReactNode }) {
-  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? "";
+  const rawId = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? "";
+  const isCustom = rawId.length === APP_ID_LENGTH;
+  const appId = isCustom ? rawId : FALLBACK_APP_ID;
   const settings = useMemo(() => config(nonce), [nonce]);
-  if (appId.length !== APP_ID_LENGTH) {
-    return <SignInUnavailable.Provider value={true}>{children}</SignInUnavailable.Provider>;
-  }
+
   return (
     <PrivyFailSafe fallback={<SignInUnavailable.Provider value={true}>{children}</SignInUnavailable.Provider>}>
-      <SignInUnavailable.Provider value={false}>
+      <SignInUnavailable.Provider value={!isCustom}>
         <PrivyProvider appId={appId} config={settings}>
           {children}
         </PrivyProvider>

@@ -1,28 +1,23 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { siteOrigin } from "@/lib/site";
 
-const display = Fraunces({
-  subsets: ["latin"],
-  axes: ["opsz", "SOFT", "WONK"],
+const display = {
   variable: "--font-display",
-  display: "swap",
-});
+  style: { fontFamily: 'Georgia, "Times New Roman", serif' },
+};
 
-const body = Manrope({
-  subsets: ["latin"],
+const body = {
   variable: "--font-body",
-  display: "swap",
-});
+  style: { fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' },
+};
 
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
+const mono = {
   variable: "--font-mono",
-  display: "swap",
-});
+  style: { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' },
+};
 
 // Each response has its own script nonce from proxy.ts, and only a page rendered for that request
 // can carry it; a page prerendered at build time would have its scripts blocked.

@@ -48,6 +48,8 @@ const nextConfig: NextConfig = {
     // nothing, so each package is pointed at an empty module instead.
     config.resolve.alias = {
       ...config.resolve.alias,
+      "@react-aria/focus": fileURLToPath(new URL("../../node_modules/@react-aria/focus/dist/main.js", import.meta.url)),
+      "@react-aria/interactions": fileURLToPath(new URL("../../node_modules/@react-aria/interactions/dist/main.js", import.meta.url)),
       "@solana/kit": false,
       "@solana-program/system": false,
       "@solana-program/token": false,

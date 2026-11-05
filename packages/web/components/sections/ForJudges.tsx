@@ -7,7 +7,6 @@ import { claimJudgeGift } from "@viapp/core/src/client/judge.js";
 import { callMoi } from "@viapp/core/src/client/send.js";
 import { getEmbeddedConnectedWallet, usePrivy, useSignMessage, useWallets } from "@privy-io/react-auth";
 import gsap from "gsap";
-import { Fraunces } from "next/font/google";
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 import type { Address, Hex } from "viem";
 import { Grain } from "@/components/hero/Grain";
@@ -19,12 +18,12 @@ import { displayName, formatShares } from "@/lib/stocks";
 import "./judges.css";
 
 // The root layout loads Fraunces upright only, so the italic cut is loaded here, as the hero does.
-const displayItalic = Fraunces({
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["opsz", "SOFT", "WONK"],
-  display: "swap",
-});
+const displayItalic = {
+  style: {
+    fontFamily: 'Georgia, "Times New Roman", serif',
+    fontStyle: "italic",
+  },
+};
 
 const TILT_MAX_DEGREES = 4;
 const TILT_LERP = 0.08;

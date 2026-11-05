@@ -2,7 +2,6 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Fraunces } from "next/font/google";
 import Link from "next/link";
 import { useEffect, useRef, type ReactNode } from "react";
 import { Grain } from "@/components/hero/Grain";
@@ -12,14 +11,14 @@ import { addressUrl, shortHex, sourceUrl } from "@/lib/proof";
 import "./sections.css";
 
 // The root layout loads Fraunces upright only, so the italic cut is loaded here, as the hero does.
-const displayItalic = Fraunces({
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["opsz", "SOFT", "WONK"],
-  display: "swap",
-});
+const displayItalic = {
+  style: {
+    fontFamily: 'Georgia, "Times New Roman", serif',
+    fontStyle: "italic",
+  },
+};
 
-const GITHUB_URL = "https://github.com/ramakrishnanhulk20/Moi";
+const GITHUB_URL = "https://github.com/ibochivincent-lang/viapp";
 const RISE_PIXELS = 24;
 const RISE_SECONDS = 0.6;
 const RISE_STAGGER_SECONDS = 0.08;
