@@ -1,6 +1,6 @@
 # viapp Dual-Chain Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Implement the dual-chain tokenized stock gifting platform on Stellar and Binance with 100% design preservation, Soroban smart contract custody, and frictionless cryptographic link claiming.
 
@@ -37,21 +37,21 @@
 - Consumes: `handleStellarQuote` from `stocks-stellar.ts`, `parseClaimKey`, `parseLink` from `gift.ts`.
 - Produces: Unified `handleQuote` and `handleStocks` supporting both `stellar` and `bnb`.
 
-- [ ] **Step 1: Write unified quote and stocks test**
+- [x] **Step 1: Write unified quote and stocks test**
 Write `packages/core/test/quote-unified.test.ts` verifying that `handleQuote` and `handleStocks` route correctly based on `chain: "stellar"` vs `chain: "bnb"`.
 
-- [ ] **Step 2: Run test to verify initial failure**
+- [x] **Step 2: Run test to verify initial failure**
 Run: `node ../../node_modules/vitest/vitest.mjs run test/quote-unified.test.ts`
 Expected: FAIL
 
-- [ ] **Step 3: Update `quote.ts` and `stocks.ts`**
+- [x] **Step 3: Update `quote.ts` and `stocks.ts`**
 Implement the routing to `handleStellarQuote` and `getStellarStocks` when `chain === "stellar"` or wallet starts with `G`.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 Run: `node ../../node_modules/vitest/vitest.mjs run test/quote-unified.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 ```bash
 git add packages/core/src/quote.ts packages/core/src/stocks.ts packages/core/test/quote-unified.test.ts
 git commit -m "feat(core): route unified quote and stocks handlers for Stellar and Binance"
@@ -71,20 +71,20 @@ git commit -m "feat(core): route unified quote and stocks handlers for Stellar a
 - Consumes: `soroban-sdk` v22+.
 - Produces: Soroban `GiftVault` contract with `initialize`, `create_gift`, `claim`, `refund`, and admin controls.
 
-- [ ] **Step 1: Create Cargo.toml for Soroban crate**
+- [x] **Step 1: Create Cargo.toml for Soroban crate**
 Configure `packages/contracts/stellar/Cargo.toml` with `crate-type = ["cdylib"]`, `soroban-sdk = "22"`.
 
-- [ ] **Step 2: Implement types and error enums**
+- [x] **Step 2: Implement types and error enums**
 Implement `State` (None, Open, Claimed, Refunded), `Gift`, `DataKey`, and `VaultError` in `types.rs` and `errors.rs`.
 
-- [ ] **Step 3: Implement contract functions in `lib.rs`**
+- [x] **Step 3: Implement contract functions in `lib.rs`**
 Implement `create_gift` (with Ed25519 anti-frontrunning verification and token transfer), `claim` (with Ed25519 claim verification and transfer to recipient), `refund` (unpausable expired return), and admin functions.
 
-- [ ] **Step 4: Compile crate with cargo**
+- [x] **Step 4: Compile crate with cargo**
 Run: `cargo check --manifest-path packages/contracts/stellar/Cargo.toml`
 Expected: Compilation success with 0 errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 ```bash
 git add packages/contracts/stellar/
 git commit -m "feat(contracts): implement Soroban GiftVault smart contract in Rust"
@@ -101,7 +101,7 @@ git commit -m "feat(contracts): implement Soroban GiftVault smart contract in Ru
 - Consumes: `GiftVaultClient` from `lib.rs`, mock SAC token clients.
 - Produces: Complete invariant test coverage for all gift lifecycle events.
 
-- [ ] **Step 1: Write integration tests in `test_vault.rs`**
+- [x] **Step 1: Write integration tests in `test_vault.rs`**
 Write tests covering:
 1. `test_create_gift_success`
 2. `test_create_gift_invalid_proof`
@@ -111,11 +111,11 @@ Write tests covering:
 6. `test_refund_expired_success`
 7. `test_unpausable_refund`
 
-- [ ] **Step 2: Run cargo test**
+- [x] **Step 2: Run cargo test**
 Run: `cargo test --manifest-path packages/contracts/stellar/Cargo.toml`
 Expected: All tests pass.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 ```bash
 git add packages/contracts/stellar/tests/
 git commit -m "test(contracts): add full Soroban GiftVault invariant test suite"
@@ -134,17 +134,17 @@ git commit -m "test(contracts): add full Soroban GiftVault invariant test suite"
 - Consumes: `@stellar/stellar-sdk`, `GiftVault` compiled contract.
 - Produces: Helpers to build createGift transaction XDR, simulate, and invoke Soroban methods.
 
-- [ ] **Step 1: Write unit tests for Stellar transaction builders**
+- [x] **Step 1: Write unit tests for Stellar transaction builders**
 Test building `create_gift` Soroban invocation XDR and parsing receipts.
 
-- [ ] **Step 2: Implement `stellar.ts` client methods**
+- [x] **Step 2: Implement `stellar.ts` client methods**
 Implement `buildCreateGiftTx`, `buildClaimTx`, and `buildRefundTx` with proper Soroban `Contract` invocations.
 
-- [ ] **Step 3: Run client tests**
+- [x] **Step 3: Run client tests**
 Run: `node ../../node_modules/vitest/vitest.mjs run test/stellar-client.test.ts`
 Expected: PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add packages/core/src/client/stellar.ts packages/core/test/stellar-client.test.ts
 git commit -m "feat(core): add Stellar Soroban transaction builder client"
@@ -166,23 +166,23 @@ git commit -m "feat(core): add Stellar Soroban transaction builder client"
 - Consumes: `@viapp/core` dual-chain APIs, Freighter wallet adapter.
 - Produces: Complete UI with network toggle, Stellar tokenized stocks, and preserved dark luxury styling.
 
-- [ ] **Step 1: Update `SiteNav.tsx` and `Hero.tsx` branding**
+- [x] **Step 1: Update `SiteNav.tsx` and `Hero.tsx` branding**
 Replace "Moi" with "viapp" in logo, titles, and text while preserving the exact Georgia serif font, spacing, and styling.
 
-- [ ] **Step 2: Add ChainSelector in `SendForm.tsx`**
+- [x] **Step 2: Add ChainSelector in `SendForm.tsx`**
 Add a segmented control button (`Stellar` / `Binance`) matching the dark luxury button theme.
 
-- [ ] **Step 3: Update `StockPicker.tsx`**
+- [x] **Step 3: Update `StockPicker.tsx`**
 Display Stellar tokenized equities (AAPL, NVDA, TSLA, etc.) when Stellar is active, and bStocks when Binance is active.
 
-- [ ] **Step 4: Update `ClaimPage.tsx`**
+- [x] **Step 4: Update `ClaimPage.tsx`**
 Handle Stellar `/g/stellar/:id#S...` links, unseal the note using `openNote`, and display the claim confirmation.
 
-- [ ] **Step 5: Verify build**
+- [x] **Step 5: Verify build**
 Run: `npm run typecheck --workspace=@viapp/web`
 Expected: PASS with 0 type errors.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add packages/web/
 git commit -m "feat(web): update UI with dual-chain selector, Stellar stocks, and viapp branding"
@@ -201,21 +201,22 @@ git commit -m "feat(web): update UI with dual-chain selector, Stellar stocks, an
 - Consumes: Relayer Stellar keypair, x402 facilitator.
 - Produces: Working `/api/claim` and `/api/wrap/{id}` endpoints.
 
-- [ ] **Step 1: Implement Stellar claim submission in `claim.ts`**
+- [x] **Step 1: Implement Stellar claim submission in `claim.ts`**
 Relayer signs and broadcasts `GiftVault.claim(...)` for Stellar gifts, paying all transaction and resource fees.
 
-- [ ] **Step 2: Implement Stellar x402 wrapping fee in `wrap.ts`**
+- [x] **Step 2: Implement Stellar x402 wrapping fee in `wrap.ts`**
 Answer HTTP 402 with USDC requirements on Stellar, verify payment signature, and mark gift wrapped.
 
-- [ ] **Step 3: Write tests for Stellar claim and wrap**
+- [x] **Step 3: Write tests for Stellar claim and wrap**
 Verify signature verification, replay protection, and error handling.
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 Run: `node ../../node_modules/vitest/vitest.mjs run test/claim-stellar.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 ```bash
 git add packages/core/src/claim.ts packages/core/src/wrap.ts packages/core/test/claim-stellar.test.ts
 git commit -m "feat(core): implement Stellar sponsored relayer claim and x402 wrapping"
 ```
+

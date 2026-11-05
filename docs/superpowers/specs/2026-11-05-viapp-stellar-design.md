@@ -118,3 +118,4 @@ The security model adheres to strict invariants (C1 to C50):
    - Integrates Stellar network selector and Stellar Wallets Kit alongside Privy/EVM.
 4. **`packages/agent`**:
    - CLI tool `viapp` for automated gifting via command line or agentic workflows.
+
