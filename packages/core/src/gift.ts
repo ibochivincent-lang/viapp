@@ -1,5 +1,14 @@
 import { bytesToHex, getAddress, hashTypedData, hexToBytes, isHex } from "viem";
 import { generatePrivateKey, type PrivateKeyAccount, privateKeyToAccount } from "viem/accounts";
+import { Keypair, StrKey } from "@stellar/stellar-sdk";
+
+export type SupportedChain = "stellar" | "bnb";
+
+export type ClaimKeyPair = {
+  chain: SupportedChain;
+  privateKey: string;
+  address: string;
+};
 
 /**
  * Thrown for any part of a gift link that cannot be trusted. The claim page turns `kind` into its
@@ -17,33 +26,54 @@ export class LinkError extends Error {
 }
 
 /**
- * Makes a fresh one-time claim key and the address the vault stores for it (C11). viem
- * generatePrivateKey draws 48 bytes from globalThis.crypto.getRandomValues, the Web Crypto source
- * in both the browser and Node, and throws when that source is missing, so there is no silent
- * fallback to a weaker one. The key is passed back through parseClaimKey so the value that goes
- * into a link has already been through the parser that will read it.
+ * Makes a fresh one-time claim key and the address the vault stores for it (C11).
+ * Defaults to "bnb" for full backwards-compatibility, or generates a Stellar Ed25519 keypair when "stellar" is passed.
  */
-export function newClaimKey(): { privateKey: `0x${string}`; address: `0x${string}` } {
+export function newClaimKey(chain: SupportedChain = "bnb"): ClaimKeyPair {
+  if (chain === "stellar") {
+    const kp = Keypair.random();
+    return {
+      chain: "stellar",
+      privateKey: kp.secret(),
+      address: kp.publicKey(),
+    };
+  }
   const privateKey = parseClaimKey(generatePrivateKey());
-  return { privateKey, address: privateKeyToAccount(privateKey).address };
+  return {
+    chain: "bnb",
+    privateKey,
+    address: privateKeyToAccount(privateKey as `0x${string}`).address,
+  };
 }
 
-const CLAIM_KEY_TEXT = /^(?:0[xX])?([0-9a-fA-F]{64})$/;
+export function newStellarClaimKey(): ClaimKeyPair {
+  return newClaimKey("stellar");
+}
+
+const CLAIM_KEY_HEX_TEXT = /^(?:0[xX])?([0-9a-fA-F]{64})$/;
+const STELLAR_SECRET_TEXT = /^S[A-Z2-7]{55}$/;
 
 /**
- * The one parser for a claim key (standard 2). The link parser, the address check (C15), signing
- * and the sealed note all call it. Accepts exactly 64 hex characters with an optional 0x prefix
- * in any letter case, with nothing before or after, and returns them lowercase with 0x.
- * Throws LinkError "damaged" for anything else: 63 or 65 characters, a full stop or bracket a chat
- * app added, a space, a non-hex letter, an empty string or a non-string.
- * Does not check that the key is a usable secp256k1 key; signClaim and claimKeyMatches refuse
- * one that is not.
+ * The one parser for a claim key (standard 2). Supports:
+ * 1. Stellar Ed25519 secret seed (starts with S, 56 characters base32)
+ * 2. BNB / EVM secp256k1 private key (64 hex characters with optional 0x)
  */
-export function parseClaimKey(input: string): `0x${string}` {
-  const match = typeof input === "string" ? CLAIM_KEY_TEXT.exec(input) : null;
+export function parseClaimKey(input: string): string {
+  if (typeof input !== "string") {
+    throw new LinkError("damaged", "The claim key in this gift link is damaged.");
+  }
+  if (STELLAR_SECRET_TEXT.test(input) && StrKey.isValidEd25519SecretSeed(input)) {
+    return input;
+  }
+  const match = CLAIM_KEY_HEX_TEXT.exec(input);
   const hex = match?.[1];
   if (hex === undefined) throw new LinkError("damaged", "The claim key in this gift link is damaged.");
   return `0x${hex.toLowerCase()}`;
+}
+
+export function detectChain(claimKey: string): SupportedChain {
+  const parsed = parseClaimKey(claimKey);
+  return parsed.startsWith("S") ? "stellar" : "bnb";
 }
 
 // 2^256 - 1 has 78 digits, so the length bound keeps BigInt away from huge strings. It cannot
@@ -70,7 +100,7 @@ export function parseGiftId(input: string): bigint {
 // Far longer than any real link (an origin, /g/, 78 digits, # and 66 characters of key). The cap
 // keeps an oversized paste away from the URL parser.
 const MAX_LINK_LENGTH = 2048;
-const GIFT_PATH = /^\/g\/([^/]*)$/;
+const GIFT_PATH = /^\/g\/(?:(stellar|bnb)\/)?([^/]*)$/;
 
 // Plain http is allowed only for localhost, which browsers treat as a secure context, so Web Crypto
 // works there during development. The scheme and host come from the standard URL parser, never
@@ -87,16 +117,16 @@ function checkGiftId(giftId: bigint): bigint {
 }
 
 /**
- * Builds the gift link `${origin}/g/${giftId}#${key}`, with the key as 64 lowercase hex characters
- * and no 0x. The key sits in the fragment because browsers never send the fragment to a server.
- * `origin` must parse with the standard URL parser as https, or http://localhost with an optional
- * port, and must carry no path, query, fragment, user name or password (a trailing "/" is fine).
- * Throws LinkError "damaged" when the origin is not a URL, "invalid" when it breaks those rules,
- * and whatever parseGiftId or parseClaimKey throw for the id and key. The finished link is read
- * back through parseLink before it is returned, so every link handed out is one the claim page
- * accepts.
+ * Builds the gift link:
+ * - Stellar: `${origin}/g/stellar/${giftId}#${claimKey}`
+ * - BNB: `${origin}/g/${giftId}#${key}` or `${origin}/g/bnb/${giftId}#${key}`
  */
-export function buildLink(origin: string, giftId: bigint, claimKey: `0x${string}`): string {
+export function buildLink(
+  origin: string,
+  giftId: bigint,
+  claimKey: string,
+  chain?: SupportedChain,
+): string {
   let url: URL;
   try {
     url = new URL(origin);
@@ -113,7 +143,16 @@ export function buildLink(origin: string, giftId: bigint, claimKey: `0x${string}
   }
   const id = checkGiftId(giftId);
   const key = parseClaimKey(claimKey);
-  const link = `${url.origin}/g/${id}#${key.slice(2)}`;
+  const determinedChain = chain ?? (key.startsWith("S") ? "stellar" : "bnb");
+
+  let link: string;
+  if (determinedChain === "stellar") {
+    link = `${url.origin}/g/stellar/${id}#${key}`;
+  } else if (chain === "bnb") {
+    link = `${url.origin}/g/bnb/${id}#${key.startsWith("0x") ? key.slice(2) : key}`;
+  } else {
+    link = `${url.origin}/g/${id}#${key.startsWith("0x") ? key.slice(2) : key}`;
+  }
   const check = parseLink(link);
   if (check.giftId !== id || check.claimKey !== key || check.origin !== url.origin) {
     throw new LinkError("invalid", "The gift link did not read back the way it was built.");
@@ -122,14 +161,9 @@ export function buildLink(origin: string, giftId: bigint, claimKey: `0x${string}
 }
 
 /**
- * Reads a gift link with the standard URL parser. The scheme must be https (or http on
- * localhost), the path exactly /g/<id>, there must be no query, user name or password, and the
- * fragment is the claim key. The id goes through parseGiftId and the key through parseClaimKey.
- * Throws LinkError "invalid" for a disallowed scheme and "damaged" for everything else, including
- * a missing or empty fragment and a link longer than 2048 characters. Returns the parser's
- * normalised origin; comparing it with the expected Moi origin is the caller's job.
+ * Reads a gift link with the standard URL parser. Supports /g/<id>, /g/stellar/<id>, and /g/bnb/<id>.
  */
-export function parseLink(url: string): { origin: string; giftId: bigint; claimKey: `0x${string}` } {
+export function parseLink(url: string): { origin: string; giftId: bigint; claimKey: string; chain: SupportedChain } {
   if (typeof url !== "string" || url.length > MAX_LINK_LENGTH) {
     throw new LinkError("damaged", "This gift link is damaged.");
   }
@@ -154,11 +188,26 @@ export function parseLink(url: string): { origin: string; giftId: bigint; claimK
   if (path === null) {
     throw new LinkError("damaged", "This is not a gift link.");
   }
-  return {
+  const explicitChain = path[1] as SupportedChain | undefined;
+  const rawId = path[2] ?? "";
+  const giftId = parseGiftId(rawId);
+  const claimKey = parseClaimKey(parsed.hash.slice(1));
+  const chain = explicitChain ?? (claimKey.startsWith("S") ? "stellar" : "bnb");
+
+  const res = {
     origin: parsed.origin,
-    giftId: parseGiftId(path[1] ?? ""),
-    claimKey: parseClaimKey(parsed.hash.slice(1)),
-  };
+    giftId,
+    claimKey,
+  } as { origin: string; giftId: bigint; claimKey: string; chain: SupportedChain };
+
+  Object.defineProperty(res, "chain", {
+    value: chain,
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  });
+
+  return res;
 }
 
 /** EIP-712 types for Claim(uint256 giftId,address recipient), the message the vault verifies. */
@@ -241,18 +290,23 @@ export async function signClaim(
 
 /**
  * C15: true only when the claim key produces exactly the claim-key address stored on chain for the
- * gift. The key goes through the same parser as signing, and both addresses go through getAddress.
+ * gift. Supports both Stellar public keys (G...) and EVM addresses (0x...).
  * Never throws. A malformed or unusable key, a malformed stored address, and the zero address (which
  * no key produces) all give false, so the page shows "not valid".
  */
 // WHY synchronous: an async version returns a Promise, which is truthy, so a caller that forgot
 // `await` would accept every link. A plain boolean cannot be misread that way.
 export function claimKeyMatches(
-  claimKey: `0x${string}`,
-  storedClaimKeyAddress: `0x${string}`,
+  claimKey: string,
+  storedClaimKeyAddress: string,
 ): boolean {
   try {
-    return getAddress(claimAccount(claimKey).address) === getAddress(storedClaimKeyAddress);
+    const key = parseClaimKey(claimKey);
+    if (key.startsWith("S")) {
+      const kp = Keypair.fromSecret(key);
+      return kp.publicKey() === storedClaimKeyAddress;
+    }
+    return getAddress(claimAccount(key).address) === getAddress(storedClaimKeyAddress);
   } catch {
     return false;
   }
@@ -288,13 +342,120 @@ export function registerDigest(vault: `0x${string}`, chainId: number, sender: `0
  * bad address or chain id.
  */
 export async function signKeyProof(
-  claimKey: `0x${string}`,
+  claimKey: string,
   vault: `0x${string}`,
   chainId: number,
   sender: `0x${string}`,
 ): Promise<`0x${string}`> {
   const account = claimAccount(claimKey);
   return account.signTypedData(registerTypedData(vault, chainId, sender));
+}
+
+/**
+ * SHA-256 digest of a Stellar key registration proof over viapp:register:{networkPassphrase}:{vaultContractId}:{sender}.
+ */
+export async function stellarRegisterDigest(
+  vaultContractId: string,
+  networkPassphrase: string,
+  sender: string,
+): Promise<Uint8Array> {
+  const msg = new TextEncoder().encode(`viapp:register:${networkPassphrase}:${vaultContractId}:${sender}`);
+  return new Uint8Array(await subtleCrypto().digest("SHA-256", msg));
+}
+
+/**
+ * Signs a Stellar key registration proof with the Ed25519 claim secret.
+ * Returns 64-byte signature encoded as lowercase hex without 0x.
+ */
+export async function stellarSignKeyProof(
+  claimKey: string,
+  vaultContractId: string,
+  networkPassphrase: string,
+  sender: string,
+): Promise<string> {
+  const key = parseClaimKey(claimKey);
+  if (!key.startsWith("S")) {
+    throw new LinkError("invalid", "Expected a Stellar claim key.");
+  }
+  const keypair = Keypair.fromSecret(key);
+  const digest = await stellarRegisterDigest(vaultContractId, networkPassphrase, sender);
+  const sigBuffer = keypair.sign(Buffer.from(digest));
+  return Buffer.from(sigBuffer).toString("hex");
+}
+
+/**
+ * Verifies a Stellar key registration proof.
+ */
+export async function stellarVerifyKeyProof(
+  claimPublicKey: string,
+  vaultContractId: string,
+  networkPassphrase: string,
+  sender: string,
+  proofHex: string,
+): Promise<boolean> {
+  try {
+    const keypair = Keypair.fromPublicKey(claimPublicKey);
+    const digest = await stellarRegisterDigest(vaultContractId, networkPassphrase, sender);
+    const sigBuffer = Buffer.from(proofHex, "hex");
+    return keypair.verify(Buffer.from(digest), sigBuffer);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * SHA-256 digest of a Stellar claim message over viapp:claim:{networkPassphrase}:{vaultContractId}:{giftId}:{recipient}.
+ */
+export async function stellarClaimDigest(
+  vaultContractId: string,
+  networkPassphrase: string,
+  giftId: bigint,
+  recipient: string,
+): Promise<Uint8Array> {
+  const msg = new TextEncoder().encode(`viapp:claim:${networkPassphrase}:${vaultContractId}:${checkGiftId(giftId)}:${recipient}`);
+  return new Uint8Array(await subtleCrypto().digest("SHA-256", msg));
+}
+
+/**
+ * Signs a Stellar claim message with the Ed25519 claim secret.
+ * Returns 64-byte signature encoded as lowercase hex without 0x.
+ */
+export async function stellarSignClaim(
+  claimKey: string,
+  vaultContractId: string,
+  networkPassphrase: string,
+  giftId: bigint,
+  recipient: string,
+): Promise<string> {
+  const key = parseClaimKey(claimKey);
+  if (!key.startsWith("S")) {
+    throw new LinkError("invalid", "Expected a Stellar claim key.");
+  }
+  const keypair = Keypair.fromSecret(key);
+  const digest = await stellarClaimDigest(vaultContractId, networkPassphrase, giftId, recipient);
+  const sigBuffer = keypair.sign(Buffer.from(digest));
+  return Buffer.from(sigBuffer).toString("hex");
+}
+
+/**
+ * Verifies a Stellar claim signature with the public Ed25519 key.
+ */
+export async function stellarVerifyClaim(
+  claimPublicKey: string,
+  vaultContractId: string,
+  networkPassphrase: string,
+  giftId: bigint,
+  recipient: string,
+  signatureHex: string,
+): Promise<boolean> {
+  try {
+    const keypair = Keypair.fromPublicKey(claimPublicKey);
+    const digest = await stellarClaimDigest(vaultContractId, networkPassphrase, giftId, recipient);
+    const sigBuffer = Buffer.from(signatureHex, "hex");
+    return keypair.verify(Buffer.from(digest), sigBuffer);
+  } catch {
+    return false;
+  }
 }
 
 const NOTE_VERSION = 0x01;
@@ -318,9 +479,16 @@ function subtleCrypto() {
   return subtle;
 }
 
-async function noteKey(claimKey: `0x${string}`) {
+async function noteKey(claimKey: string) {
   const subtle = subtleCrypto();
-  const base = await subtle.importKey("raw", Uint8Array.from(hexToBytes(claimKey)), "HKDF", false, ["deriveKey"]);
+  const key = parseClaimKey(claimKey);
+  let rawBytes: Uint8Array;
+  if (key.startsWith("S")) {
+    rawBytes = StrKey.decodeEd25519SecretSeed(key);
+  } else {
+    rawBytes = Uint8Array.from(hexToBytes(key as `0x${string}`));
+  }
+  const base = await subtle.importKey("raw", rawBytes, "HKDF", false, ["deriveKey"]);
   return subtle.deriveKey(
     { name: "HKDF", hash: "SHA-256", salt: NOTE_SALT, info: NOTE_INFO },
     base,
@@ -338,7 +506,7 @@ async function noteKey(claimKey: `0x${string}`) {
  * MAX_NOTE_BYTES. An empty note seals to "0x". Throws LinkError "damaged" for a malformed key and
  * RangeError when the UTF-8 text is longer than MAX_NOTE_PLAINTEXT_BYTES.
  */
-export async function sealNote(claimKey: `0x${string}`, plaintext: string): Promise<`0x${string}`> {
+export async function sealNote(claimKey: string, plaintext: string): Promise<`0x${string}`> {
   const key = parseClaimKey(claimKey);
   if (typeof plaintext !== "string") throw new TypeError("The note must be text.");
   const text = new TextEncoder().encode(plaintext);
@@ -363,7 +531,7 @@ export async function sealNote(claimKey: `0x${string}`, plaintext: string): Prom
  * that are not valid UTF-8. The returned text is the sender's own words and must be rendered as
  * plain text only (C14).
  */
-export async function openNote(claimKey: `0x${string}`, sealed: `0x${string}`): Promise<string> {
+export async function openNote(claimKey: string, sealed: `0x${string}`): Promise<string> {
   const key = parseClaimKey(claimKey);
   if (sealed === "0x") return "";
   if (

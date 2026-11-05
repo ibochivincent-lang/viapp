@@ -1,5 +1,5 @@
 {
-  "name": "moi",
+  "name": "viapp",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -10,8 +10,8 @@
   },
   "scripts": {
     "test": "npm test --workspaces --if-present",
-    "slice": "npm run slice --workspace=@moi/core",
-    "prove": "npm run prove --workspace=@moi/core",
-    "moi": "npm run moi --workspace=@moi/agent --"
+    "slice": "npm run slice --workspace=@viapp/core",
+    "prove": "npm run prove --workspace=@viapp/core",
+    "viapp": "npm run viapp --workspace=@viapp/agent --"
   }
 }

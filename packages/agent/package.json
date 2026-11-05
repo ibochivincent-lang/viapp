@@ -1,5 +1,5 @@
 {
-  "name": "@moi/agent",
+  "name": "@viapp/agent",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,10 +9,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p .",
     "test": "tsc --noEmit -p . && vitest run",
-    "moi": "tsx src/cli.ts"
+    "viapp": "tsx src/cli.ts"
   },
   "dependencies": {
-    "@moi/core": "*",
+    "@viapp/core": "*",
     "viem": "2.57.3",
     "zod": "4.6.5"
   },
