@@ -1,7 +1,7 @@
-import { parseAmount } from "@moi/core/src/amounts.js";
-import { parseGiftId } from "@moi/core/src/gift.js";
-import { readGift } from "@moi/core/src/vault.js";
-import { WRAP_ASSETS, type WrapAsset } from "@moi/core/src/wrap.js";
+import { parseAmount } from "@viapp/core/src/amounts.js";
+import { parseGiftId } from "@viapp/core/src/gift.js";
+import { readGift } from "@viapp/core/src/vault.js";
+import { WRAP_ASSETS, type WrapAsset } from "@viapp/core/src/wrap.js";
 import { formatUnits, type Hex } from "viem";
 import { z } from "zod";
 import { sameAddress, sleep } from "./checks.js";

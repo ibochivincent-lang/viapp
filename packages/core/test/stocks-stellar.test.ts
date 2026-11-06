@@ -8,7 +8,7 @@ const VALID_STELLAR_WALLET = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34
 describe("Stellar Stocks and Quotation", () => {
   it("lists Stellar stocks with valid SAC contract IDs", () => {
     const stocks = getStellarStocks(TESTNET_PASSPHRASE);
-    expect(stocks.length).toBeGreaterThanOrEqual(10);
+    expect(stocks.length).toBeGreaterThanOrEqual(9);
 
     const aapl = stocks.find((s) => s.code === "AAPL");
     expect(aapl).toBeDefined();

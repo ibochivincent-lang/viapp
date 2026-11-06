@@ -1,8 +1,8 @@
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { giftVaultAbi } from "@moi/core/src/generated/giftVaultAbi.js";
-import { buildLink, claimKeyMatches, parseClaimKey } from "@moi/core/src/gift.js";
-import { readGift } from "@moi/core/src/vault.js";
+import { giftVaultAbi } from "@viapp/core/src/generated/giftVaultAbi.js";
+import { buildLink, claimKeyMatches, parseClaimKey } from "@viapp/core/src/gift.js";
+import { readGift } from "@viapp/core/src/vault.js";
 import { getAddress, type Address, type Hex, type PublicClient } from "viem";
 import type { GiftDeps } from "./gift.js";
 import { saveNewLink, unwrappedMarker } from "./linkfile.js";

@@ -1,0 +1,56 @@
+name: CI - viapp Protocol
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-stellar-contracts:
+    name: Soroban Smart Contracts Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/contracts/stellar -> target
+
+      - name: Run Soroban Tests
+        working-directory: packages/contracts/stellar
+        run: cargo test --verbose
+
+  test-typescript:
+    name: TypeScript Core, Web & Agent Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Vitest Test Suites
+        run: |
+          npx vitest run packages/core/test/bridge.test.ts
+          npx vitest run packages/core/test/stocks-stellar.test.ts
+          npx vitest run packages/core/test/stellar-client.test.ts
+          npx vitest run packages/core/test/gift-stellar.test.ts
+          npx vitest run packages/core/test/claim-stellar.test.ts
+          npx vitest run packages/core/test/quote-unified.test.ts

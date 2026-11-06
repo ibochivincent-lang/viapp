@@ -5,11 +5,11 @@
 import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { USDT } from "@moi/core/src/chain.js";
-import { buildApproveVaultTx, buildCreateGiftTx, defaultExpiry } from "@moi/core/src/create.js";
-import { giftVaultAbi } from "@moi/core/src/generated/giftVaultAbi.js";
-import { claimKeyMatches, parseLink, signKeyProof } from "@moi/core/src/gift.js";
-import { WRAP_ASSETS } from "@moi/core/src/wrap.js";
+import { USDT } from "@viapp/core/src/chain.js";
+import { buildApproveVaultTx, buildCreateGiftTx, defaultExpiry } from "@viapp/core/src/create.js";
+import { giftVaultAbi } from "@viapp/core/src/generated/giftVaultAbi.js";
+import { claimKeyMatches, parseLink, signKeyProof } from "@viapp/core/src/gift.js";
+import { WRAP_ASSETS } from "@viapp/core/src/wrap.js";
 import { encodeAbiParameters, encodeEventTopics, getAddress, type Address, type Hex, type PublicClient } from "viem";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GiftCancelled, GiftError, GiftNotWrapped, sendGift, type GiftDeps } from "../src/gift.js";
@@ -21,8 +21,8 @@ import { ADDRESSES, bawDate, fakeBaw, leftQuota, settings, STATUS_CONNECTED, WAL
 
 const captured = vi.hoisted(() => ({}) as { key?: { privateKey: `0x${string}`; address: `0x${string}` }; sealed?: `0x${string}` });
 
-vi.mock("@moi/core/src/gift.js", async (importOriginal) => {
-  const real = await importOriginal<typeof import("@moi/core/src/gift.js")>();
+vi.mock("@viapp/core/src/gift.js", async (importOriginal) => {
+  const real = await importOriginal<typeof import("@viapp/core/src/gift.js")>();
   return {
     ...real,
     newClaimKey: () => {

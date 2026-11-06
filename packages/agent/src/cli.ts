@@ -4,7 +4,7 @@ import { stdin, stdout } from "node:process";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { parseArgs, parseEnv } from "node:util";
-import { createBscClient, DEFAULT_BSC_RPC_URL } from "@moi/core/src/chain.js";
+import { createBscClient, DEFAULT_BSC_RPC_URL } from "@viapp/core/src/chain.js";
 import { z } from "zod";
 import { BawError, createBawRunner } from "./baw.js";
 import { GiftError, sendGift, type GiftDeps } from "./gift.js";

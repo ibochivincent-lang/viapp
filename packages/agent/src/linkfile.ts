@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { parseLink } from "@moi/core/src/gift.js";
+import { parseLink } from "@viapp/core/src/gift.js";
 import { GiftError } from "./errors.js";
 
 // A link file is one short line; anything far bigger is not ours and is left alone.

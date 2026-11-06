@@ -1,4 +1,4 @@
-import { USDT } from "@moi/core/src/chain.js";
+import { USDT } from "@viapp/core/src/chain.js";
 import { getAddress, zeroAddress, type Address } from "viem";
 import { z } from "zod";
 

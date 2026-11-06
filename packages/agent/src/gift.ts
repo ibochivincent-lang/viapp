@@ -1,5 +1,5 @@
-import { parseAmount } from "@moi/core/src/amounts.js";
-import { balanceOf, rawToShares, readTokenInfo } from "@moi/core/src/chain.js";
+import { parseAmount } from "@viapp/core/src/amounts.js";
+import { balanceOf, rawToShares, readTokenInfo } from "@viapp/core/src/chain.js";
 import {
   buildApproveVaultTx,
   buildCreateGiftTx,
@@ -7,9 +7,9 @@ import {
   MAX_GIFT_USD,
   readGiftIdFromReceipt,
   type UnsignedTx,
-} from "@moi/core/src/create.js";
-import { buildLink, MAX_NOTE_PLAINTEXT_BYTES, newClaimKey, sealNote, signKeyProof } from "@moi/core/src/gift.js";
-import { readGift, readListedTokens } from "@moi/core/src/vault.js";
+} from "@viapp/core/src/create.js";
+import { buildLink, MAX_NOTE_PLAINTEXT_BYTES, newClaimKey, sealNote, signKeyProof } from "@viapp/core/src/gift.js";
+import { readGift, readListedTokens } from "@viapp/core/src/vault.js";
 import { formatUnits, getAddress, type Address, type Hex, type PublicClient, type TransactionReceipt } from "viem";
 import { z } from "zod";
 import type { BawRunner } from "./baw.js";
