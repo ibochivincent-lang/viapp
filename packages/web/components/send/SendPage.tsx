@@ -150,8 +150,8 @@ export function SendPage() {
   const lines = bannerLines !== null && bannerLines.address === address ? bannerLines.lines : null;
 
   const stockList = stocks.status === "ready" ? stocks.stocks : [];
-  const defaultStock = stockList.find((stock) => stock.symbol === DEFAULT_SYMBOL && isTradable(stock)) ?? null;
-  const stock = selected === null ? defaultStock : (stockList.find((entry) => entry.address === selected) ?? null);
+  const defaultStock = stockList.find((stock) => stock.symbol === DEFAULT_SYMBOL && isTradable(stock)) ?? stockList.find(isTradable) ?? stockList[0] ?? null;
+  const stock = selected === null ? defaultStock : (stockList.find((entry) => entry.address === selected) ?? defaultStock);
   const stockName = stock === null ? null : displayName(stock.name);
   const price = stock === null ? null : stock.priceUsd;
 

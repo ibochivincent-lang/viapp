@@ -52,3 +52,4 @@ describe("Backend Bridge & 1:1 Pegged Stock Engine", () => {
     expect(proof.reserveType).toBe("bStocks_Binance_Custody");
   });
 });
+

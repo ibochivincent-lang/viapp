@@ -220,3 +220,4 @@ export function verify1to1PegProof(giftId: string, stockCode: string): {
     reserveType: config.backingVenue === "bnb" ? "bStocks_Binance_Custody" : "xStocks_OKX_Custody",
   };
 }
+

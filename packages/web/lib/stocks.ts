@@ -71,6 +71,7 @@ function isValidAddress(address: unknown): address is string {
   if (typeof address !== "string") return false;
   if (isAddress(address)) return true;
   if ((address.startsWith("C") || address.startsWith("G")) && address.length === 56) return true;
+  if (/^[A-Za-z0-9_-]{3,66}$/.test(address)) return true;
   return false;
 }
 
@@ -82,20 +83,22 @@ function parseStocks(body: unknown): Stock[] | null {
   const stocks: Stock[] = [];
   for (const row of list as unknown[]) {
     if (typeof row !== "object" || row === null) continue;
-    const { address, symbol, name, decimals, priceUsd, market, logoUrl } = row as Record<string, unknown>;
-    if (!isValidAddress(address)) continue;
-    if (typeof symbol !== "string" || typeof name !== "string") continue;
+    const { address, contractId, symbol, code, name, decimals, priceUsd, market, logoUrl } = row as Record<string, unknown>;
+    const resolvedAddress = typeof address === "string" && address.length > 0 ? address : typeof contractId === "string" ? contractId : null;
+    if (!resolvedAddress || !isValidAddress(resolvedAddress)) continue;
+    const resolvedSymbol = typeof symbol === "string" ? symbol : typeof code === "string" ? code : null;
+    if (!resolvedSymbol || typeof name !== "string") continue;
     if (typeof decimals !== "number" || !Number.isInteger(decimals) || decimals < 0 || decimals > 77) continue;
     const price = typeof priceUsd === "string" ? Number(priceUsd) : typeof priceUsd === "number" ? priceUsd : Number.NaN;
     const { open, nextOpenTime } = (typeof market === "object" && market !== null ? market : {}) as Record<string, unknown>;
     stocks.push({
-      address,
-      symbol,
+      address: resolvedAddress,
+      symbol: resolvedSymbol,
       name,
       decimals,
       priceUsd: Number.isFinite(price) && price > 0 ? price : null,
       market: {
-        open: typeof open === "boolean" ? open : null,
+        open: typeof open === "boolean" ? open : true,
         nextOpenTime: typeof nextOpenTime === "number" && Number.isFinite(nextOpenTime) && nextOpenTime > 0 ? nextOpenTime : null,
       },
       logoUrl: safeLogo(logoUrl),

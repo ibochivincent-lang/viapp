@@ -2,6 +2,7 @@ import { Asset } from "@stellar/stellar-sdk";
 
 export type StellarStock = {
   chain: "stellar";
+  address: string;
   code: string;
   symbol: string;
   issuer: string;
@@ -23,7 +24,7 @@ export type StellarStock = {
 export const STELLAR_TESTNET_ISSUER = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
 export const STELLAR_MAINNET_USDC_ISSUER = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN";
 
-export const STELLAR_STOCKS_CATALOG: Omit<StellarStock, "contractId">[] = [
+export const STELLAR_STOCKS_CATALOG: Omit<StellarStock, "contractId" | "address">[] = [
   {
     chain: "stellar",
     code: "AAPL",
@@ -33,7 +34,7 @@ export const STELLAR_STOCKS_CATALOG: Omit<StellarStock, "contractId">[] = [
     uiMultiplier: "10000000",
     priceUsd: "228.50",
     market: { open: true, reasonCode: null, reasonMsg: null, nextOpenTime: null },
-    logoUrl: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
+    logoUrl: null,
   },
   {
     chain: "stellar",
@@ -148,11 +149,13 @@ export const STELLAR_STOCKS_CATALOG: Omit<StellarStock, "contractId">[] = [
 ];
 
 /**
- * Returns listed tokenized stocks and assets on Stellar, complete with SAC contract IDs for the given passphrase.
+ * Returns listed tokenized stocks on Stellar, complete with SAC contract IDs for the given passphrase.
+ * Filters out currency assets (USDC, XLM) so only giftable equities are returned.
  */
 export function getStellarStocks(networkPassphrase: string): StellarStock[] {
-  return STELLAR_STOCKS_CATALOG.map((item) => {
-    const asset = item.code === "XLM" ? Asset.native() : new Asset(item.code, item.issuer);
+  const equities = STELLAR_STOCKS_CATALOG.filter((item) => item.code !== "USDC" && item.code !== "XLM");
+  return equities.map((item) => {
+    const asset = new Asset(item.code, item.issuer);
     let contractId = "";
     try {
       contractId = asset.contractId(networkPassphrase);
@@ -161,6 +164,7 @@ export function getStellarStocks(networkPassphrase: string): StellarStock[] {
     }
     return {
       ...item,
+      address: contractId,
       symbol: item.code,
       contractId,
     };
