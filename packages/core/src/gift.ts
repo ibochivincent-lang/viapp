@@ -488,7 +488,7 @@ async function noteKey(claimKey: string) {
   } else {
     rawBytes = Uint8Array.from(hexToBytes(key as `0x${string}`));
   }
-  const base = await subtle.importKey("raw", rawBytes, "HKDF", false, ["deriveKey"]);
+  const base = await subtle.importKey("raw", rawBytes as BufferSource, "HKDF", false, ["deriveKey"]);
   return subtle.deriveKey(
     { name: "HKDF", hash: "SHA-256", salt: NOTE_SALT, info: NOTE_INFO },
     base,

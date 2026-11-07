@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Address, Bytes, BytesN};
+use soroban_sdk::{contractevent, contracttype, Address, Bytes, BytesN};
 
 #[contracttype]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -34,5 +34,32 @@ pub enum DataKey {
     Gift(u64),
     ClaimKeyUsed(BytesN<32>),
     Liabilities(Address),
+}
+
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GiftCreated {
+    #[topic]
+    pub sender: Address,
+    #[topic]
+    pub token: Address,
+    pub gift_id: u64,
+    pub amount: i128,
+}
+
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GiftClaimed {
+    #[topic]
+    pub gift_id: u64,
+    pub recipient: Address,
+}
+
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GiftRefunded {
+    #[topic]
+    pub gift_id: u64,
+    pub sender: Address,
 }
 

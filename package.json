@@ -13,5 +13,8 @@
     "slice": "npm run slice --workspace=@viapp/core",
     "prove": "npm run prove --workspace=@viapp/core",
     "viapp": "npm run viapp --workspace=@viapp/agent --"
+  },
+  "dependencies": {
+    "viem": "^2.57.3"
   }
 }

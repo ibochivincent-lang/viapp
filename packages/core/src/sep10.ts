@@ -1,7 +1,6 @@
 import {
   Account,
   Keypair,
-  ManageDataOperation,
   Operation,
   TimeoutInfinite,
   Transaction,
@@ -115,7 +114,7 @@ export function verifySep10Challenge(
     if (tx.operations.length === 0) {
       return { valid: false, clientPublicKey: "", homeDomain: "", error: "No operations found in challenge" };
     }
-    const op = tx.operations[0] as ManageDataOperation;
+    const op = tx.operations[0] as Operation.ManageData;
     if (op.type !== "manageData") {
       return { valid: false, clientPublicKey: "", homeDomain: "", error: "First operation must be manageData" };
     }
@@ -161,3 +160,4 @@ export function verifySep10Challenge(
     };
   }
 }
+

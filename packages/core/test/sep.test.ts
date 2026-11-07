@@ -37,8 +37,8 @@ desc="Pegged 1:1 tokenized equity share"
     expect(parsed.ANCHOR_QUOTE_SERVER).toBe("https://api.viapp.gift/sep38");
     expect(parsed.SIGNING_KEY).toBe("GAZWESWQPZOIH2EH3IL37THBLKGLAC5FCHTLMWAXJGLKJPT4NRRIHN6B");
     expect(parsed.CURRENCIES?.length).toBe(2);
-    expect(parsed.CURRENCIES?.[0].code).toBe("USDC");
-    expect(parsed.CURRENCIES?.[1].code).toBe("NVDA");
+    expect(parsed.CURRENCIES?.[0]?.code).toBe("USDC");
+    expect(parsed.CURRENCIES?.[1]?.code).toBe("NVDA");
   });
 
   it("finds specific currencies with findTomlCurrency", () => {
@@ -156,7 +156,7 @@ describe("SEP-0038: Anchor RFQ Quotes API Client", () => {
 
     const info = await client.getInfo();
     expect(info.assets.length).toBe(3);
-    expect(info.assets[2].asset).toBe("equity:NVDA");
+    expect(info.assets[2]?.asset).toBe("equity:NVDA");
   });
 
   it("fetches indicative prices via /price", async () => {
@@ -224,3 +224,4 @@ describe("SEP-0038: Anchor RFQ Quotes API Client", () => {
     );
   });
 });
+

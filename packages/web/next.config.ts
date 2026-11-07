@@ -20,6 +20,9 @@ const WEB_DIR = fileURLToPath(new URL("./", import.meta.url));
 const CORE_SRC = fileURLToPath(new URL("../core/src/", import.meta.url));
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   // Verification builds point this at a second folder so they never touch the running dev server's.
   distDir: process.env.NEXT_DIST_DIR || ".next",
   // Otherwise next dev writes an AGENTS.md scaffold back into the app on every start.

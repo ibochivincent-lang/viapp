@@ -4,7 +4,7 @@ pub mod errors;
 pub mod types;
 
 use errors::VaultError;
-use types::{DataKey, Gift, State};
+use types::{DataKey, Gift, GiftClaimed, GiftCreated, GiftRefunded, State};
 
 use soroban_sdk::{
     contract, contractimpl, token, Address, Bytes, BytesN, Env, Vec,
@@ -113,8 +113,8 @@ impl GiftVault {
         env.storage().persistent().set(&DataKey::Liabilities(token.clone()), &(current_liabilities + amount));
 
         let gift = Gift {
-            token,
-            sender,
+            token: token.clone(),
+            sender: sender.clone(),
             claim_key,
             amount,
             expiry,
@@ -125,6 +125,14 @@ impl GiftVault {
         env.storage().persistent().set(&DataKey::Gift(gift_id), &gift);
         env.storage().persistent().extend_ttl(&DataKey::Gift(gift_id), PERSISTENT_LIFETIME_THRESHOLD, PERSISTENT_BUMP_AMOUNT);
         env.storage().instance().extend_ttl(INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
+
+        GiftCreated {
+            sender,
+            token,
+            gift_id,
+            amount,
+        }
+        .publish(&env);
 
         Ok(gift_id)
     }
@@ -180,6 +188,12 @@ impl GiftVault {
         let client = token::Client::new(&env, &gift.token);
         client.transfer(&env.current_contract_address(), &recipient, &gift.amount);
 
+        GiftClaimed {
+            gift_id,
+            recipient,
+        }
+        .publish(&env);
+
         Ok(())
     }
 
@@ -204,6 +218,12 @@ impl GiftVault {
 
         let client = token::Client::new(&env, &gift.token);
         client.transfer(&env.current_contract_address(), &gift.sender, &gift.amount);
+
+        GiftRefunded {
+            gift_id,
+            sender: gift.sender,
+        }
+        .publish(&env);
 
         Ok(())
     }

@@ -128,7 +128,7 @@ describe("handleQuote", () => {
     const { api, posts } = fakeApi();
     const res = await handleQuote({ api, client: funded(), vault: VAULT }, body(), IN);
     expect(res.status).toBe(200);
-    if (!res.body.ok || res.body.step !== "swap") throw new Error(`not a swap: ${JSON.stringify(res.body)}`);
+    if (!res.body.ok || !("step" in res.body) || res.body.step !== "swap") throw new Error(`not a swap: ${JSON.stringify(res.body)}`);
     const q = res.body;
     expect(Object.keys(q).sort()).toEqual(["expectedOut", "minOut", "ok", "priceUsd", "step", "stock", "swapTx", "usdAmount", "vaultApproveTx"]);
     expect(q.expectedOut).toBe(EXPECTED_OUT.toString());
@@ -147,7 +147,7 @@ describe("handleQuote", () => {
 
   it("carries the stock checksummed and the usdAmount exactly as given on the swap step", async () => {
     const res = await handleQuote({ api: fakeApi().api, client: funded(), vault: VAULT }, body({ stock: STOCK.toLowerCase(), usdAmount: "1.00" }), IN);
-    if (!res.body.ok || res.body.step !== "swap") throw new Error(`not a swap: ${JSON.stringify(res.body)}`);
+    if (!res.body.ok || !("step" in res.body) || res.body.step !== "swap") throw new Error(`not a swap: ${JSON.stringify(res.body)}`);
     expect(res.body.stock).toBe(STOCK);
     expect(res.body.stock).not.toBe(STOCK.toLowerCase());
     expect(res.body.usdAmount).toBe("1.00");
