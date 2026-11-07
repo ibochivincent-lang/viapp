@@ -78,3 +78,4 @@ Write-Host " Network:     $Network" -ForegroundColor Gray
 Write-Host " Contract ID: $contractId" -ForegroundColor Magenta
 Write-Host " Admin:       $deployerAddress" -ForegroundColor Gray
 Write-Host "=============================================" -ForegroundColor Cyan
+

@@ -54,3 +54,5 @@ jobs:
           npx vitest run packages/core/test/gift-stellar.test.ts
           npx vitest run packages/core/test/claim-stellar.test.ts
           npx vitest run packages/core/test/quote-unified.test.ts
+          npx vitest run packages/core/test/sep.test.ts
+          npx vitest run packages/core/test/fuzz-stellar-claim.test.ts

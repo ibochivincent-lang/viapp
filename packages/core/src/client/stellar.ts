@@ -11,6 +11,13 @@ import {
   xdr,
 } from "@stellar/stellar-sdk";
 
+/**
+ * Deployed and initialized Soroban GiftVault contract on Stellar Testnet.
+ * Explorer: https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M
+ */
+export const DEFAULT_STELLAR_VAULT_CONTRACT_ID =
+  "CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M";
+
 export interface CreateGiftParams {
   sender: string;
   tokenAddress: string;

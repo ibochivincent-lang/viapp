@@ -76,3 +76,4 @@ All protocol operations are protected by automated tests across multiple languag
 - **New Onboarding Primitive:** Onboards non-crypto users to Stellar with real, familiar financial assets (equities).
 - **Soroban Showcase:** Uses advanced Soroban capabilities: ed25519 host verification, SAC interoperability, and persistent TTL bump management.
 - **x402 Agentic Integration:** Demonstrates real-world machine-payable micro-transactions on Stellar.
+

@@ -65,3 +65,4 @@ echo " Network:     ${NETWORK}"
 echo " Contract ID: ${CONTRACT_ID}"
 echo " Admin:       ${DEPLOYER_ADDRESS}"
 echo "============================================="
+

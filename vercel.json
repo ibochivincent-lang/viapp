@@ -4,3 +4,4 @@
   "buildCommand": "npm run build --workspace=@viapp/web",
   "outputDirectory": "packages/web/.next"
 }
+
