@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/contracts/stellar/bindings"
   ],
   "overrides": {
     "ws": "8.22.0"

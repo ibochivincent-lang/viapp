@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { Keypair, Networks, Transaction } from "@stellar/stellar-sdk";
 import { findTomlCurrency, parseStellarTomlText } from "../src/sep1.js";
 import { buildSep10Challenge, verifySep10Challenge } from "../src/sep10.js";
+import { Sep24Client } from "../src/sep24.js";
 import { Sep38Client } from "../src/sep38.js";
 
 describe("SEP-0001: Stellar Info File (stellar.toml)", () => {
@@ -224,4 +225,84 @@ describe("SEP-0038: Anchor RFQ Quotes API Client", () => {
     );
   });
 });
+
+describe("SEP-0024: Hosted Deposit and Withdrawal", () => {
+  const client = new Sep24Client("https://anchor.viapp.gift/sep24");
+
+  it("fetches info about supported interactive assets via /info", async () => {
+    const mockInfo = {
+      deposit: {
+        USDC: { enabled: true, min_amount: 1, max_amount: 10000, fee_fixed: 0.5 },
+      },
+      withdraw: {
+        USDC: { enabled: true, min_amount: 5, max_amount: 5000 },
+      },
+      fee: { enabled: true },
+    };
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockInfo,
+    } as any);
+
+    const info = await client.getInfo();
+    expect(info.deposit["USDC"]?.enabled).toBe(true);
+    expect(info.withdraw["USDC"]?.min_amount).toBe(5);
+  });
+
+  it("initiates an interactive deposit and returns the interactive webview URL", async () => {
+    const mockResponse = {
+      type: "interactive_customer_info_needed",
+      url: "https://anchor.viapp.gift/sep24/interactive?id=tx-12345",
+      id: "tx-12345",
+    };
+
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse,
+    } as any);
+
+    const res = await client.initiateDeposit("sample-jwt", {
+      assetCode: "USDC",
+      account: "GAZWESWQPZOIH2EH3IL37THBLKGLAC5FCHTLMWAXJGLKJPT4NRRIHN6B",
+      amount: "100.00",
+    });
+
+    expect(res.type).toBe("interactive_customer_info_needed");
+    expect(res.url).toContain("interactive?id=tx-12345");
+    expect(res.id).toBe("tx-12345");
+    expect(fetchSpy).toHaveBeenCalledWith(
+      "https://anchor.viapp.gift/sep24/transactions/deposit/interactive",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer sample-jwt",
+        }),
+      }),
+    );
+  });
+
+  it("queries transaction status via /transaction", async () => {
+    const mockTx = {
+      transaction: {
+        id: "tx-12345",
+        kind: "deposit",
+        status: "completed",
+        amount_in: "100.00",
+        amount_out: "99.50",
+      },
+    };
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockTx,
+    } as any);
+
+    const tx = await client.getTransaction("sample-jwt", "tx-12345");
+    expect(tx.id).toBe("tx-12345");
+    expect(tx.status).toBe("completed");
+    expect(tx.amount_out).toBe("99.50");
+  });
+});
+
 
