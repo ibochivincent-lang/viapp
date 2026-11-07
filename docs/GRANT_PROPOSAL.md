@@ -21,9 +21,17 @@ Every share is:
 
 ---
 
-## 2. Technical Architecture
+## 2. Technical Architecture & Verified Testnet Evidence
 
-### 2.1 Soroban Smart Contract Architecture (`@viapp/contracts`)
+### 2.1 Live Testnet Deployment & Execution
+The protocol is already live and fully verified on Stellar Testnet:
+* **Contract ID:** [`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)
+* **Deploy Tx:** [`8675102f...`](https://stellar.expert/explorer/testnet/tx/8675102f1054b1322c73c378ad28f42ad1ab094dfcea556c4266e62db48b4be5)
+* **Init Tx:** [`2593bb74...`](https://stellar.expert/explorer/testnet/tx/2593bb74aefcb81c78b2a7d8518cffe28cbb71a05655dc314280f69fb9b72010)
+* **Live Gift Creation Tx:** [`ad2a84c5...`](https://stellar.expert/explorer/testnet/tx/ad2a84c5d2dbda6d4c43c9abe7f45916c5e9a107aa3e3bdaf9f8b05d1164ae94) (locks XLM/stocks in GiftVault, registers Ed25519 claim proof, bumps TTL)
+* **Live Gift Claim Tx:** [`21d69188...`](https://stellar.expert/explorer/testnet/tx/21d69188fc46dbee51e4c1f5c138f3dd0654ef8b0af8fd8ebe6b88bc3b28eaff) (verifies URL secret signature on-chain, gasless relayer settlement)
+
+### 2.2 Soroban Smart Contract Architecture (`@viapp/contracts`)
 The protocol core is implemented in Rust (`packages/contracts/stellar/src/lib.rs`):
 - **`initialize(admin, relayer, initial_tokens)`**: Configures vault governance, authorized fee relayer, and initial listed equity addresses.
 - **`create_gift(sender, token, amount, claim_pubkey, duration, sealed_note, key_proof)`**:

@@ -17,3 +17,4 @@ Fixes #(issue)
 - [ ] Rust contract tests pass: `cargo test` in `packages/contracts/stellar`
 - [ ] Protocol tests pass: `npm run test --workspace=@viapp/core`
 - [ ] Web production build passes: `npm run build --workspace=@viapp/web`
+

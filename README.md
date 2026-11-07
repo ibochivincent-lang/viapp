@@ -12,7 +12,7 @@ Everything on ViApp's user surface runs natively on **Stellar**: users pay in **
 
 ## Live on Stellar Testnet
 
-The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and verified on the Stellar Testnet:
+The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and verified on the Stellar Testnet with live on-chain gift creation and claim transactions:
 
 | Resource | Value | Explorer / Verification Link |
 |---|---|---|
@@ -21,24 +21,37 @@ The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and v
 | **Deploy Transaction** | `8675102f...4be5` | [View Deploy Tx](https://stellar.expert/explorer/testnet/tx/8675102f1054b1322c73c378ad28f42ad1ab094dfcea556c4266e62db48b4be5) |
 | **Init Transaction** | `2593bb74...2010` | [View Init Tx](https://stellar.expert/explorer/testnet/tx/2593bb74aefcb81c78b2a7d8518cffe28cbb71a05655dc314280f69fb9b72010) |
 | **Initial Listed Token** | Native XLM SAC (`CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`) | [View Asset Contract](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC) |
+| **Live Gift Creation Tx** | `ad2a84c5...ae94` | [View Create Gift Tx](https://stellar.expert/explorer/testnet/tx/ad2a84c5d2dbda6d4c43c9abe7f45916c5e9a107aa3e3bdaf9f8b05d1164ae94) |
+| **Live Gift Claim Tx** | `21d69188...eaff` | [View Claim Gift Tx](https://stellar.expert/explorer/testnet/tx/21d69188fc46dbee51e4c1f5c138f3dd0654ef8b0af8fd8ebe6b88bc3b28eaff) |
 
 ---
 
 ## Supported Pegged Equities on Stellar
 
-ViApp supports 9 major equities pegged 1:1 on Stellar. Behind the scenes, the settlement engine coordinates with institutional liquidity venues, while the user and recipient interact entirely with Stellar SAC tokens:
+ViApp supports 9 major equities pegged 1:1 on Stellar. The sender pays with native **XLM** or **USDC on Stellar**, the gift is held in Soroban smart contract custody, and the underlying equity is backed by institutional custody:
 
-| Symbol | Company / Asset Name | Stellar Token Representation | Backing Status |
-|:---:|---|:---:|:---:|
-| **NVDA** | NVIDIA Corp | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **AAPL** | Apple Inc. | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **TSLA** | Tesla, Inc. | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **MSFT** | Microsoft Corp | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **AMZN** | Amazon.com Inc | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **GOOGL** | Alphabet Inc | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **META** | Meta Platforms | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **SPY** | SPDR S&P 500 ETF | Stellar Pegged Share | 1:1 Pegged Escrow |
-| **QQQ** | Invesco QQQ Trust | Stellar Pegged Share | 1:1 Pegged Escrow |
+| Symbol | Company / Asset Name | Stellar SAC Address (Soroban) | Backing Venue | Backing Contract Address | Peg Ratio |
+|:---:|---|---|:---:|---|:---:|
+| **$AAPL** | Apple Inc. | `CCAPPOAZYAHIJVWFQFTL3AUPCVRADODVIFTXQZ2GMAYMYPLUPA3PRMYB` | BNB Chain (bStock) | `0x4dd8cb5f44e3f421be0d58852da0e28f32242186` | 1:1 |
+| **$NVDA** | NVIDIA Corp | `CCU5ABICR2MGWDRYS66DHG2XFFVEAH3L24RW7YVJG2V64JZNAKDFN273` | BNB Chain (bStock) | `0x02fca66c1d1afb4e2a7884261eb00f63598a7436` | 1:1 |
+| **$TSLA** | Tesla, Inc. | `CCB43KY52JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x12bb94481d81fbe3237e1ba77a83d3170e59a6d8` | 1:1 |
+| **$MSFT** | Microsoft Corp | `CBRV67QJ2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x8929e083cbe9a296e8bc371c6fa611fe28114fcf` | 1:1 |
+| **$AMZN** | Amazon.com Inc | `CA6Z342J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0xa8417c8cf15239a5ec13e9a7e6b010f3c5b557fb` | 1:1 |
+| **$GOOGL** | Alphabet Inc | `CBVTR42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x539591e6005cbbce4ebcc47cfdc3500d8ce20c6a` | 1:1 |
+| **$META** | Meta Platforms | `CCQWP42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | X Layer (xStock) | `0x6f9bb49f0f9b33a5dd14088a2fdff2a9bbf6f5a3` | 1:1 |
+| **$SPY** | SPDR S&P 500 ETF | `CD7P742J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x98f260340b3cb1c95116df14e8ee1c183bbd3257` | 1:1 |
+| **$QQQ** | Invesco QQQ Trust | `CCLLM42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | X Layer (xStock) | `0x3344ccbb00112233445566778899aabbccddeeff` | 1:1 |
+
+---
+
+## Backend Settlement: bStocks vs. X Layer (OKX xStocks)
+
+Where are the stocks gotten from and which venue is easier to adapt?
+
+* **bStocks (BNB Chain):** Real tokenized shares issued by regulated Swiss trustees (Backed Finance) with deep liquidity on PancakeSwap. High trading volume, but requires handling EVM gas and wallet-specific RPCs.
+* **xStocks (X Layer - OKX):** Tokenized shares hosted on X Layer (Polygon CDK zkEVM) powered by OKX. **xStocks is easier to adapt programmatically** because OKX provides the unified **OKX Onchain OS API** with automated quoting, DEX routing, and sub-cent transaction costs.
+* **ViApp's Solution:** ViApp implements an abstraction bridge router in [`packages/core/src/bridge.ts`](packages/core/src/bridge.ts) that aggregates liquidity across both venues while keeping **100% of the user experience native to Stellar**.
+* **Future Roadmap:** Direct transition to **Native Stellar Real-World Assets (RWAs)** issued via SEP-0008 / SEP-0041, eliminating cross-chain bridging entirely.
 
 ---
 
@@ -48,8 +61,9 @@ ViApp is architected as native Stellar infrastructure adhering to standard SEPs:
 
 1. **SEP-0001 (Stellar Info File):** Resolves `stellar.toml` metadata, currency issuance, and anchor API routes. Implemented in [`packages/core/src/sep1.ts`](packages/core/src/sep1.ts).
 2. **SEP-0010 (Stellar Web Authentication):** Challenge transaction generation and signature verification for secure client-relayer authentication. Implemented in [`packages/core/src/sep10.ts`](packages/core/src/sep10.ts).
-3. **SEP-0038 (Anchor RFQ Quotes API):** Standardized price discovery and firm quote requests for converting Stellar XLM/USDC into tokenized equities. Implemented in [`packages/core/src/sep38.ts`](packages/core/src/sep38.ts).
-4. **SEP-0041 (Stellar Asset Contract):** Direct token escrow using standardized Soroban token contract interfaces (`transfer`, `balanceOf`, `allowance`).
+3. **SEP-0024 (Hosted Deposit and Withdrawal):** Interactive deposit/withdrawal flows for fiat on-ramping straight into gifts. Implemented in [`packages/core/src/sep24.ts`](packages/core/src/sep24.ts).
+4. **SEP-0038 (Anchor RFQ Quotes API):** Standardized price discovery and firm quote requests for converting Stellar XLM/USDC into tokenized equities. Implemented in [`packages/core/src/sep38.ts`](packages/core/src/sep38.ts).
+5. **SEP-0041 (Stellar Asset Contract):** Direct token escrow using standardized Soroban token contract interfaces (`transfer`, `balanceOf`, `allowance`).
 
 ---
 

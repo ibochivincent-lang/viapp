@@ -352,15 +352,29 @@ export async function signKeyProof(
 }
 
 /**
- * SHA-256 digest of a Stellar key registration proof over viapp:register:{networkPassphrase}:{vaultContractId}:{sender}.
+ * SHA-256 digest of a Stellar key registration proof over:
+ * "viapp:register:" + sha256(networkPassphrase) + vaultContractId + sender
+ * Exactly matches Soroban contract logic in lib.rs.
  */
 export async function stellarRegisterDigest(
   vaultContractId: string,
   networkPassphrase: string,
   sender: string,
 ): Promise<Uint8Array> {
-  const msg = new TextEncoder().encode(`viapp:register:${networkPassphrase}:${vaultContractId}:${sender}`);
-  return new Uint8Array(await subtleCrypto().digest("SHA-256", msg));
+  const subtle = subtleCrypto();
+  const networkHash = new Uint8Array(await subtle.digest("SHA-256", new TextEncoder().encode(networkPassphrase)));
+  const prefix = new TextEncoder().encode("viapp:register:");
+  const vaultBytes = new TextEncoder().encode(vaultContractId);
+  const senderBytes = new TextEncoder().encode(sender);
+
+  const combined = new Uint8Array(prefix.length + networkHash.length + vaultBytes.length + senderBytes.length);
+  let offset = 0;
+  combined.set(prefix, offset); offset += prefix.length;
+  combined.set(networkHash, offset); offset += networkHash.length;
+  combined.set(vaultBytes, offset); offset += vaultBytes.length;
+  combined.set(senderBytes, offset);
+
+  return new Uint8Array(await subtle.digest("SHA-256", combined));
 }
 
 /**
@@ -404,7 +418,9 @@ export async function stellarVerifyKeyProof(
 }
 
 /**
- * SHA-256 digest of a Stellar claim message over viapp:claim:{networkPassphrase}:{vaultContractId}:{giftId}:{recipient}.
+ * SHA-256 digest of a Stellar claim message over:
+ * "viapp:claim:" + sha256(networkPassphrase) + vaultContractId + giftId (8 bytes BE) + recipient
+ * Exactly matches Soroban contract logic in lib.rs.
  */
 export async function stellarClaimDigest(
   vaultContractId: string,
@@ -412,8 +428,26 @@ export async function stellarClaimDigest(
   giftId: bigint,
   recipient: string,
 ): Promise<Uint8Array> {
-  const msg = new TextEncoder().encode(`viapp:claim:${networkPassphrase}:${vaultContractId}:${checkGiftId(giftId)}:${recipient}`);
-  return new Uint8Array(await subtleCrypto().digest("SHA-256", msg));
+  const subtle = subtleCrypto();
+  const networkHash = new Uint8Array(await subtle.digest("SHA-256", new TextEncoder().encode(networkPassphrase)));
+  const prefix = new TextEncoder().encode("viapp:claim:");
+  const vaultBytes = new TextEncoder().encode(vaultContractId);
+
+  const idBuf = new Uint8Array(8);
+  const view = new DataView(idBuf.buffer);
+  view.setBigUint64(0, checkGiftId(giftId), false); // Big Endian
+
+  const recipientBytes = new TextEncoder().encode(recipient);
+
+  const combined = new Uint8Array(prefix.length + networkHash.length + vaultBytes.length + idBuf.length + recipientBytes.length);
+  let offset = 0;
+  combined.set(prefix, offset); offset += prefix.length;
+  combined.set(networkHash, offset); offset += networkHash.length;
+  combined.set(vaultBytes, offset); offset += vaultBytes.length;
+  combined.set(idBuf, offset); offset += idBuf.length;
+  combined.set(recipientBytes, offset);
+
+  return new Uint8Array(await subtle.digest("SHA-256", combined));
 }
 
 /**
