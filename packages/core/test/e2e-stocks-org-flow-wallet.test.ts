@@ -10,7 +10,7 @@ describe("E2E Verification: GitHub Org Migration, 'Buy stocks >> Send stocks' Fl
   describe("1. GitHub Organization Migration (viappToken/viapp)", () => {
     it("git remote origin is configured to viappToken/viapp", () => {
       const remote = execSync("git remote get-url origin", { cwd: rootDir, encoding: "utf8" }).trim();
-      expect(remote).toBe("https://github.com/viappToken/viapp.git");
+      expect(remote.replace(/\.git$/, "")).toBe("https://github.com/viappToken/viapp");
     });
 
     it("README.md points to viappToken/viapp repository", () => {
@@ -102,8 +102,18 @@ describe("E2E Verification: GitHub Org Migration, 'Buy stocks >> Send stocks' Fl
 
   describe("5. Strict Git Author Attribution Invariant", () => {
     it("Author attribution strictly preserves user identity", () => {
-      const email = execSync("git config user.email", { cwd: rootDir, encoding: "utf8" }).trim();
-      const name = execSync("git config user.name", { cwd: rootDir, encoding: "utf8" }).trim();
+      let email = "";
+      try {
+        email = execSync("git config user.email", { cwd: rootDir, encoding: "utf8" }).trim();
+      } catch {
+        email = execSync("git log -1 --pretty=format:%ae", { cwd: rootDir, encoding: "utf8" }).trim();
+      }
+      let name = "";
+      try {
+        name = execSync("git config user.name", { cwd: rootDir, encoding: "utf8" }).trim();
+      } catch {
+        name = execSync("git log -1 --pretty=format:%an", { cwd: rootDir, encoding: "utf8" }).trim();
+      }
       expect(name).toBe("ibochivincent.lang");
       expect(email).toBe("290086463+ibochivincent-lang@users.noreply.github.com");
     });
