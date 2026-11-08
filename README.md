@@ -6,7 +6,7 @@
 [![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-blue.svg)](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)
 [![Soroban](https://img.shields.io/badge/Soroban-Rust%20Contract-purple.svg)](packages/contracts/stellar)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-[![Tests: 700 Passing](https://img.shields.io/badge/Tests-700%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
+[![Tests: 707 Passing](https://img.shields.io/badge/Tests-707%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
 
 Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized stock on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 

@@ -14,7 +14,7 @@ export type WalletView =
   | { kind: "disconnected"; onConnect: () => void }
   | { kind: "connected"; address: string; balances: Balances | null; onDisconnect: () => void };
 
-export type AmountChoice = "1" | "5" | "10" | "25" | "other";
+export type AmountChoice = "1" | "5" | "10" | "25" | "100" | "other";
 export type Days = 7 | 30 | 90;
 export type StorageState = "checking" | "ok" | "blocked";
 
@@ -37,7 +37,7 @@ export function sendHintFor(state: { running: boolean; storage: StorageState; co
   return null;
 }
 
-const PRESETS: readonly AmountChoice[] = ["1", "5", "10", "25"];
+const PRESETS: readonly AmountChoice[] = ["1", "5", "10", "25", "100"];
 const LIFETIMES: readonly Days[] = [7, 30, 90];
 // Under 0.5 XLM a wallet cannot pay for the operations of a send.
 const LOW_XLM = 5_000_000n;

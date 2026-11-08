@@ -58,3 +58,6 @@ jobs:
           npx vitest run packages/core/test/fuzz-stellar-claim.test.ts
           npx vitest run packages/core/test/trade-stellar.test.ts
           npx vitest run packages/core/test/mainnet-readiness.test.ts
+          npx vitest run packages/core/test/e2e-stocks-org-flow-wallet.test.ts
+          npx vitest run packages/core/test/e2e-catalog-xlayer-removal.test.ts
+          npx vitest run packages/core/test/adversarial-challenger-2.test.ts

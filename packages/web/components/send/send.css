@@ -445,11 +445,36 @@
   font: 400 14px/1.5 var(--font-body);
 }
 
+.send-picker-top.sr-only,
+.send-search-row.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Stock tiles */
 .send-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 960px) {
+  .send-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .send-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .send-tile {
@@ -458,15 +483,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 72px;
-  padding: 12px;
+  height: 68px;
+  padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--bg-raised);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
-  transition: border-color 150ms;
+  transition: border-color 150ms, background 150ms;
 }
 
 .send-tile:not(:disabled):hover {
@@ -475,7 +500,7 @@
 
 .send-tile[data-selected="true"],
 .send-tile[data-selected="true"]:hover {
-  border-color: var(--gold);
+  border: 1.5px solid var(--gold);
 }
 
 .send-tile:disabled {
@@ -505,8 +530,17 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  object-fit: cover;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   background: var(--line);
+}
+
+.send-logo svg {
+  display: block;
+  width: 28px;
+  height: 28px;
 }
 
 .send-logo-blank {
