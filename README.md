@@ -2,6 +2,11 @@
 
 # ViApp: Tokenized Equities & Gift Vault on Stellar
 
+[![CI - viapp Protocol](https://github.com/ibochivincent-lang/viapp/actions/workflows/ci.yml/badge.svg)](https://github.com/ibochivincent-lang/viapp/actions/workflows/ci.yml)
+[![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-blue.svg)](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)
+[![Soroban](https://img.shields.io/badge/Soroban-Rust%20Contract-purple.svg)](packages/contracts/stellar)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
+
 Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized equity on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 
 Everything on ViApp's user surface runs natively on **Stellar**: users pay in **XLM or USDC on Stellar**, gifts are locked in a **Soroban Smart Contract**, and tokenized equities are held, gifted, and transferred directly on the Stellar network. While current Testnet deployment features 1:1 pegged assets backed by institutional reserves, **ViApp's active roadmap transitions directly to natively tokenized and directly liquidated stocks issued on the Stellar blockchain rather than remaining pegged**.
