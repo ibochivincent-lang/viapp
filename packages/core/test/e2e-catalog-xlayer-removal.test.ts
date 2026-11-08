@@ -287,7 +287,7 @@ describe("Tier 1: Feature Coverage (Requirement-Driven)", () => {
       expect(fs.existsSync(stockPickerPath)).toBe(true);
       const content = fs.readFileSync(stockPickerPath, "utf-8");
       expect(content).toContain("send-search-input");
-      expect(content).toContain('aria-label="Search equities"');
+      expect(content).toContain('aria-label="Search stocks"');
     });
 
     it("T1_F4_05: StockPicker in-memory catalog renders exactly the 9 core stocks", () => {

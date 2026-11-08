@@ -117,7 +117,7 @@ export function WalletModal({
 
         <h3 className="send-modal-title">Connect Wallet</h3>
         <p className="send-modal-subtitle">
-          Choose a wallet to fund, hold, and send tokenized equities on Stellar.
+          Choose a wallet to fund, hold, and send tokenized stocks on Stellar.
         </p>
 
         {error && (

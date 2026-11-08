@@ -1,6 +1,6 @@
 # ViApp Protocol Architecture
 
-ViApp enables anyone to send a friend their first real tokenized equity (Apple, NVIDIA, Tesla, S&P 500) as a shareable link. The recipient claims the share using Google, email, or a Stellar passkey with no seed phrase, no browser extension, and zero transaction fees.
+ViApp enables anyone to send a friend their first real tokenized stock (Apple, NVIDIA, Tesla, S&P 500) as a shareable link. The recipient claims the share using Google, email, or a Stellar passkey with no seed phrase, no browser extension, and zero transaction fees.
 
 For the comprehensive Stellar specification, live testnet contract verifications, and protocol sequence diagrams, see:
 - [Stellar Protocol Architecture Specification](docs/ARCHITECTURE.md)
@@ -31,7 +31,7 @@ flowchart TD
 
     subgraph OnChain["Stellar Network (Soroban)"]
         Vault["GiftVault Smart Contract\nCDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M"]
-        SAC["Stellar Asset Contracts\n(Native XLM, USDC, Equities)"]
+        SAC["Stellar Asset Contracts\n(Native XLM, USDC, Stocks)"]
         SDEX["Stellar SDEX & Soroban AMM\n(Direct On-Chain Liquidation)"]
     end
 

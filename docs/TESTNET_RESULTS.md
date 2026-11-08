@@ -118,7 +118,7 @@ stellar contract invoke \
 
 ### 2.4 Gift Creation Transaction (`create_gift`)
 
-Locks 10,000,000 stroops (1 share) of tokenized equity into the contract escrow with an Ed25519 one-time registration key proof and encrypted client-side note:
+Locks 10,000,000 stroops (1 share) of tokenized stock into the contract escrow with an Ed25519 one-time registration key proof and encrypted client-side note:
 
 ```bash
 stellar contract invoke \

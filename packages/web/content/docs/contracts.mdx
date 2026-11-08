@@ -3,7 +3,7 @@ title: Contracts & Architecture
 description: The viapp-gift-vault on Stellar Soroban, function by function, verification, and live testnet explorer links.
 ---
 
-ViApp's core smart contract is `viapp-gift-vault`, deployed and verified on the Stellar Testnet. It holds tokenized equity tokens locked in escrow until the recipient's ephemeral link key claims them through ViApp's gasless relayer, or the sender retrieves them after expiration.
+ViApp's core smart contract is `viapp-gift-vault`, deployed and verified on the Stellar Testnet. It holds tokenized stock tokens locked in escrow until the recipient's ephemeral link key claims them through ViApp's gasless relayer, or the sender retrieves them after expiration.
 
 | Resource | Value | Explorer / Verification Link |
 |---|---|---|
@@ -57,7 +57,7 @@ The vault holds the registry of listed tokenized assets under the **Soroban SEP-
 
 | Function | What it does |
 |---|---|
-| `set_token_listed(token, bool)` | Adds or removes a tokenized equity from the active gifting registry. |
+| `set_token_listed(token, bool)` | Adds or removes a tokenized stock from the active gifting registry. |
 | `set_relayer(new_relayer)` | Updates the authorized gasless relayer keypair. |
 | `pause()` and `unpause()` | Circuit-breaker to freeze new gift creation during maintenance. |
 | `extend_ttl()` | Automatically bumps instance TTL and gift storage TTL across Stellar ledgers. |

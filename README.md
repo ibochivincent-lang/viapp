@@ -1,6 +1,6 @@
 <p align="center"><img src="packages/web/public/v-mark.svg" alt="ViApp" width="64"></p>
 
-# ViApp: Tokenized Equities & Gift Vault on Stellar
+# ViApp: Tokenized Stocks & Gift Vault on Stellar
 
 [![CI - viapp Protocol](https://github.com/viappToken/viapp/actions/workflows/ci.yml/badge.svg)](https://github.com/viappToken/viapp/actions/workflows/ci.yml)
 [![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-blue.svg)](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)
@@ -8,9 +8,9 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Tests: 700 Passing](https://img.shields.io/badge/Tests-700%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
 
-Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized equity on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
+Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized stock on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 
-Everything on ViApp's user surface runs natively on **Stellar**: users pay in **XLM or USDC on Stellar**, gifts are locked in a **Soroban Smart Contract**, and tokenized equities are held, gifted, and transferred directly on the Stellar network. While current Testnet deployment features 1:1 pegged assets backed by institutional reserves (bStocks on BNB Smart Chain), **ViApp's active roadmap transitions directly to natively tokenized and directly liquidated stocks issued on the Stellar blockchain rather than remaining pegged**.
+Everything on ViApp's user surface runs natively on **Stellar**: users pay in **XLM or USDC on Stellar**, gifts are locked in a **Soroban Smart Contract**, and tokenized stocks are held, gifted, and transferred directly on the Stellar network. While current Testnet deployment features 1:1 pegged assets backed by institutional reserves (bStocks on BNB Smart Chain), **ViApp's active roadmap transitions directly to natively tokenized and directly liquidated stocks issued on the Stellar blockchain rather than remaining pegged**.
 
 [Live Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) · [Testnet Verification Results](docs/TESTNET_RESULTS.md) · [Architecture Specification](docs/ARCHITECTURE.md) · [Technical & Product Roadmap](docs/ROADMAP.md) · [CI Pipeline](.github/workflows/ci.yml)
 
@@ -38,7 +38,7 @@ flowchart TD
     subgraph LiquidityRouter["3. Streamlined Reserve Router"]
         H{"Reserve Router & Health Oracle"}
         I["1:1 Institutional Reserves: bStocks (BNB Smart Chain 56)"]
-        K["Direct Native Stellar Equities (Phase 2 Roadmap)"]
+        K["Direct Native Stellar Stocks (Phase 2 Roadmap)"]
     end
 
     subgraph RecipientLayer["4. Recipient Redemption & Off-Ramp"]
@@ -52,7 +52,7 @@ flowchart TD
     B -->|"2. Derive Claim Key & Proof"| C
     C -->|"3. Encrypt Note Letter"| D
     B -->|"4. Invoke create_gift()"| E
-    E -->|"5. Lock 1:1 Pegged Equities"| F
+    E -->|"5. Lock 1:1 Pegged Stocks"| F
     B -->|"6. Trigger Bridge Backing"| H
     H -->|"1:1 Institutional Custody"| I
     H -.->|"Native Stellar Issuance"| K
@@ -114,13 +114,13 @@ sequenceDiagram
 </p>
 
 <p align="center">
-  <em>Left: Streamlined send interface with preset amounts, 30-day expiration, and AES-GCM encrypted notes. Right: Interactive modal selecting from leading tokenized and pegged equities on Stellar.</em>
+  <em>Left: Streamlined send interface with preset amounts, 30-day expiration, and AES-GCM encrypted notes. Right: Interactive modal selecting from leading tokenized and pegged stocks on Stellar.</em>
 </p>
 
 <br>
 
 <p align="center">
-  <img src="docs/assets/screenshots/localhost-home-stocks.png" alt="ViApp Live Equities Directory" width="85%">
+  <img src="docs/assets/screenshots/localhost-home-stocks.png" alt="ViApp Live Stocks Directory" width="85%">
 </p>
 
 <p align="center">
@@ -165,7 +165,7 @@ For full CLI command walkthroughs, contract JSON responses, and live RPC invocat
 ## Features
 
 ### For the Sender
-- **Frictionless Gifting Experience (`/send`):** Connect Freighter wallet, xBull, or passkey. Pick from top global equities ($NVDA, $AAPL, $TSLA, etc.), select any dollar amount from $1 to $100 paid in Stellar XLM or USDC, and set an expiry window (7, 30, or 90 days).
+- **Frictionless Gifting Experience (`/send`):** Connect Freighter wallet, xBull, or passkey. Pick from top global stocks ($NVDA, $AAPL, $TSLA, etc.), select any dollar amount from $1 to $100 paid in Stellar XLM or USDC, and set an expiry window (7, 30, or 90 days).
 - **Exact Approvals & Price Protection:** Every quote is pre-simulated against current ledger state before anything is signed. Approvals match the exact gift amount and never allow unlimited allowances. Slippage is bounded within 1%, guarded by an oracle circuit-breaker.
 - **Client-Side Encrypted Notes:** Write a personal letter sealed in the browser using AES-GCM-256 with an ephemeral key derived from the claim secret. Only someone holding the full link with the hash fragment can decrypt and read the note.
 - **Optional Anti-Sniffing PIN Protection:** Senders can lock the gift with an optional passphrase PIN so even if the link URL is sniffed in transit, it cannot be claimed without the sender's PIN.
@@ -189,7 +189,7 @@ For full CLI command walkthroughs, contract JSON responses, and live RPC invocat
 
 ## Stellar Testnet Pegged Asset Contract Addresses (CA) & Reserve Infrastructure
 
-Every tokenized equity and currency on ViApp operates under the **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard. Under Soroban, each classic asset `Asset(code, issuer)` is deterministically addressed by a 56-character Contract Address (CA) on the network.
+Every tokenized stock and currency on ViApp operates under the **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard. Under Soroban, each classic asset `Asset(code, issuer)` is deterministically addressed by a 56-character Contract Address (CA) on the network.
 
 ### Core Protocol Infrastructure on Stellar Testnet
 
@@ -221,7 +221,7 @@ All 9 institutional bStocks are mapped to Soroban Stellar Asset Contracts (SACs)
 
 ---
 
-### Direct Canonical Equities on Stellar Testnet (Phase 2 Native Roadmap)
+### Direct Canonical Stocks on Stellar Testnet (Phase 2 Native Roadmap)
 
 For ViApp's direct native tokenization roadmap (issuing and liquidating directly on Stellar without external bridge dependencies):
 
@@ -244,7 +244,7 @@ For ViApp's direct native tokenization roadmap (issuing and liquidating directly
 ViApp provides end-to-end trading and liquidity pool logic in [`packages/core/src/trade-stellar.ts`](packages/core/src/trade-stellar.ts):
 
 1. **SDEX Orderbook Trading:**
-   - Place limit buy & sell orders (`buildSdexBuyOfferOp`, `buildSdexSellOfferOp`) for any equity pair against USDC or XLM.
+   - Place limit buy & sell orders (`buildSdexBuyOfferOp`, `buildSdexSellOfferOp`) for any stock pair against USDC or XLM.
    - Algorithmic market swaps via strict-receive path payments (`buildSdexPathPaymentStrictReceiveOp`).
 2. **Soroban Constant-Product AMM Liquidity Pools:**
    - 30 bps (0.3%) automated market maker swap output calculation (`calculateAmmSwapOutput`).
@@ -258,11 +258,11 @@ ViApp provides end-to-end trading and liquidity pool logic in [`packages/core/sr
 
 ## Direct Native Stellar Tokenization & Liquidation Roadmap (Beyond Pegged Assets)
 
-While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture backed by custodial reserves (bStocks), **our strategic roadmap moves beyond cross-chain pegging to directly tokenized and natively liquidated equities natively issued on the Stellar blockchain**.
+While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture backed by custodial reserves (bStocks), **our strategic roadmap moves beyond cross-chain pegging to directly tokenized and natively liquidated stocks natively issued on the Stellar blockchain**.
 
 ### Key Advantages: Native Issuance & Liquidation vs. Pegged Assets
 
-| Dimension | Phase 1: 1:1 Pegged Equities (Current Testnet) | Phase 2+: Directly Tokenized & Liquidated Stocks (Roadmap) |
+| Dimension | Phase 1: 1:1 Pegged Stocks (Current Testnet) | Phase 2+: Directly Tokenized & Liquidated Stocks (Roadmap) |
 |---|---|---|
 | **Asset Issuance** | Synthetic SAC issuer on Stellar mapped to cross-chain contracts | **Direct native Stellar issuance** via **SEP-0008 (Regulated Assets)** & **SEP-0041** |
 | **Cross-Chain Dependency** | Requires bridging transactions and multi-chain custody attestations | **Zero cross-chain bridges**; 100% native Stellar ledger state and security |
@@ -280,7 +280,7 @@ ViApp is architected as native Stellar infrastructure adhering to standard SEPs:
 1. **SEP-0001 (Stellar Info File):** Resolves `stellar.toml` metadata, currency issuance, and anchor API routes. Implemented in [`packages/core/src/sep1.ts`](packages/core/src/sep1.ts).
 2. **SEP-0010 (Stellar Web Authentication):** Challenge transaction generation and signature verification for secure client-relayer authentication. Implemented in [`packages/core/src/sep10.ts`](packages/core/src/sep10.ts).
 3. **SEP-0024 (Hosted Deposit and Withdrawal):** Interactive deposit/withdrawal flows for fiat on-ramping straight into gifts. Implemented in [`packages/core/src/sep24.ts`](packages/core/src/sep24.ts).
-4. **SEP-0038 (Anchor RFQ Quotes API):** Standardized price discovery and firm quote requests for converting Stellar XLM/USDC into tokenized equities. Implemented in [`packages/core/src/sep38.ts`](packages/core/src/sep38.ts).
+4. **SEP-0038 (Anchor RFQ Quotes API):** Standardized price discovery and firm quote requests for converting Stellar XLM/USDC into tokenized stocks. Implemented in [`packages/core/src/sep38.ts`](packages/core/src/sep38.ts).
 5. **SEP-0041 (Stellar Asset Contract):** Direct token escrow using standardized Soroban token contract interfaces (`transfer`, `balanceOf`, `allowance`).
 
 ---
@@ -349,7 +349,7 @@ viapp/
 │   │   ├── src/sep10.ts           # SEP-0010 Stellar WebAuth challenge validator
 │   │   ├── src/sep24.ts           # SEP-0024 Hosted Deposit and Withdrawal
 │   │   ├── src/sep38.ts           # SEP-0038 Anchor RFQ Quotes API client
-│   │   ├── src/stocks-stellar.ts  # Tokenized equities catalog & pricing logic
+│   │   ├── src/stocks-stellar.ts  # Tokenized stocks catalog & pricing logic
 │   │   ├── src/trade-stellar.ts   # SDEX orderbook trade logic & Soroban AMM pools
 │   │   └── test/                  # 539 TypeScript test cases & property-based fuzz tests
 │   ├── web/                       # Next.js 15 Web Application with Stellar UI

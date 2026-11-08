@@ -1,6 +1,6 @@
 # Contributing to ViApp on Stellar
 
-Thank you for your interest in contributing to **ViApp**, the tokenized equity gifting protocol on Stellar!
+Thank you for your interest in contributing to **ViApp**, the tokenized stock gifting protocol on Stellar!
 
 ViApp is an open-source public good designed to bring gasless gifting, instant micro-investing, and Soroban smart contract custody to everyone.
 

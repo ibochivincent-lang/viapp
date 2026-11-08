@@ -50,6 +50,17 @@ describe("E2E Verification: GitHub Org Migration, 'Buy stocks >> Send stocks' Fl
       const pickerFile = fs.readFileSync(path.join(webDir, "components/send/StockPicker.tsx"), "utf8");
       expect(pickerFile).toContain("Search 9 leading stocks");
     });
+
+    it("StockPicker and WalletModal UI contain no references to equities or equity", () => {
+      const pickerFile = fs.readFileSync(path.join(webDir, "components/send/StockPicker.tsx"), "utf8");
+      expect(pickerFile).not.toContain("equities");
+      expect(pickerFile).not.toContain("equity");
+      expect(pickerFile).toContain('aria-label="Search stocks"');
+
+      const modalFile = fs.readFileSync(path.join(webDir, "components/send/WalletModal.tsx"), "utf8");
+      expect(modalFile).not.toContain("equities");
+      expect(modalFile).not.toContain("equity");
+    });
   });
 
   describe("3. Flow Stepper: 'Buy stocks >> Send stocks'", () => {

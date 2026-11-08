@@ -1,6 +1,6 @@
 # ViApp Architecture & Protocol Specification
 
-ViApp is a decentralized protocol on Stellar enabling users to purchase, tokenize, and gift shares of real-world equities (e.g. Apple, NVIDIA, Tesla) as shareable web links. The recipient can claim their gift without owning pre-funded crypto or paying transaction fees, while the sender retains full non-custodial ownership and refund guarantees.
+ViApp is a decentralized protocol on Stellar enabling users to purchase, tokenize, and gift shares of real-world stocks (e.g. Apple, NVIDIA, Tesla) as shareable web links. The recipient can claim their gift without owning pre-funded crypto or paying transaction fees, while the sender retains full non-custodial ownership and refund guarantees.
 
 ---
 
@@ -21,7 +21,7 @@ flowchart TD
     subgraph CoreLayer["Core Protocol (@viapp/core)"]
         StellarClient["Soroban SDK Transaction Builders"]
         SEP["SEP Engine\n(SEP-1, SEP-10, SEP-38, SEP-41)"]
-        Bridge["Pegging & Settlement Engine\n(1:1 Pegged Equities)"]
+        Bridge["Pegging & Settlement Engine\n(1:1 Pegged Stocks)"]
     end
 
     subgraph OnChain["Stellar Network (Soroban)"]
@@ -75,7 +75,7 @@ sequenceDiagram
     participant Vault as Soroban GiftVault
     participant SAC as Token Contract (SAC)
 
-    Sender->>Web: Select equity (e.g. NVDA) & Amount (e.g. $25)
+    Sender->>Web: Select stock (e.g. NVDA) & Amount (e.g. $25)
     Web->>Core: newStellarClaimKey()
     Core-->>Web: { address: PublicKey, privateKey: SecretKey }
     Web->>Core: stellarSignKeyProof(claimKey, vault, network, sender)
@@ -122,18 +122,18 @@ sequenceDiagram
 
 ---
 
-## 4. Tokenized Equities & Settlement Mechanics
+## 4. Tokenized Stocks & Settlement Mechanics
 
 ### 4.1 Underlying Stock Liquidity & Custody Venues
-To enable gifting of US blue-chip equities on Stellar without forcing users through traditional brokerage onboarding, ViApp operates a **1:1 backed synthetic equity engine** backed by institutional liquidity venues:
+To enable gifting of US blue-chip stocks on Stellar without forcing users through traditional brokerage onboarding, ViApp operates a **1:1 backed synthetic stock engine** backed by institutional liquidity venues:
 
 1. **bStocks (BNB Chain / Binance Web3):**
-   * Regulated tokenized real-world assets (RWAs) tracking US equities (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ).
+   * Regulated tokenized real-world assets (RWAs) tracking US stocks (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ).
    * Backed 1:1 by physical shares held in bankruptcy-remote Swiss custody (e.g. Backed Finance / CM-Equity AG).
 
 ### 4.2 Institutional Reserve Backing: bStocks (BNB Chain)
 
-ViApp automatically routes all equity purchases to 1:1 institutional reserves via bStocks on BNB Smart Chain (Chain 56). This provides deep decentralized liquidity on PancakeSwap V3, verified Swiss custody, and deterministic settlement without multi-venue complexity.
+ViApp automatically routes all stock purchases to 1:1 institutional reserves via bStocks on BNB Smart Chain (Chain 56). This provides deep decentralized liquidity on PancakeSwap V3, verified Swiss custody, and deterministic settlement without multi-venue complexity.
 
 ### 4.3 Catalog & Pegged Contract Addresses
 
@@ -151,7 +151,7 @@ ViApp automatically routes all equity purchases to 1:1 institutional reserves vi
 
 ### 4.4 Roadmap Architecture: Native Stellar Tokenization & Direct On-Chain Liquidation (Beyond Pegged Assets)
 
-While ViApp's Testnet proof-of-concept operates with 1:1 pegged synthetic equities backed by custodial reserves (bStocks), our target architecture **eliminates cross-chain bridges and pegged assets entirely by bringing natively liquidated and tokenized stocks directly into the Stellar blockchain**.
+While ViApp's Testnet proof-of-concept operates with 1:1 pegged synthetic stocks backed by custodial reserves (bStocks), our target architecture **eliminates cross-chain bridges and pegged assets entirely by bringing natively liquidated and tokenized stocks directly into the Stellar blockchain**.
 
 ```mermaid
 flowchart LR
@@ -172,7 +172,7 @@ flowchart LR
 ```
 
 #### 1. Direct Native Issuance via SEP-0008 & SEP-0041
-- **Regulated Asset Architecture:** Equities are issued directly on Stellar utilizing **SEP-0008 (Regulated Assets)**. The issuer maintains flags `AUTH_REQUIRED` and `AUTH_REVOCABLE`, ensuring compliance with global securities laws, automated sanctions screening, and investor whitelisting.
+- **Regulated Asset Architecture:** Stocks are issued directly on Stellar utilizing **SEP-0008 (Regulated Assets)**. The issuer maintains flags `AUTH_REQUIRED` and `AUTH_REVOCABLE`, ensuring compliance with global securities laws, automated sanctions screening, and investor whitelisting.
 - **Soroban SAC Compatibility:** Each native stock is mapped directly to a Soroban Stellar Asset Contract (SAC) adhering to **SEP-0041**, allowing seamless integration into the `viapp-gift-vault` without custom wrapper contracts.
 - **Bankruptcy-Remote Custody:** Institutional broker-dealer partners hold underlying shares in qualified custody accounts directly mapped to Stellar asset supply, audited via automated Proof of Reserves (PoR).
 
@@ -209,7 +209,7 @@ ViApp integrates standard Stellar Ecosystem Proposals to guarantee interoperabil
 * **SEP-0001 (Stellar Info File):** Machine-readable discovery (`stellar.toml`) exporting protocol metadata, signers, currencies, and anchor endpoints. Implemented in [`packages/core/src/sep1.ts`](file:///C:/Users/User/.gemini/antigravity/scratch/viapp/packages/core/src/sep1.ts).
 * **SEP-0010 (Stellar Web Authentication):** Standardized challenge transaction builder and validator for mutual authentication between client and relayer. Implemented in [`packages/core/src/sep10.ts`](file:///C:/Users/User/.gemini/antigravity/scratch/viapp/packages/core/src/sep10.ts).
 * **SEP-0024 (Hosted Deposit and Withdrawal):** Interactive web flows for fiat on-ramping and off-ramping directly into gifts. Implemented in [`packages/core/src/sep24.ts`](file:///C:/Users/User/.gemini/antigravity/scratch/viapp/packages/core/src/sep24.ts).
-* **SEP-0038 (Anchor RFQ Quotes API):** Standardized indicative pricing and firm quote requests for converting between on-chain assets (USDC, XLM) and tokenized equities. Implemented in [`packages/core/src/sep38.ts`](file:///C:/Users/User/.gemini/antigravity/scratch/viapp/packages/core/src/sep38.ts).
+* **SEP-0038 (Anchor RFQ Quotes API):** Standardized indicative pricing and firm quote requests for converting between on-chain assets (USDC, XLM) and tokenized stocks. Implemented in [`packages/core/src/sep38.ts`](file:///C:/Users/User/.gemini/antigravity/scratch/viapp/packages/core/src/sep38.ts).
 * **SEP-0041 (Stellar Asset Contract):** Direct token escrow using standardized SAC interfaces (`transfer`, `balanceOf`).
 
 ---

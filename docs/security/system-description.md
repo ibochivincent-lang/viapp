@@ -4,7 +4,7 @@ Functional description of the ViApp protocol on Stellar, covering architecture, 
 
 ## What ViApp Does
 
-A person (the sender) gives another person (the friend) a real share of a US company (e.g. Apple, NVIDIA, Tesla, Microsoft, Alphabet, Amazon, Meta) as a tokenized stock on Stellar. The sender pays in native USDC or XLM on Stellar. The friend receives a shareable gift link, opens it in a browser, signs in with Google, email, or a biometric Stellar passkey (zero seed phrases, zero wallet apps), and the tokenized equity is transferred into their non-custodial Stellar wallet.
+A person (the sender) gives another person (the friend) a real share of a US company (e.g. Apple, NVIDIA, Tesla, Microsoft, Alphabet, Amazon, Meta) as a tokenized stock on Stellar. The sender pays in native USDC or XLM on Stellar. The friend receives a shareable gift link, opens it in a browser, signs in with Google, email, or a biometric Stellar passkey (zero seed phrases, zero wallet apps), and the tokenized stock is transferred into their non-custodial Stellar wallet.
 
 Under current deployment, tokenized stocks are backed 1:1 by institutional reserves via BNB Chain (`bStocks`), locked in ViApp's Soroban `viapp-gift-vault` contract. The protocol's active roadmap transitions directly to native tokenization and direct on-chain liquidation on the Stellar Decentralized Exchange (SDEX).
 

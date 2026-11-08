@@ -88,7 +88,7 @@ export function StockPicker({
           placeholder="Search 9 leading stocks (e.g. NVDA, Apple, Tesla)..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          aria-label="Search equities"
+          aria-label="Search stocks"
         />
       </div>
 

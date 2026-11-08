@@ -2,7 +2,7 @@
  * ViApp Stellar Trading & Liquidity Pool Engine
  *
  * Implements SDEX orderbook trading, Soroban SAC token holding,
- * and Constant-Product AMM Liquidity Pools for tokenized equities
+ * and Constant-Product AMM Liquidity Pools for tokenized stocks
  * (bStocks from BNB Chain) on the Stellar Network.
  */
 

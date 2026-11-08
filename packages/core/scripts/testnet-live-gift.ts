@@ -26,7 +26,7 @@ async function main() {
   console.log(`   Public Claim Key: ${claim.address} (hex: ${claimPubKeyHex})`);
 
   // 2. Encrypt note with HKDF + AES-256-GCM
-  const noteText = "Congratulations! Here is your tokenized equity share on Stellar.";
+  const noteText = "Congratulations! Here is your tokenized stock share on Stellar.";
   const sealed = await sealNote(claim.privateKey, noteText);
   const sealedHex = sealed.startsWith("0x") ? sealed.slice(2) : sealed;
   console.log(`2. Sealed Note: ${sealed.slice(0, 32)}... (${sealedHex.length / 2} bytes)`);

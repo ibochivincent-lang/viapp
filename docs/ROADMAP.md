@@ -1,14 +1,14 @@
 # ViApp Technical & Product Roadmap: Native Stellar Tokenization & Direct Liquidation
 
-This document defines the strategic and technical roadmap for **ViApp**, detailing our evolution from an initial **1:1 cross-chain pegged equity model** to **natively tokenized and directly liquidated stocks on the Stellar blockchain**.
+This document defines the strategic and technical roadmap for **ViApp**, detailing our evolution from an initial **1:1 cross-chain pegged stock model** to **natively tokenized and directly liquidated stocks on the Stellar blockchain**.
 
 ---
 
-## Executive Summary: The Shift to Native Stellar Equities
+## Executive Summary: The Shift to Native Stellar Stocks
 
 ViApp began on Stellar Testnet with a proven 1:1 synthetic pegged model: users pay with Stellar USDC/XLM, and ViApp locks 1:1 pegged Stellar Asset Contracts (SACs) in the Soroban GiftVault, backed by institutional reserves on BNB Chain (bStocks).
 
-While this proved that gifting equities on Stellar is frictionless and gasless, **our long-term architectural goal is to eliminate cross-chain pegs and bridges entirely**. ViApp is bringing **liquidated and tokenized stocks directly into the Stellar blockchain**:
+While this proved that gifting stocks on Stellar is frictionless and gasless, **our long-term architectural goal is to eliminate cross-chain pegs and bridges entirely**. ViApp is bringing **liquidated and tokenized stocks directly into the Stellar blockchain**:
 
 1. **Direct Native Tokenization:** Shares of US blue-chip companies (Apple, NVIDIA, Tesla, S&P 500) will be minted and issued natively on the Stellar ledger as **SEP-0008 Regulated Assets** and wrapped with **SEP-0041 Soroban Smart Asset Contracts (SACs)**.
 2. **Direct On-Chain Liquidation:** Rather than relying on external cross-chain DEXs or off-chain settlement to sell shares, tokenized stocks on Stellar will be **liquidated directly on the Stellar Decentralized Exchange (SDEX) and Soroban AMM liquidity pools**. Anyone holding a gifted stock can liquidate it back into native Stellar USDC or XLM with sub-second finality and sub-cent network fees.
@@ -20,7 +20,7 @@ While this proved that gifting equities on Stellar is frictionless and gasless, 
 
 ```mermaid
 flowchart TD
-    subgraph Current["Phase 1: 1:1 Pegged Equities (Current Testnet)"]
+    subgraph Current["Phase 1: 1:1 Pegged Stocks (Current Testnet)"]
         direction TB
         P_Sender["Sender (Stellar USDC/XLM)"] --> P_Vault["Soroban GiftVault\nCDEDHFJ7..."]
         P_Vault --> P_Peg["1:1 Pegged SAC (e.g. AAPL SAC)"]
@@ -44,7 +44,7 @@ flowchart TD
 
 ## Detailed Comparison: Pegged vs. Directly Tokenized & Liquidated Stocks
 
-| Dimension | 1:1 Pegged Equities (Current Testnet) | Direct Native Tokenized & Liquidated Stocks (Roadmap) |
+| Dimension | 1:1 Pegged Stocks (Current Testnet) | Direct Native Tokenized & Liquidated Stocks (Roadmap) |
 |---|---|---|
 | **Asset Issuance** | Synthetic SAC issuer on Stellar mapped to cross-chain contracts | Native Stellar Asset issued directly by regulated institutional anchors / transfer agents via **SEP-0008** |
 | **Smart Contract Interface** | Standard Soroban SEP-0041 SAC wrapper | Standard Soroban SEP-0041 SAC with native compliance callbacks (SEP-0008) |
@@ -64,14 +64,14 @@ flowchart TD
 * [x] **Soroban GiftVault Deployment:** Smart contract deployed and verified on Stellar Testnet (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`).
 * [x] **Zero-Knowledge Gift Link Flow:** Client-side Ed25519 claim keys embedded in URL fragments (`#claimSecret`) for zero-custody link distribution.
 * [x] **Gasless Sponsored Claims:** ViApp relayer sponsors all claim transaction fees on Soroban, enabling recipients with zero balance to claim shares.
-* [x] **1:1 Pegged Equity Catalog:** Catalog of 9 top US stocks and ETFs (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ) pegged 1:1 against bStocks.
+* [x] **1:1 Pegged Stock Catalog:** Catalog of 9 top US stocks and ETFs (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ) pegged 1:1 against bStocks.
 * [x] **Full Stellar Protocol Suite:** SEP-0001 (Discovery), SEP-0010 (WebAuth), SEP-0024 (Hosted On-Ramp), SEP-0038 (RFQ Quotes), SEP-0041 (SACs).
 * [x] **Automated Testing & CI:** 508 unit tests, property-based Ed25519 signature fuzz tests, and Rust integration test suite.
 
 ---
 
 ### Phase 2: Direct Native Stock Tokenization on Stellar (Status: IN PROGRESS / Q1 2027)
-*Objective: Remove external cross-chain dependencies by minting tokenized equities directly on Stellar.*
+*Objective: Remove external cross-chain dependencies by minting tokenized stocks directly on Stellar.*
 
 * [ ] **SEP-0008 Regulated Asset Implementation:**
   - Build compliance approval service verifying investor eligibility, jurisdiction whitelisting, and sanctions screening.
@@ -80,7 +80,7 @@ flowchart TD
   - Partner with regulated broker-dealers, transfer agents, and custody partners (e.g. Backed Finance, Ondo, DriveWealth, or licensed Swiss trust anchors).
   - Physical underlying shares held in bankruptcy-remote legal vehicles with real-time Proof of Reserves (PoR) published to Stellar.
 * [ ] **Native Stellar Asset Issuers:**
-  - Establish dedicated institutional issuing accounts on Stellar for each equity ticker (`AAPL:G...`, `NVDA:G...`).
+  - Establish dedicated institutional issuing accounts on Stellar for each stock ticker (`AAPL:G...`, `NVDA:G...`).
   - Deploy Soroban SEP-0041 SAC instances for every directly tokenized stock, enabling direct composability with the `viapp-gift-vault`.
 * [ ] **Deprecation of Cross-Chain Bridges:**
   - Transition backend routing from bStocks bridges to native Stellar minting APIs, retiring external chain dependencies.
@@ -105,10 +105,10 @@ flowchart TD
 ---
 
 ### Phase 4: Corporate Actions & Programmable Yield (Status: SCHEDULED / Q3 2027)
-*Objective: Bring real equity ownership features directly onto the Stellar blockchain.*
+*Objective: Bring real stock ownership features directly onto the Stellar blockchain.*
 
 * [ ] **Native USDC Dividend Streaming:**
-  - When underlying equities pay quarterly cash dividends, the issuing anchor automatically streams proportionate Stellar USDC directly to all token holders' accounts on-chain.
+  - When underlying stocks pay quarterly cash dividends, the issuing anchor automatically streams proportionate Stellar USDC directly to all token holders' accounts on-chain.
 * [ ] **Stock Splits & Mergers Automation:**
   - Soroban contract logic to handle 2-for-1, 3-for-1 stock splits or reverse splits without requiring users to manually redeem or swap tokens.
 * [ ] **Proxy Voting & Shareholder Rights:**
@@ -117,7 +117,7 @@ flowchart TD
 ---
 
 ### Phase 5: Mainnet Production, Mobile SDK & Enterprise (Status: SCHEDULED / Q4 2027)
-*Objective: Scale ViApp into the premier global micro-investing and equity gifting platform.*
+*Objective: Scale ViApp into the premier global micro-investing and stock gifting platform.*
 
 * [ ] **Mainnet Security Audits:**
   - Complete formal verification and third-party security audits (e.g. OpenZeppelin, CertiK, or Kudelski) for `viapp-gift-vault` and SEP-0008 token controllers.

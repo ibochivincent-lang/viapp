@@ -173,7 +173,7 @@ Replace "ViApp" with "viapp" in logo, titles, and text while preserving the exac
 Add a segmented control button (`Stellar` / `Binance`) matching the dark luxury button theme.
 
 - [x] **Step 3: Update `StockPicker.tsx`**
-Display Stellar tokenized equities (AAPL, NVDA, TSLA, etc.) when Stellar is active, and bStocks when Binance is active.
+Display Stellar tokenized stocks (AAPL, NVDA, TSLA, etc.) when Stellar is active, and bStocks when Binance is active.
 
 - [x] **Step 4: Update `ClaimPage.tsx`**
 Handle Stellar `/g/stellar/:id#S...` links, unseal the note using `openNote`, and display the claim confirmation.

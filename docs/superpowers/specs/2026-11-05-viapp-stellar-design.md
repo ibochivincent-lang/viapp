@@ -71,7 +71,7 @@ The security model adheres to strict invariants (C1 to C50):
 
 | Feature | Stellar Network | Binance Smart Chain |
 | :--- | :--- | :--- |
-| **Available Equities** | AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ, USDC, XLM | AAPLB, NVDAB, TSLAB, MSFTB, AMZNB, GOOGLB, METAB, SPYB, QQQB |
+| **Available Stocks** | AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ, USDC, XLM | AAPLB, NVDAB, TSLAB, MSFTB, AMZNB, GOOGLB, METAB, SPYB, QQQB |
 | **Token Standard** | Stellar Asset Contract (SAC / SEP-41) | ERC-20 (`bStock`) |
 | **Trading Source** | Stellar SDEX (Path Payment Strict Receive) & Soroswap AMM | Binance Web3 Aggregator API (`/quote`, `/swap`) |
 | **Settlement Speed** | ~4 seconds (single-ledger finality) | ~3 seconds (BNB PoSA) |
@@ -108,7 +108,7 @@ The security model adheres to strict invariants (C1 to C50):
 
 1. **`packages/core`**:
    - `src/gift.ts`: Dual-chain claim key generator, link parser, AES-256-GCM note sealer, and Ed25519/secp256k1 signers.
-   - `src/stocks-stellar.ts`: Stellar equities catalog and SAC contract ID resolver.
+   - `src/stocks-stellar.ts`: Stellar stocks catalog and SAC contract ID resolver.
    - `src/quote-stellar.ts`: Stellar SDEX/AMM quotation engine with slippage protection.
 2. **`packages/contracts/stellar`**:
    - Rust Soroban crate: `Cargo.toml`, `src/lib.rs` (`GiftVault`), unit tests in `tests/test_vault.rs`.

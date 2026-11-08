@@ -107,10 +107,10 @@ export function resetVenueHealth(): void {
 
 /**
  * Mapping of Stellar stocks to their behind-the-scenes BSC bStocks backing venue and contract.
- * Fully supports all 9 core tokenized equities and their bStock aliases.
+ * Fully supports all 9 core tokenized stocks and their bStock aliases.
  */
 export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
-  // --- 9 Canonical Core Equities ---
+  // --- 9 Canonical Core Stocks ---
   AAPL: {
     code: "AAPL",
     name: "Apple Inc.",

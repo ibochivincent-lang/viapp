@@ -1,6 +1,6 @@
 # SCF / Drips Wave Grant Proposal: ViApp
 
-**Project:** ViApp — Tokenized Equities & Gift Vault Protocol on Stellar  
+**Project:** ViApp — Tokenized Stocks & Gift Vault Protocol on Stellar  
 **Applicant / Maintainer:** `ibochivincent.lang <290086463+ibochivincent-lang@users.noreply.github.com>`  
 **GitHub Repository:** [https://github.com/viappToken/viapp](https://github.com/viappToken/viapp)  
 **Target Track:** SCF Tier-2 / Drips Wave Infrastructure & Product Track ($60,000)  
@@ -10,13 +10,13 @@
 
 ## 1. Executive Summary
 
-**ViApp** is a consumer onboarding and tokenized equity gifting protocol built natively on the Stellar blockchain. It enables anyone to gift a friend their first real share of blue-chip stock ($NVDA, $AAPL, $TSLA, $MSFT, $AMZN, $GOOGL, $META, $SPY, $QQQ) through a single shareable link.
+**ViApp** is a consumer onboarding and tokenized stock gifting protocol built natively on the Stellar blockchain. It enables anyone to gift a friend their first real share of blue-chip stock ($NVDA, $AAPL, $TSLA, $MSFT, $AMZN, $GOOGL, $META, $SPY, $QQQ) through a single shareable link.
 
-Recipients open the link on any mobile or desktop browser, authenticate with Google, email, or a biometric Stellar passkey, and instantly own real tokenized equity in a self-custodial Stellar account with **no browser extensions, no seed phrases, and zero gas fees**.
+Recipients open the link on any mobile or desktop browser, authenticate with Google, email, or a biometric Stellar passkey, and instantly own real tokenized stock in a self-custodial Stellar account with **no browser extensions, no seed phrases, and zero gas fees**.
 
 Every share is:
 1. **Funded Exclusively on Stellar:** Senders pay using native Stellar assets (`USDC` or `XLM`).
-2. **Held in Stellar Wallets:** Equities are minted as Stellar Asset Contracts (SACs) under SEP-0041, held directly in Freighter, xBull, Lobstr, or embedded passkey wallets.
+2. **Held in Stellar Wallets:** Stocks are minted as Stellar Asset Contracts (SACs) under SEP-0041, held directly in Freighter, xBull, Lobstr, or embedded passkey wallets.
 3. **Tradable via SDEX & Soroban AMMs:** Recipients can hold shares, transfer them to peers, or **instantly liquidate** them for native Stellar USDC/XLM on the Stellar Decentralized Exchange (SDEX) or Soroban constant-product liquidity pools.
 4. **Sealed in Soroban Smart Contracts:** Gifts are held in the `viapp-gift-vault` escrow contract on Stellar Testnet (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`) secured by one-time Ed25519 signatures verified on-chain.
 5. **Backed 1:1 by Institutional Reserves:** The bridge fulfillment engine supports 1:1 backing from **BNB Smart Chain (bStocks via Binance Web3)** with verified Swiss custody and automatic routing.
@@ -66,7 +66,7 @@ ViApp fully supports all 9 core bStocks plus settlement currencies on Stellar. E
 
 ## 4. Stellar Trading & Liquidity Pool Engine
 
-ViApp provides full programmatic trading logic for all listed equities on Stellar:
+ViApp provides full programmatic trading logic for all listed stocks on Stellar:
 
 1. **SDEX Orderbook Trading (`packages/core/src/trade-stellar.ts`):**
    - Direct limit buy and sell offers (`Operation.manageBuyOffer`, `Operation.manageSellOffer`).
@@ -125,4 +125,4 @@ To ensure production resilience, the following security and operational mitigati
 2. **Reentrancy Protection via Checks-Effects-Interactions:** Gift state is mutated to `Claimed` or `Refunded` before any token transfers occur.
 3. **Storage Rent Lifetime Management:** The contract issues `extend_ttl` calls on both instance and persistent storage keys on every creation and claim, eliminating rent-expiry state eviction.
 4. **Slippage & Price Band Protection:** Max 1% bounded slippage on quotes, protected by oracle circuit-breakers against stale pricing.
-5. **MoneyGram Retail Access Integration:** Provides recipients in 180+ countries the ability to liquidate gifted equity proceeds into physical cash at 400,000+ MoneyGram locations worldwide.
+5. **MoneyGram Retail Access Integration:** Provides recipients in 180+ countries the ability to liquidate gifted stock proceeds into physical cash at 400,000+ MoneyGram locations worldwide.

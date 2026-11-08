@@ -25,13 +25,13 @@ export type StellarStock = {
   backingContract?: string;
 };
 
-// Known testnet/mainnet issuers for tokenized equities and base currencies on Stellar
+// Known testnet/mainnet issuers for tokenized stocks and base currencies on Stellar
 export const STELLAR_TESTNET_ISSUER = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
 export const STELLAR_MAINNET_USDC_ISSUER = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN";
 export const STELLAR_MAINNET_ISSUER = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
 
 export const STELLAR_STOCKS_CATALOG: Omit<StellarStock, "contractId" | "address" | "symbol">[] = [
-  // --- 9 Core Tokenized Equities Backed by BSC bStocks ---
+  // --- 9 Core Tokenized Stocks Backed by BSC bStocks ---
   {
     chain: "stellar",
     code: "AAPL",
@@ -188,17 +188,17 @@ export const STELLAR_STOCKS_CATALOG: Omit<StellarStock, "contractId" | "address"
 
 /**
  * Returns listed tokenized stocks on Stellar, complete with SAC contract IDs for the given passphrase.
- * Filters out currency assets (USDC, XLM) so only giftable equities are returned.
+ * Filters out currency assets (USDC, XLM) so only giftable stocks are returned.
  * Optionally filters by venue ("bnb" | "stellar").
  */
 export function getStellarStocks(networkPassphrase: string, venue?: StockVenue): StellarStock[] {
-  let equities = STELLAR_STOCKS_CATALOG.filter(
+  let stocks = STELLAR_STOCKS_CATALOG.filter(
     (item) => item.code !== "USDC" && item.code !== "XLM",
   );
   if (venue) {
-    equities = equities.filter((item) => item.venue === venue);
+    stocks = stocks.filter((item) => item.venue === venue);
   }
-  return equities.map((item) => {
+  return stocks.map((item) => {
     const asset = item.code === "XLM" ? Asset.native() : new Asset(item.code, item.issuer);
     let contractId = "";
     try {
@@ -246,7 +246,7 @@ export function getBscStocks(networkPassphrase: string): StellarStock[] {
 
 /**
  * Looks up a single Stellar stock or settlement asset by its symbol/code/address.
- * Normalizes case, prefixes (b), separators (-, _, ., /), and checks both equities and currencies.
+ * Normalizes case, prefixes (b), separators (-, _, ., /), and checks both stocks and currencies.
  * Fully supports bStock alias resolution (e.g. "AAPLB", "bAAPL", "METAB", "0x...").
  */
 export function findStellarStock(code: string, networkPassphrase: string): StellarStock | undefined {

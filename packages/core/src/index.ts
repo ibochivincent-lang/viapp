@@ -12,7 +12,7 @@ export * from "./sep38.js";
 // Stellar Client & Soroban Contract Operations
 export * from "./client/stellar.js";
 
-// Equities & Stocks on Stellar
+// Stocks on Stellar
 export * from "./stocks-stellar.js";
 
 // Amounts & Math Helpers
