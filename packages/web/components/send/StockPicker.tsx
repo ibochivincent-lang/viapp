@@ -32,13 +32,13 @@ function Check() {
 function StockBadge({ isPegged }: { isPegged: boolean }) {
   if (isPegged) {
     return (
-      <span className="send-badge-venue send-badge-pegged" title="1:1 Pegged Equity on Stellar">
-        Pegged 1:1
+      <span className="send-badge-venue send-badge-pegged" title="Tokenized Equity on Stellar">
+        Equity
       </span>
     );
   }
   return (
-    <span className="send-badge-venue send-badge-stellar" title="Direct Tokenized Equity on Stellar">
+    <span className="send-badge-venue send-badge-stellar" title="Stellar Direct Asset">
       Stellar
     </span>
   );
@@ -119,7 +119,7 @@ export function StockPicker({
           className={`send-venue-tab ${filterCategory === "pegged" ? "send-venue-tab-active" : ""}`}
           onClick={() => setFilterCategory("pegged")}
         >
-          Stellar Pegged ({peggedCount})
+          Equities ({peggedCount})
         </button>
         <button
           type="button"
@@ -128,7 +128,7 @@ export function StockPicker({
           className={`send-venue-tab ${filterCategory === "direct" ? "send-venue-tab-active" : ""}`}
           onClick={() => setFilterCategory("direct")}
         >
-          Stellar Direct ({directCount})
+          Direct Assets ({directCount})
         </button>
       </div>
 

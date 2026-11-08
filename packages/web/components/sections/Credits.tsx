@@ -32,7 +32,7 @@ const vaultName = (
 );
 
 const CREDITS: readonly Credit[] = [
-  { role: "THE SHARES", name: "1:1 Pegged Stocks on Stellar" },
+  { role: "THE SHARES", name: "Real Tokenized Stocks on Stellar" },
   { role: "THE PRICES", name: "Stellar SDEX & DEX Feeds" },
   { role: "THE TRADE", name: "Soroban Smart Contracts & Bridge" },
   { role: "THE DRY RUN", name: "Soroban RPC Simulation" },
