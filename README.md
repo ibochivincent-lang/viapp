@@ -357,7 +357,7 @@ viapp/
 ├── .github/workflows/ci.yml       # Automated GitHub Actions CI for Rust & TypeScript
 ├── docs/
 │   ├── ARCHITECTURE.md            # Detailed protocol specification & Mermaid diagrams
-│   ├── GRANT_PROPOSAL.md          # Stellar Community Fund (SCF) Tier-2 Proposal ($60k, 10/10 Scorecard)
+│   ├── GRANT_PROPOSAL.md          # Ecosystem Grant Proposal ($60k Milestone Plan)
 │   ├── ROADMAP.md                 # Native tokenization & direct on-chain liquidation roadmap
 │   ├── assets/screenshots/        # UI screenshots & certificate previews
 │   └── security/                  # Threat model, system descriptions & 60 attack refusal proofs
