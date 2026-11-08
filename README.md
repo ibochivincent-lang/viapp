@@ -25,21 +25,21 @@ flowchart TD
     subgraph ClientLayer["1. Client & User Experience Layer"]
         A["Sender (Freighter / WebAuth / Passkey)"]
         B["ViApp Web App (Next.js 15 + GSAP)"]
-        C["Ephemeral Key Derivation (#claimSecret)"]
+        C["Ephemeral Key Derivation (claimSecret Hash)"]
         D["AES-GCM-256 Client-Sealed Note"]
     end
 
     subgraph StellarCore["2. Native Stellar Core & Soroban Escrow"]
-        E["Soroban GiftVault Contract<br/>CDEDHFJ7...DEV5M"]
-        F["Stellar Asset Contract (SAC) Registry<br/>Issuer: GBBD47IF...FLA5"]
-        G["Gasless FeeBump Relayer<br/>GA5ZSEJY...KZVN"]
+        E["Soroban GiftVault Contract (CDEDHFJ7...DEV5M)"]
+        F["Stellar Asset Contract Registry (Issuer: GBBD47IF...FLA5)"]
+        G["Gasless FeeBump Relayer (GA5ZSEJY...KZVN)"]
     end
 
     subgraph LiquidityRouter["3. Resilient Multi-Venue Reserve Router"]
         H{"Reserve Router & Health Oracle"}
-        I["Primary Venue: bStocks<br/>(BNB Smart Chain 56)"]
-        J["Secondary Venue: OKX xStocks<br/>(X Layer Chain 196)"]
-        K["Direct Native Stellar Equities<br/>(Phase 2 Roadmap)"]
+        I["Primary Venue: bStocks (BNB Smart Chain 56)"]
+        J["Secondary Venue: OKX xStocks (X Layer Chain 196)"]
+        K["Direct Native Stellar Equities (Phase 2 Roadmap)"]
     end
 
     subgraph RecipientLayer["4. Recipient Redemption & Off-Ramp"]
@@ -58,7 +58,7 @@ flowchart TD
     H -->|"Primary Healthy"| I
     H -.->|"Failover on BNB Outage"| J
     H -.->|"Native Stellar Issuance"| K
-    B -->|"7. Ephemeral Link https://viapp.gift/g/{id}#secret"| L
+    B -->|"7. Ephemeral Link viapp.gift/g/id#secret"| L
     L -->|"8. Sign Ed25519 Claim Proof"| M
     M -->|"9. Sponsored Gasless Claim"| G
     G -->|"10. Settle Gift via Vault"| E
@@ -72,27 +72,27 @@ flowchart TD
 ```mermaid
 sequenceDiagram
   autonumber
-  actor S as Sender (Freighter/Passkey)
-  participant UI as ViApp Web App (Next.js 15)
-  participant API as ViApp API / SEP Engine
-  participant V as Soroban GiftVault (CDEDHFJ7...DEV5M)
-  participant R as ViApp Fee-Bump Relayer
-  actor F as Recipient (Friend)
+  actor S as "Sender (Freighter / Passkey)"
+  participant UI as "ViApp Web App (Next.js 15)"
+  participant API as "ViApp API & SEP Engine"
+  participant V as "Soroban GiftVault Contract"
+  participant R as "ViApp Fee-Bump Relayer"
+  actor F as "Recipient (Friend)"
 
-  S->>UI: 1. Select stock ($25 NVDA) and pay XLM/USDC
+  S->>UI: 1. Select stock (25 USD NVDA) and pay XLM or USDC
   UI->>API: 2. Request quote and routing (SEP-38 RFQ)
   API-->>UI: 3. Firm quote and simulated execution
-  UI->>V: 4. Invoke create_gift(token, amount, claimKey, expiry, sealedNote)
+  UI->>V: 4. Invoke create_gift with token, amount, claimKey, expiry, sealedNote
   V-->>UI: 5. Tokens locked in escrow, giftId emitted
-  UI->>UI: 6. Generate private claim link (viapp.gift/g/id#claimSecret)
+  UI->>UI: 6. Generate private claim link with ephemeral key fragment
   UI-->>S: 7. Link ready to share via WhatsApp, Telegram, Email, or SMS
   S->>F: 8. Shares the private gift link
-  F->>UI: 9. Opens link, authenticates via Google/Privy embedded Stellar wallet
-  F->>UI: 10. Signs claim proof with link's ephemeral key
+  F->>UI: 9. Opens link, authenticates via embedded Stellar wallet
+  F->>UI: 10. Signs claim proof with link ephemeral key
   UI->>API: 11. POST /api/claim with giftId, recipient, signature
   API->>R: 12. Verify signature and rate limits, trigger relayer
-  R->>V: 13. Relayer invokes claim(giftId, recipient, signature) and pays gas
-  V-->>F: 14. Stock transferred directly to friend's Stellar account!
+  R->>V: 13. Relayer invokes claim with signature and pays gas
+  V-->>F: 14. Stock transferred directly to friend Stellar account
 ```
 
 ---
