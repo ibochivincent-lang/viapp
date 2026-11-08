@@ -219,6 +219,26 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
       expect(okxResult.backingDetails.contract).toBe(XLAYER_XSTOCKS_ALLOWLIST.NVDAx.address);
     });
 
+    it("proves automatic fallback routing on mainnet if bStocks venue experiences downtime", async () => {
+      const failoverResult = await executeBridgePurchase(
+        {
+          senderStellarAddress: MAINNET_DEPLOYER,
+          stockCode: "AAPLB",
+          paymentAsset: "USDC",
+          usdAmount: 50.0,
+          giftId: 1003n,
+          claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        },
+        { forceFailPrimary: true, failoverReason: "Mainnet BSC RPC congestion; routed to X Layer" }
+      );
+
+      expect(failoverResult.ok).toBe(true);
+      expect(failoverResult.backingDetails.fallbackTriggered).toBe(true);
+      expect(failoverResult.backingDetails.venue).toBe("okx");
+      expect(failoverResult.backingDetails.contract).toBe(XLAYER_XSTOCKS_ALLOWLIST.AAPLx.address);
+      expect(failoverResult.backingDetails.fallbackReason).toBe("Mainnet BSC RPC congestion; routed to X Layer");
+    });
+
     it("verifies attestation proofs for both custody types", () => {
       const bProof = verify1to1PegProof("1001", "AAPLB");
       expect(bProof.verified).toBe(true);
