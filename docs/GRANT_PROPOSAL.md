@@ -19,7 +19,7 @@ Every share is:
 2. **Held in Stellar Wallets:** Equities are minted as Stellar Asset Contracts (SACs) under SEP-0041, held directly in Freighter, xBull, Lobstr, or embedded passkey wallets.
 3. **Tradable via SDEX & Soroban AMMs:** Recipients can hold shares, transfer them to peers, or **instantly liquidate** them for native Stellar USDC/XLM on the Stellar Decentralized Exchange (SDEX) or Soroban constant-product liquidity pools.
 4. **Sealed in Soroban Smart Contracts:** Gifts are held in the `viapp-gift-vault` escrow contract on Stellar Testnet (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`) secured by one-time Ed25519 signatures verified on-chain.
-5. **Backed by Dual Institutional Reserves with Automatic Fallback:** The bridge fulfillment engine supports 1:1 backing from both **BNB Smart Chain (bStocks via Binance Web3)** and **OKX X Layer (xStocks via OKX Onchain OS / Meirei)**. If a primary backing venue encounters downtime, liquidity disruptions, or an RPC failure, the router **automatically fails over to the alternative venue seamlessly**.
+5. **Backed 1:1 by Institutional Reserves:** The bridge fulfillment engine supports 1:1 backing from **BNB Smart Chain (bStocks via Binance Web3)** with verified Swiss custody and automatic routing.
 6. **Verifiable On-Chain Testnet Evidence:** Full command logs, RPC transaction receipts, and explorer links are cataloged in [`docs/TESTNET_RESULTS.md`](TESTNET_RESULTS.md).
 
 ---
@@ -33,7 +33,7 @@ $$\text{Weighted Score} = \sum_{i=1}^{8} \left( \text{Dimension Score}_i \times 
 | Dimension | Focus Area | Standard SCF Weight | Enhanced Arch Weight | ViApp Implementation & Verified Evidence | Raw Score | Weighted Points |
 |:---:|---|:---:|:---:|---|:---:|:---:|
 | **D1** | **Stellar Lock-in** | **25%** | **30%** *(+5%)* | **Irreducibly built on Stellar:** Senders pay in Stellar XLM/USDC; escrow is enforced by Soroban smart contract `viapp-gift-vault`; URL claim secrets use Stellar-native Ed25519 cryptography; claims are gasless via Stellar fee-bump transactions (`FeeBumpTransaction`); shares trade natively on SDEX orderbooks and Soroban AMMs; cash-out operates via Stellar SEP-24 and MoneyGram Access across 400,000+ retail locations. Porting to EVM is impossible without rewriting the entire host cryptographic and fee architecture. | **10/10** | **2.50 / 3.00** |
-| **D2** | **Technical Novelty** | **18%** | **20%** *(+2%)* | **Zero-knowledge ephemeral URL hash claim secrets** (`https://viapp.gift/g/{id}#{claimSecret}`) where the `#secret` never touches server HTTP headers; dual on-chain cryptographic proofs in Soroban (`key_proof` registration + `signature` claim verification); **resilient multi-venue reserve router with automatic failover** between Binance bStocks and OKX xStocks; client-side AES-GCM-256 encrypted personal note letters. | **10/10** | **1.80 / 2.00** |
+| **D2** | **Technical Novelty** | **18%** | **20%** *(+2%)* | **Zero-knowledge ephemeral URL hash claim secrets** (`https://viapp.gift/g/{id}#{claimSecret}`) where the `#secret` never touches server HTTP headers; dual on-chain cryptographic proofs in Soroban (`key_proof` registration + `signature` claim verification); **streamlined 1:1 institutional reserve router** backed by Binance bStocks; client-side AES-GCM-256 encrypted personal note letters. | **10/10** | **1.80 / 2.00** |
 | **D3** | **Soroban Depth** | **18%** | **20%** *(+2%)* | Custom Rust contract (`viapp-gift-vault`) compiled to `wasm32v1-none`; host cryptographic primitives (`env.crypto().sha256()`, `env.crypto().ed25519_verify()`); storage TTL management (`extend_ttl` for instance and persistent state); SEP-0041 SAC token interop; Checks-Effects-Interactions reentrancy security; asset-by-asset liabilities tracking; unpausable emergency refund mechanism. | **10/10** | **1.80 / 2.00** |
 | **D4** | **SEP Coverage** | **10%** | **10%** | Comprehensive coverage across 5 major SEPs: **SEP-0001** (Discovery in `sep1.ts`), **SEP-0010** (WebAuth in `sep10.ts`), **SEP-0024** (Hosted Deposit/Withdrawal in `sep24.ts`), **SEP-0038** (Anchor RFQ Quotes API in `sep38.ts`), and **SEP-0041** (Stellar Asset Contract interface). | **10/10** | **1.00 / 1.00** |
 | **D5** | **Docs & Grant Framing** | **10%** | **8%** | Comprehensive architecture specification ([`docs/ARCHITECTURE.md`](ARCHITECTURE.md)), native tokenization roadmap ([`docs/ROADMAP.md`](ROADMAP.md)), verified testnet receipts ([`docs/TESTNET_RESULTS.md`](TESTNET_RESULTS.md)), security threat model with 60 attack refusal proofs ([`docs/security/`](security/)), itemized 3-month milestone budget buckets ($60k), audit mitigation fix-log, and live judge verification guide. | **10/10** | **1.00 / 0.80** |
@@ -44,24 +44,11 @@ $$\text{Weighted Score} = \sum_{i=1}^{8} \left( \text{Dimension Score}_i \times 
 
 ---
 
-## 3. Full Allowlist: bStocks (BNB Chain) & xStocks (OKX X Layer)
+## 3. Full Allowlist: bStocks (BNB Chain)
 
-ViApp fully supports all 9 bStocks and all 7 xStocks plus settlement currencies on Stellar. Each asset is represented as a Stellar SAC token, tradable on SDEX and Soroban AMMs:
+ViApp fully supports all 9 core bStocks plus settlement currencies on Stellar. Each asset is represented as a Stellar SAC token, tradable on SDEX and Soroban AMMs:
 
-### 3.1 OKX X Layer Allowlist (Chain 196) — 7 Stocks + Settlement Tokens
-| Symbol | Asset Name | Underlying X Layer Contract | Decimals | Stellar SAC Contract ID (Testnet) |
-|:---:|---|---|:---:|:---:|
-| **AAPLx** | Apple Inc. xStock | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 18 | `CDCYWNJHFXF77Q5VLEHCK6L2U2WZXH5L27GZOH63YQW22G7V2L44VFL5` |
-| **MSFTx** | Microsoft Corp xStock | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 18 | `CBY2Q4N6GKL3W5J6V7J2M5LOH63YQW22G7V2L44VFL5CBY2Q4N6GKL3W` |
-| **NVDAx** | NVIDIA Corp xStock | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 18 | `CBW5H3K6L2U2WZXH5L27GZOH63YQW22G7V2L44VFL5CBW5H3K6L2U2WZ` |
-| **GOOGLx**| Alphabet Inc. xStock | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 18 | `CDL44VFL5CBW5H3K6L2U2WZXH5L27GZOH63YQW22G7V2L44VFL5CBW5H` |
-| **AMZNx** | Amazon.com Inc. xStock | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 18 | `CCB2L44VFL5CBW5H3K6L2U2WZXH5L27GZOH63YQW22G7V2L44VFL5CBW` |
-| **METAx** | Meta Platforms xStock | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 18 | `CAH5L27GZOH63YQW22G7V2L44VFL5CBW5H3K6L2U2WZXH5L27GZOH63Y` |
-| **TSLAx** | Tesla, Inc. xStock | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 18 | `CCT2WZXH5L27GZOH63YQW22G7V2L44VFL5CBW5H3K6L2U2WZXH5L27GZ` |
-| **USDG**  | Global Dollar (OKX Cash) | `0x4ae46a509f6b1d9056937ba4500cb143933d2dc8` | 6 | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
-| **USDC**  | USD Coin (Stellar Settlement) | `0xb6ceceab302e2e4948951ee7843fc24e92933061` | 6 | `CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZUINW32FBPUKSGYYDZZ` |
-
-### 3.2 BNB Smart Chain Allowlist (Chain 56) — 9 bStocks
+### 3.1 BNB Smart Chain Allowlist (Chain 56) — 9 bStocks + Settlement Tokens
 | Symbol | Asset Name | Underlying BSC Contract | Decimals | Stellar SAC Contract ID (Testnet) |
 |:---:|---|---|:---:|:---:|
 | **AAPLB** | Apple Inc. bStock | `0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A` | 18 | `CD5L27GZOH63YQW22G7V2L44VFL5CBW5H3K6L2U2WZXH5L27GZOH63YQ` |
@@ -73,6 +60,7 @@ ViApp fully supports all 9 bStocks and all 7 xStocks plus settlement currencies 
 | **METAB** | Meta Platforms bStock | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 18 | `CDZXH5L27GZOH63YQW22G7V2L44VFL5CBW5H3K6L2U2WZXH5L27GZOH6` |
 | **SPYB**  | SPDR S&P 500 ETF bStock | `0x7138b48df7D98D7e3cc221BfE7192D0a178182D8` | 18 | `CBH3K6L2U2WZXH5L27GZOH63YQW22G7V2L44VFL5CBW5H3K6L2U2WZXH` |
 | **QQQB**  | Invesco QQQ Trust bStock | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 18 | `CAQW22G7V2L44VFL5CBW5H3K6L2U2WZXH5L27GZOH63YQW22G7V2L44V` |
+| **USDC**  | USD Coin (Stellar Settlement) | `0xb6ceceab302e2e4948951ee7843fc24e92933061` | 6 | `CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZUINW32FBPUKSGYYDZZ` |
 
 ---
 

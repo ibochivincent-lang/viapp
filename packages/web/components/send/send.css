@@ -320,39 +320,6 @@
   font: 400 14px/1.5 var(--font-body);
 }
 
-/* Venue Filter Tabs */
-.send-venue-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.send-venue-tab {
-  padding: 6px 14px;
-  border-radius: 9999px;
-  border: 1px solid var(--line);
-  background: var(--bg-raised);
-  color: var(--ink-muted);
-  font: 500 12px/1.4 var(--font-mono);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 150ms ease;
-}
-
-.send-venue-tab:hover {
-  border-color: var(--gold);
-  color: var(--ink);
-}
-
-.send-venue-tab-active {
-  border-color: var(--gold);
-  background: rgba(242, 177, 61, 0.12);
-  color: var(--gold);
-  font-weight: 600;
-}
-
 .send-tile-name-row {
   display: flex;
   align-items: center;
@@ -365,12 +332,6 @@
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.send-badge-okx {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .send-badge-bnb {

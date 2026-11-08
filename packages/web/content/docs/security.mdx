@@ -116,6 +116,6 @@ Every page carries one Content Security Policy header. It is the list of outside
 | `wss://www.walletlink.org` | Connections | The relay Coinbase Wallet uses. |
 | `https://verify.walletconnect.com` and `https://verify.walletconnect.org` | Frames | WalletConnect's verification frames. |
 | `https://explorer-api.walletconnect.com` | Connections and images | WalletConnect's wallet list and the wallet icons in the connect window. |
-| `https://*.bnbstatic.com` and `https://*.okx.com` | Images | Token and asset logos. |
+| `https://*.bnbstatic.com` | Images | Token and asset logos. |
 
 The rest of the policy is strict. Scripts run only if they carry the one-time nonce made for that response, or were loaded by a script that does, so inline script without the nonce never runs. Inline styles are allowed, because Privy's sign-in window writes its styles inline and a nonce would switch that off. Fonts, workers and the manifest come only from the page's own address. Plugins are blocked, forms and the base address stay on the page itself, and no other site may put ViApp in a frame. In development only, the policy also allows `'unsafe-eval'`, because React needs it there. Production never does.

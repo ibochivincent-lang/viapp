@@ -128,22 +128,12 @@ sequenceDiagram
 To enable gifting of US blue-chip equities on Stellar without forcing users through traditional brokerage onboarding, ViApp operates a **1:1 backed synthetic equity engine** backed by institutional liquidity venues:
 
 1. **bStocks (BNB Chain / Binance Web3):**
-   * Regulated tokenized real-world assets (RWAs) tracking US equities (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, SPY).
+   * Regulated tokenized real-world assets (RWAs) tracking US equities (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ).
    * Backed 1:1 by physical shares held in bankruptcy-remote Swiss custody (e.g. Backed Finance / CM-Equity AG).
-2. **xStocks (X Layer - OKX Onchain OS):**
-   * Institutional tokenized stock market on X Layer (Polygon CDK zkEVM Layer 2).
-   * Backed 1:1 by underlying equities with native OKX Onchain OS DEX aggregation and automated trading APIs.
 
-### 4.2 Adaptation Comparison: bStocks (BNB Chain) vs. xStocks (X Layer)
+### 4.2 Institutional Reserve Backing: bStocks (BNB Chain)
 
-| Feature | bStocks (BNB Chain) | xStocks (X Layer - OKX) | ViApp Assessment |
-| :--- | :--- | :--- | :--- |
-| **Liquidity & Volume** | High decentralized liquidity on PancakeSwap V3. | Growing institutional liquidity; OKX DEX market maker network. | bStocks currently has deeper instantaneous liquidity. |
-| **Developer API & Tooling** | Standard EVM JSON-RPC; Binance Web3 SDK. | **OKX Onchain OS API** with native programmatic DEX router and AI agent endpoints. | **xStocks is significantly easier to adapt programmatically** via OKX Onchain OS. |
-| **Settlement Speed & Fees** | ~3s block time; ~$0.05 BNB gas. | Sub-second zkEVM finality; <$0.01 gas. | X Layer provides faster, cheaper fulfillment. |
-| **Integration Architecture** | Dual-step swap + custody bridge. | Direct REST API quote + execution. | ViApp uses an abstraction router supporting both. |
-
-> **Verdict:** **X Layer (OKX xStocks) is easier to adapt programmatically** for autonomous agents and backend fulfillment because of the standardized OKX Onchain OS APIs. ViApp leverages a multi-venue routing adapter (`packages/core/src/bridge.ts`) to achieve best-execution pricing across both.
+ViApp automatically routes all equity purchases to 1:1 institutional reserves via bStocks on BNB Smart Chain (Chain 56). This provides deep decentralized liquidity on PancakeSwap V3, verified Swiss custody, and deterministic settlement without multi-venue complexity.
 
 ### 4.3 Catalog & Pegged Contract Addresses
 
@@ -155,13 +145,13 @@ To enable gifting of US blue-chip equities on Stellar without forcing users thro
 | **$MSFT** | Microsoft Corp | `CBRV67QJ2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x8929e083cbe9a296e8bc371c6fa611fe28114fcf` | 1:1 |
 | **$AMZN** | Amazon.com Inc. | `CA6Z342J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0xa8417c8cf15239a5ec13e9a7e6b010f3c5b557fb` | 1:1 |
 | **$GOOGL** | Alphabet Inc. | `CBVTR42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x539591e6005cbbce4ebcc47cfdc3500d8ce20c6a` | 1:1 |
-| **$META** | Meta Platforms | `CCQWP42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | X Layer (xStock) | `0x6f9bb49f0f9b33a5dd14088a2fdff2a9bbf6f5a3` | 1:1 |
+| **$META** | Meta Platforms | `CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK` | BNB Chain (bStock) | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 1:1 |
 | **$SPY** | S&P 500 ETF | `CD7P742J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x98f260340b3cb1c95116df14e8ee1c183bbd3257` | 1:1 |
-| **$QQQ** | Invesco QQQ Trust | `CCLLM42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | X Layer (xStock) | `0x3344ccbb00112233445566778899aabbccddeeff` | 1:1 |
+| **$QQQ** | Invesco QQQ Trust | `CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23` | BNB Chain (bStock) | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 1:1 |
 
 ### 4.4 Roadmap Architecture: Native Stellar Tokenization & Direct On-Chain Liquidation (Beyond Pegged Assets)
 
-While ViApp's Testnet proof-of-concept operates with 1:1 pegged synthetic equities backed by multi-chain reserves (bStocks & xStocks), our target architecture **eliminates cross-chain bridges and pegged assets entirely by bringing natively liquidated and tokenized stocks directly into the Stellar blockchain**.
+While ViApp's Testnet proof-of-concept operates with 1:1 pegged synthetic equities backed by custodial reserves (bStocks), our target architecture **eliminates cross-chain bridges and pegged assets entirely by bringing natively liquidated and tokenized stocks directly into the Stellar blockchain**.
 
 ```mermaid
 flowchart LR

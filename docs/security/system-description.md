@@ -6,7 +6,7 @@ Functional description of the ViApp protocol on Stellar, covering architecture, 
 
 A person (the sender) gives another person (the friend) a real share of a US company (e.g. Apple, NVIDIA, Tesla, Microsoft, Alphabet, Amazon, Meta) as a tokenized stock on Stellar. The sender pays in native USDC or XLM on Stellar. The friend receives a shareable gift link, opens it in a browser, signs in with Google, email, or a biometric Stellar passkey (zero seed phrases, zero wallet apps), and the tokenized equity is transferred into their non-custodial Stellar wallet.
 
-Under current deployment, tokenized stocks are backed 1:1 by institutional reserves across X Layer (OKX `xStocks`) and BNB Chain (`bStocks`), locked in ViApp's Soroban `viapp-gift-vault` contract. The protocol's active roadmap transitions directly to native tokenization and direct on-chain liquidation on the Stellar Decentralized Exchange (SDEX).
+Under current deployment, tokenized stocks are backed 1:1 by institutional reserves via BNB Chain (`bStocks`), locked in ViApp's Soroban `viapp-gift-vault` contract. The protocol's active roadmap transitions directly to native tokenization and direct on-chain liquidation on the Stellar Decentralized Exchange (SDEX).
 
 ## Core Components
 
@@ -26,8 +26,7 @@ Under current deployment, tokenized stocks are backed 1:1 by institutional reser
 5. **The Gift Link**: `https://<viapp-domain>/g/<giftId>#<claimKeyPrivateKey>`. The claim key is an ephemeral cryptographic keypair generated client-side in the sender's browser. The public key is stored in the Soroban contract; the private key exists strictly in the URL fragment (`#`), which browsers never transmit to the server.
 6. **Recipient Non-Custodial Wallet**: Created seamlessly via embedded wallet / Stellar passkey providers. No seed phrase required; private keys can be exported or recovered at any time.
 7. **ViApp Sender Agent (CLI)**: Command-line autonomous agent (`@viapp/agent`) for automated programmatic gifting, portfolio rebalancing, and headless integration.
-8. **Multi-Venue Backing Adapter**: Real-time quoting and reserve custody across:
-   - **X Layer (OKX xStocks, Chain 196)**: Programmatic execution via OKX Onchain OS APIs.
+8. **Institutional Reserve Backing Adapter**: Real-time quoting and reserve custody across:
    - **BNB Chain (bStocks, Chain 56)**: Institutional reserve custody.
    - **Stellar Native SDEX**: Target architecture for direct issuance and on-chain orderbook liquidation.
 9. **Shared Store (Upstash Redis / Memory Store)**: Ephemeral storage for rate-limiting counters (IPv4 `/32`, IPv6 `/64`), daily relayer gas budgets, deduplication nonces, and anti-replay locks.

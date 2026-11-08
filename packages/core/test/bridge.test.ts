@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  BSC_BSTOCKS_ALLOWLIST,
   calculatePeggedShares,
   executeBridgePurchase,
   executeResilientBridgePurchase,
-  getDualVenueBacking,
+  getBscStockAllowlist,
   getPeggedConfig,
   getVenueHealth,
-  listDualVenueEquities,
   PEGGED_STOCK_MAP,
   resetVenueHealth,
   setVenueHealth,
@@ -22,14 +22,17 @@ describe("Backend Bridge & 1:1 Pegged Stock Engine", () => {
     resetVenueHealth();
   });
 
-  it("maps Stellar stocks to 1:1 backing assets on BNB/OKX", () => {
+  it("maps Stellar stocks to 1:1 backing assets on BSC bStocks", () => {
     const nvda = getPeggedConfig("NVDA");
     expect(nvda.backingVenue).toBe("bnb");
     expect(nvda.backingSymbol).toBe("NVDAB");
     expect(nvda.pegRatio).toBe("1:1");
 
+    // Corrected META backing: strictly routes to BSC bStock METAB
     const meta = getPeggedConfig("META");
-    expect(meta.backingVenue).toBe("okx");
+    expect(meta.backingVenue).toBe("bnb");
+    expect(meta.backingSymbol).toBe("METAB");
+    expect(meta.backingContract).toBe(BSC_BSTOCKS_ALLOWLIST.METAB.address);
     expect(meta.pegRatio).toBe("1:1");
   });
 
@@ -39,7 +42,7 @@ describe("Backend Bridge & 1:1 Pegged Stock Engine", () => {
     expect(sharesBaseUnits).toBeGreaterThan(0n);
   });
 
-  it("executes standard primary bridge purchase when primary venue is healthy", async () => {
+  it("executes standard primary bridge purchase auto-routing to bStocks on BSC", async () => {
     const result = await executeBridgePurchase({
       senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
       stockCode: "NVDA",
@@ -56,89 +59,54 @@ describe("Backend Bridge & 1:1 Pegged Stock Engine", () => {
     expect(result.backingDetails.pegRatio).toBe("1:1");
     expect(result.backingDetails.venue).toBe("bnb");
     expect(result.backingDetails.backingSymbol).toBe("NVDAB");
+    expect(result.backingDetails.contract).toBe(BSC_BSTOCKS_ALLOWLIST.NVDAB.address);
     expect(result.backingDetails.fallbackTriggered).toBe(false);
     expect(result.backingDetails.primaryAttempted).toBe("bnb");
     expect(result.backingDetails.executionTxHash).toContain("0x");
   });
 
-  it("automatically fails over to OKX xStocks when bStocks (BNB) fails or is marked offline", async () => {
-    // Simulate bStocks downtime or network failure on BSC
+  it("executes auto-selected bridge purchase for META routing directly to BSC METAB", async () => {
+    const result = await executeBridgePurchase({
+      senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+      stockCode: "META",
+      paymentAsset: "USDC",
+      usdAmount: 20.0,
+      giftId: 43n,
+      claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.stockCode).toBe("META");
+    expect(result.backingDetails.venue).toBe("bnb");
+    expect(result.backingDetails.backingSymbol).toBe("METAB");
+    expect(result.backingDetails.contract).toBe(BSC_BSTOCKS_ALLOWLIST.METAB.address);
+    expect(result.backingDetails.fallbackTriggered).toBe(false);
+  });
+
+  it("auto-selects bStocks backing for all 9 core tokenized stocks", async () => {
+    const coreStocks = ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "GOOGL", "META", "SPY", "QQQ"];
+    let giftCounter = 100n;
+
+    for (const code of coreStocks) {
+      const result = await executeBridgePurchase({
+        senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+        stockCode: code,
+        paymentAsset: "USDC",
+        usdAmount: 10.0,
+        giftId: giftCounter++,
+        claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      });
+
+      expect(result.ok).toBe(true);
+      expect(result.backingDetails.venue).toBe("bnb");
+      expect(result.backingDetails.backingSymbol).toBe(`${code}B`);
+      expect(result.backingDetails.fallbackTriggered).toBe(false);
+    }
+  });
+
+  it("throws clear error when BNB backing venue is offline or unhealthy", async () => {
     setVenueHealth("bnb", false);
     expect(getVenueHealth("bnb")).toBe(false);
-    expect(getVenueHealth("okx")).toBe(true);
-
-    const result = await executeResilientBridgePurchase({
-      senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-      stockCode: "AAPL",
-      paymentAsset: "USDC",
-      usdAmount: 10.0,
-      giftId: 101n,
-      claimKeyHash: "abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-    });
-
-    expect(result.ok).toBe(true);
-    expect(result.stockCode).toBe("AAPL");
-    // Verify automatic failover took effect
-    expect(result.backingDetails.fallbackTriggered).toBe(true);
-    expect(result.backingDetails.primaryAttempted).toBe("bnb");
-    expect(result.backingDetails.venue).toBe("okx");
-    expect(result.backingDetails.backingSymbol).toBe("AAPLx");
-    expect(result.backingDetails.contract).toBe("0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a"); // OKX X Layer AAPLx
-    expect(result.backingDetails.fallbackReason).toContain("Primary venue 'bnb' unavailable");
-    expect(Buffer.from(result.backingDetails.executionTxHash.slice(2), "hex").toString("utf8")).toContain(":fallback");
-  });
-
-  it("automatically fails over to BNB bStocks when OKX xStocks fails or is marked offline", async () => {
-    // Simulate OKX X Layer downtime or bridge pause
-    setVenueHealth("okx", false);
-    expect(getVenueHealth("okx")).toBe(false);
-    expect(getVenueHealth("bnb")).toBe(true);
-
-    const result = await executeResilientBridgePurchase({
-      senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-      stockCode: "NVDAx",
-      paymentAsset: "USDC",
-      usdAmount: 10.0,
-      giftId: 102n,
-      claimKeyHash: "fedcbafedcbafedcbafedcbafedcbafedcbafedcbafedcbafedcbafedcba1234",
-    });
-
-    expect(result.ok).toBe(true);
-    expect(result.stockCode).toBe("NVDAx");
-    // Verify automatic failover from OKX to BNB bStocks
-    expect(result.backingDetails.fallbackTriggered).toBe(true);
-    expect(result.backingDetails.primaryAttempted).toBe("okx");
-    expect(result.backingDetails.venue).toBe("bnb");
-    expect(result.backingDetails.backingSymbol).toBe("NVDAB");
-    expect(result.backingDetails.contract).toBe("0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436"); // BSC NVDAB
-    expect(result.backingDetails.fallbackReason).toContain("Primary venue 'okx' unavailable");
-    expect(Buffer.from(result.backingDetails.executionTxHash.slice(2), "hex").toString("utf8")).toContain(":fallback");
-  });
-
-  it("automatically fails over using forceFailPrimary options flag", async () => {
-    const result = await executeBridgePurchase(
-      {
-        senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-        stockCode: "TSLA",
-        paymentAsset: "XLM",
-        usdAmount: 25.0,
-        giftId: 202n,
-        claimKeyHash: "1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff",
-      },
-      { forceFailPrimary: true, failoverReason: "Simulated BSC RPC timeout" }
-    );
-
-    expect(result.ok).toBe(true);
-    expect(result.backingDetails.fallbackTriggered).toBe(true);
-    expect(result.backingDetails.venue).toBe("okx");
-    expect(result.backingDetails.backingSymbol).toBe("TSLAx");
-    expect(result.backingDetails.contract).toBe("0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0"); // OKX TSLAx
-    expect(result.backingDetails.fallbackReason).toBe("Simulated BSC RPC timeout");
-  });
-
-  it("throws clear error when BOTH primary and secondary backing venues are down", async () => {
-    setVenueHealth("bnb", false);
-    setVenueHealth("okx", false);
 
     await expect(
       executeResilientBridgePurchase({
@@ -149,54 +117,44 @@ describe("Backend Bridge & 1:1 Pegged Stock Engine", () => {
         giftId: 303n,
         claimKeyHash: "cafecafecafecafecafecafecafecafecafecafecafecafecafecafecafecafe",
       })
-    ).rejects.toThrow("Multi-venue bridge failure: Both primary venue 'bnb' and fallback venue 'okx' are currently unavailable");
+    ).rejects.toThrow("Bridge failure: BNB bStocks backing venue is currently unavailable");
   });
 
-  it("verifies dual-venue configuration exists for all 7 major equities", () => {
-    const duals = listDualVenueEquities();
-    expect(duals.length).toBeGreaterThanOrEqual(7);
-
-    const codes = duals.map((d) => d.canonicalCode);
-    expect(codes).toContain("AAPL");
-    expect(codes).toContain("NVDA");
-    expect(codes).toContain("TSLA");
-    expect(codes).toContain("MSFT");
-    expect(codes).toContain("AMZN");
-    expect(codes).toContain("GOOGL");
-    expect(codes).toContain("META");
-
-    for (const dual of duals) {
-      expect(dual.primaryVenue).toBe("bnb");
-      expect(dual.fallbackVenue).toBe("okx");
-      expect(dual.primaryContract).toMatch(/^0x[a-fA-F0-9]{40}$/);
-      expect(dual.fallbackContract).toMatch(/^0x[a-fA-F0-9]{40}$/);
-      expect(dual.pegRatio).toBe("1:1");
-    }
+  it("throws error when forceFailPrimary option is enabled", async () => {
+    await expect(
+      executeBridgePurchase(
+        {
+          senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+          stockCode: "TSLA",
+          paymentAsset: "XLM",
+          usdAmount: 25.0,
+          giftId: 202n,
+          claimKeyHash: "1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff",
+        },
+        { forceFailPrimary: true, failoverReason: "Simulated BSC RPC timeout" }
+      )
+    ).rejects.toThrow("Simulated BSC RPC timeout");
   });
 
-  it("resolves dual-venue backing config via getDualVenueBacking helper", () => {
-    const goog = getDualVenueBacking("GOOGL");
-    expect(goog).not.toBeNull();
-    expect(goog?.primarySymbol).toBe("GOOGLB");
-    expect(goog?.fallbackSymbol).toBe("GOOGLx");
+  it("verifies 1:1 peg proof solely attests to bStocks_Binance_Custody", () => {
+    const proofAapl = verify1to1PegProof("42", "AAPL");
+    expect(proofAapl.verified).toBe(true);
+    expect(proofAapl.pegRatio).toBe("1:1");
+    expect(proofAapl.reserveType).toBe("bStocks_Binance_Custody");
+    expect(proofAapl.activeVenue).toBe("bnb");
 
-    // Case and suffix normalization
-    const googB = getDualVenueBacking("GOOGLB");
-    expect(googB?.canonicalCode).toBe("GOOGL");
-    const googX = getDualVenueBacking("GOOGLx");
-    expect(googX?.canonicalCode).toBe("GOOGL");
+    const proofMeta = verify1to1PegProof("43", "META");
+    expect(proofMeta.verified).toBe(true);
+    expect(proofMeta.activeVenue).toBe("bnb");
+    expect(proofMeta.reserveType).toBe("bStocks_Binance_Custody");
   });
 
-  it("verifies 1:1 peg proof for given gift and venue override", () => {
-    const proofBnb = verify1to1PegProof("42", "AAPL");
-    expect(proofBnb.verified).toBe(true);
-    expect(proofBnb.pegRatio).toBe("1:1");
-    expect(proofBnb.reserveType).toBe("bStocks_Binance_Custody");
-    expect(proofBnb.activeVenue).toBe("bnb");
-
-    const proofOkx = verify1to1PegProof("42", "AAPL", "okx");
-    expect(proofOkx.verified).toBe(true);
-    expect(proofOkx.activeVenue).toBe("okx");
-    expect(proofOkx.reserveType).toBe("xStocks_OKX_Custody");
+  it("lists all 9 tradable bStocks via getBscStockAllowlist", () => {
+    const allowlist = getBscStockAllowlist();
+    expect(allowlist.length).toBe(9);
+    const symbols = allowlist.map((s) => s.symbol);
+    expect(symbols).toEqual([
+      "AAPLB", "NVDAB", "TSLAB", "MSFTB", "AMZNB", "GOOGLB", "METAB", "SPYB", "QQQB"
+    ]);
   });
 });

@@ -32,14 +32,13 @@ import {
   getPeggedConfig,
   verify1to1PegProof,
   BSC_BSTOCKS_ALLOWLIST,
-  XLAYER_XSTOCKS_ALLOWLIST,
 } from "../src/bridge.js";
 
 const MAINNET_DEPLOYER = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
 const MAINNET_RELAYER = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN";
 const MAINNET_RECIPIENT = Keypair.random().publicKey();
 
-describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
+describe("ViApp Mainnet Readiness & bStocks Verification", () => {
   describe("Network Passphrase & Contract Isolation Invariant", () => {
     it("ensures SAC contract IDs on Mainnet strictly differ from Testnet to prevent replay", () => {
       const testnetAapl = getSacContractId("AAPLB", STELLAR_TESTNET_ISSUER, TESTNET_PASSPHRASE);
@@ -124,7 +123,7 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
   });
 
   describe("Mainnet SDEX & AMM Order Execution", () => {
-    it("builds mainnet SDEX order for both bStocks (AAPLB) and xStocks (NVDAx)", () => {
+    it("builds mainnet SDEX order for bStocks (AAPLB and NVDAB)", () => {
       const sourceAccount = new Account(MAINNET_DEPLOYER, "5000000000");
 
       // bStock buy order on Mainnet
@@ -140,38 +139,24 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
       expect(bStockTx.networkPassphrase).toBe(MAINNET_PASSPHRASE);
       expect(bStockTx.operations[0]!.type).toBe("manageBuyOffer");
 
-      // xStock sell order on Mainnet
-      const xStockTx = buildSdexOrderTx({
+      // bStock sell order on Mainnet
+      const bStockSellTx = buildSdexOrderTx({
         sourceAccount,
-        stockCode: "NVDAx",
+        stockCode: "NVDAB",
         counterAssetCode: "USDC",
         side: "sell",
         shares: "5.0",
         pricePerShare: "142.20",
         networkPassphrase: MAINNET_PASSPHRASE,
       });
-      expect(xStockTx.networkPassphrase).toBe(MAINNET_PASSPHRASE);
-      expect(xStockTx.operations[0]!.type).toBe("manageSellOffer");
+      expect(bStockSellTx.networkPassphrase).toBe(MAINNET_PASSPHRASE);
+      expect(bStockSellTx.operations[0]!.type).toBe("manageSellOffer");
     });
 
-    it("simulates mainnet AMM swaps across all 9 bStocks and 7 xStocks", () => {
+    it("simulates mainnet AMM swaps across all 9 bStocks", () => {
       const bStocks = ["AAPLB", "NVDAB", "TSLAB", "MSFTB", "AMZNB", "GOOGLB", "METAB", "SPYB", "QQQB"];
-      const xStocks = ["AAPLx", "MSFTx", "NVDAx", "GOOGLx", "AMZNx", "METAx", "TSLAx"];
 
       for (const ticker of bStocks) {
-        const sim = simulateTrade({
-          stockCode: ticker,
-          counterAssetCode: "USDC",
-          side: "buy",
-          amount: "100.0",
-          limitPrice: "200.0",
-          userStellarAddress: MAINNET_DEPLOYER,
-        }, MAINNET_PASSPHRASE);
-        expect(sim.ok).toBe(true);
-        expect(parseFloat(sim.expectedOutputAmount)).toBeGreaterThan(0);
-      }
-
-      for (const ticker of xStocks) {
         const sim = simulateTrade({
           stockCode: ticker,
           counterAssetCode: "USDC",
@@ -186,10 +171,10 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
     });
   });
 
-  describe("Multi-Venue Cross-Chain Fulfillment Readiness", () => {
-    it("proves 1:1 backing verification on both BNB Chain and OKX X Layer", async () => {
-      // Test bStock bridge fulfillment
-      const bnbResult = await executeBridgePurchase({
+  describe("Multi-Asset Cross-Chain Fulfillment Readiness", () => {
+    it("proves 1:1 backing verification on BSC bStocks including META", async () => {
+      // Test AAPLB bridge fulfillment
+      const aaplResult = await executeBridgePurchase({
         senderStellarAddress: MAINNET_DEPLOYER,
         stockCode: "AAPLB",
         paymentAsset: "USDC",
@@ -198,55 +183,53 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
         claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
       });
 
-      expect(bnbResult.ok).toBe(true);
-      expect(bnbResult.backingDetails.venue).toBe("bnb");
-      expect(bnbResult.backingDetails.backingSymbol).toBe("AAPLB");
-      expect(bnbResult.backingDetails.contract).toBe(BSC_BSTOCKS_ALLOWLIST.AAPLB.address);
+      expect(aaplResult.ok).toBe(true);
+      expect(aaplResult.backingDetails.venue).toBe("bnb");
+      expect(aaplResult.backingDetails.backingSymbol).toBe("AAPLB");
+      expect(aaplResult.backingDetails.contract).toBe(BSC_BSTOCKS_ALLOWLIST.AAPLB.address);
 
-      // Test xStock bridge fulfillment
-      const okxResult = await executeBridgePurchase({
+      // Test METAB bridge fulfillment (BSC backing)
+      const metaResult = await executeBridgePurchase({
         senderStellarAddress: MAINNET_DEPLOYER,
-        stockCode: "NVDAx",
+        stockCode: "METAB",
         paymentAsset: "USDC",
         usdAmount: 50.0,
         giftId: 1002n,
         claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
       });
 
-      expect(okxResult.ok).toBe(true);
-      expect(okxResult.backingDetails.venue).toBe("okx");
-      expect(okxResult.backingDetails.backingSymbol).toBe("NVDAx");
-      expect(okxResult.backingDetails.contract).toBe(XLAYER_XSTOCKS_ALLOWLIST.NVDAx.address);
+      expect(metaResult.ok).toBe(true);
+      expect(metaResult.backingDetails.venue).toBe("bnb");
+      expect(metaResult.backingDetails.backingSymbol).toBe("METAB");
+      expect(metaResult.backingDetails.contract).toBe(BSC_BSTOCKS_ALLOWLIST.METAB.address);
     });
 
-    it("proves automatic fallback routing on mainnet if bStocks venue experiences downtime", async () => {
-      const failoverResult = await executeBridgePurchase(
-        {
-          senderStellarAddress: MAINNET_DEPLOYER,
-          stockCode: "AAPLB",
-          paymentAsset: "USDC",
-          usdAmount: 50.0,
-          giftId: 1003n,
-          claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-        },
-        { forceFailPrimary: true, failoverReason: "Mainnet BSC RPC congestion; routed to X Layer" }
-      );
-
-      expect(failoverResult.ok).toBe(true);
-      expect(failoverResult.backingDetails.fallbackTriggered).toBe(true);
-      expect(failoverResult.backingDetails.venue).toBe("okx");
-      expect(failoverResult.backingDetails.contract).toBe(XLAYER_XSTOCKS_ALLOWLIST.AAPLx.address);
-      expect(failoverResult.backingDetails.fallbackReason).toBe("Mainnet BSC RPC congestion; routed to X Layer");
+    it("verifies failure handling on mainnet if bStocks venue experiences downtime", async () => {
+      await expect(
+        executeBridgePurchase(
+          {
+            senderStellarAddress: MAINNET_DEPLOYER,
+            stockCode: "AAPLB",
+            paymentAsset: "USDC",
+            usdAmount: 50.0,
+            giftId: 1003n,
+            claimKeyHash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+          },
+          { forceFailPrimary: true, failoverReason: "Mainnet BSC RPC congestion; venue unavailable" }
+        )
+      ).rejects.toThrow("Mainnet BSC RPC congestion; venue unavailable");
     });
 
-    it("verifies attestation proofs for both custody types", () => {
-      const bProof = verify1to1PegProof("1001", "AAPLB");
-      expect(bProof.verified).toBe(true);
-      expect(bProof.reserveType).toBe("bStocks_Binance_Custody");
+    it("verifies attestation proofs for institutional bStocks custody", () => {
+      const aaplProof = verify1to1PegProof("1001", "AAPLB");
+      expect(aaplProof.verified).toBe(true);
+      expect(aaplProof.reserveType).toBe("bStocks_Binance_Custody");
+      expect(aaplProof.activeVenue).toBe("bnb");
 
-      const xProof = verify1to1PegProof("1002", "NVDAx");
-      expect(xProof.verified).toBe(true);
-      expect(xProof.reserveType).toBe("xStocks_OKX_Custody");
+      const metaProof = verify1to1PegProof("1002", "METAB");
+      expect(metaProof.verified).toBe(true);
+      expect(metaProof.reserveType).toBe("bStocks_Binance_Custody");
+      expect(metaProof.activeVenue).toBe("bnb");
     });
   });
 });

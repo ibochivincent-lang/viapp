@@ -11,6 +11,10 @@ DX-FACTS.md
 DX-LOG.md
 docs/RD-BRIEF.md
 docs/AUDIT-PACKET.md
+PROJECT.md
+TEST_INFRA.md
+TEST_READY.md
+.agents/
 .claude/
 scratchpad/
 reference/

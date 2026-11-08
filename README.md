@@ -10,7 +10,7 @@
 
 Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized equity on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 
-Everything on ViApp's user surface runs natively on **Stellar**: users pay in **XLM or USDC on Stellar**, gifts are locked in a **Soroban Smart Contract**, and tokenized equities are held, gifted, and transferred directly on the Stellar network. While current Testnet deployment features 1:1 pegged assets backed by institutional reserves (bStocks & xStocks), **ViApp's active roadmap transitions directly to natively tokenized and directly liquidated stocks issued on the Stellar blockchain rather than remaining pegged**.
+Everything on ViApp's user surface runs natively on **Stellar**: users pay in **XLM or USDC on Stellar**, gifts are locked in a **Soroban Smart Contract**, and tokenized equities are held, gifted, and transferred directly on the Stellar network. While current Testnet deployment features 1:1 pegged assets backed by institutional reserves (bStocks on BNB Smart Chain), **ViApp's active roadmap transitions directly to natively tokenized and directly liquidated stocks issued on the Stellar blockchain rather than remaining pegged**.
 
 [Live Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) · [Testnet Verification Results](docs/TESTNET_RESULTS.md) · [Architecture Specification](docs/ARCHITECTURE.md) · [Technical & Product Roadmap](docs/ROADMAP.md) · [CI Pipeline](.github/workflows/ci.yml)
 
@@ -18,7 +18,7 @@ Everything on ViApp's user surface runs natively on **Stellar**: users pay in **
 
 ## End-to-End System Architecture
 
-ViApp is engineered as high-integrity tokenized securities infrastructure on the Stellar blockchain. The system coordinates Soroban smart contract custody, zero-knowledge ephemeral claim secrets, a resilient multi-venue reserve router (bStocks on BNB Chain ↔ OKX xStocks on X Layer with automatic failover), and sponsored gasless fee-bump relayers.
+ViApp is engineered as high-integrity tokenized securities infrastructure on the Stellar blockchain. The system coordinates Soroban smart contract custody, zero-knowledge ephemeral claim secrets, a streamlined reserve router (backed 1:1 by institutional reserves via bStocks on BNB Chain), and sponsored gasless fee-bump relayers.
 
 ```mermaid
 flowchart TD
@@ -35,10 +35,9 @@ flowchart TD
         G["Gasless FeeBump Relayer (GA5ZSEJY...KZVN)"]
     end
 
-    subgraph LiquidityRouter["3. Resilient Multi-Venue Reserve Router"]
+    subgraph LiquidityRouter["3. Streamlined Reserve Router"]
         H{"Reserve Router & Health Oracle"}
-        I["Primary Venue: bStocks (BNB Smart Chain 56)"]
-        J["Secondary Venue: OKX xStocks (X Layer Chain 196)"]
+        I["1:1 Institutional Reserves: bStocks (BNB Smart Chain 56)"]
         K["Direct Native Stellar Equities (Phase 2 Roadmap)"]
     end
 
@@ -55,8 +54,7 @@ flowchart TD
     B -->|"4. Invoke create_gift()"| E
     E -->|"5. Lock 1:1 Pegged Equities"| F
     B -->|"6. Trigger Bridge Backing"| H
-    H -->|"Primary Healthy"| I
-    H -.->|"Failover on BNB Outage"| J
+    H -->|"1:1 Institutional Custody"| I
     H -.->|"Native Stellar Issuance"| K
     B -->|"7. Ephemeral Link viapp.gift/g/id#secret"| L
     L -->|"8. Sign Ed25519 Claim Proof"| M
@@ -133,7 +131,7 @@ sequenceDiagram
 
 ## Live Stellar Testnet Execution & Verification Results
 
-The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and verified on the **Stellar Testnet** with live on-chain gift creation, gasless fee-bump claims, and multi-venue failover routing. Detailed command-line execution receipts, RPC outputs, and ledger sequence proofs are documented in [`docs/TESTNET_RESULTS.md`](docs/TESTNET_RESULTS.md).
+The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and verified on the **Stellar Testnet** with live on-chain gift creation, gasless fee-bump claims, and institutional reserve backing. Detailed command-line execution receipts, RPC outputs, and ledger sequence proofs are documented in [`docs/TESTNET_RESULTS.md`](docs/TESTNET_RESULTS.md).
 
 ### On-Chain Contract & Transaction Verification
 
@@ -147,16 +145,16 @@ The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and v
 | **Live Gift Creation Tx** | `ad2a84c5d2dbda6d4c43c9abe7f45916c5e9a107aa3e3bdaf9f8b05d1164ae94` | `614289` | **SUCCESS** | [View Create Gift Tx](https://stellar.expert/explorer/testnet/tx/ad2a84c5d2dbda6d4c43c9abe7f45916c5e9a107aa3e3bdaf9f8b05d1164ae94) |
 | **Live Gasless Claim Tx** | `21d69188fc46dbee51e4c1f5c138f3dd0654ef8b0af8fd8ebe6b88bc3b28eaff` | `614302` | **SUCCESS** | [View Claim Gift Tx](https://stellar.expert/explorer/testnet/tx/21d69188fc46dbee51e4c1f5c138f3dd0654ef8b0af8fd8ebe6b88bc3b28eaff) |
 
-### Automatic Multi-Venue Fallback: bStocks (BNB) ↔ xStocks (OKX X Layer)
+### 1:1 Institutional Reserve Backing: bStocks (BNB Chain)
 
-ViApp includes an automated cross-venue failover engine. If primary backing reserves on BNB Chain experience an outage or liquidity drop, the backend router **instantly and automatically falls back to OKX xStocks on X Layer (Chain 196)** to execute 1:1 token backing without interrupting the Stellar user:
+ViApp routes tokenized stock purchases directly and automatically to 1:1 institutional reserves via bStocks on BNB Chain (Chain 56) without interrupting the Stellar user:
 
 ```bash
-# Automated Failover Execution Proof (Primary 'bnb' Offline -> Failover to 'okx')
-[Bridge Failover] Primary venue 'bnb' unavailable. Seamlessly routed to 'okx' (AAPLx) on X Layer.
-  - Backing Contract: 0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a (Apple xStock)
+# Reserve Execution & Peg Attestation Proof
+[Bridge Router] Routing order to institutional custody venue 'bnb' (AAPLB).
+  - Backing Contract: 0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A (Apple bStock)
   - Stellar Peg Asset: AAPL:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
-  - Proof Attestation: attest:peg:1to1:AAPL:101:okx
+  - Proof Attestation: attest:peg:1to1:AAPL:101:bnb
   - Invariant Status: 1:1 Reserve Maintained (100% Backed)
 ```
 
@@ -189,7 +187,7 @@ For full CLI command walkthroughs, contract JSON responses, and live RPC invocat
 
 ---
 
-## Stellar Testnet Pegged Asset Contract Addresses (CA) & Multi-Venue Infrastructure
+## Stellar Testnet Pegged Asset Contract Addresses (CA) & Reserve Infrastructure
 
 Every tokenized equity and currency on ViApp operates under the **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard. Under Soroban, each classic asset `Asset(code, issuer)` is deterministically addressed by a 56-character Contract Address (CA) on the network.
 
@@ -202,7 +200,6 @@ Every tokenized equity and currency on ViApp operates under the **Soroban SEP-00
 | **Fee-Bump Relayer Wallet** | `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN` | Testnet | **ACTIVE** | [Stellar Expert Account](https://stellar.expert/explorer/testnet/account/GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN) |
 | **Native XLM SAC** | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC) |
 | **USDC SAC (Testnet)** | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA) |
-| **USDG SAC (OKX Settlement)** | `CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL) |
 
 ---
 
@@ -224,22 +221,6 @@ All 9 institutional bStocks are mapped to Soroban Stellar Asset Contracts (SACs)
 
 ---
 
-### Full Allowlist: Pegged xStocks on Stellar Testnet (7 Stocks Backed by OKX X Layer)
-
-All 7 institutional xStocks and settlement tokens are mapped to Soroban Stellar Asset Contracts (SACs) backed 1:1 by OKX X Layer reserves:
-
-| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Underlying X Layer Contract (Chain 196) | Decimals | Explorer Link |
-|:---:|---|---|---|---|:---:|:---:|
-| **AAPLx** | Apple Inc. (xStock) | `CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF` | `AAPLx:GBBD47IF...` | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF) |
-| **MSFTx** | Microsoft Corp (xStock) | `CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT` | `MSFTx:GBBD47IF...` | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT) |
-| **NVDAx** | NVIDIA Corp (xStock) | `CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X` | `NVDAx:GBBD47IF...` | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X) |
-| **GOOGLx**| Alphabet Inc. (xStock) | `CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L` | `GOOGLx:GBBD47IF...` | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L) |
-| **AMZNx** | Amazon.com Inc. (xStock) | `CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS` | `AMZNx:GBBD47IF...` | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS) |
-| **METAx** | Meta Platforms (xStock) | `CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q` | `METAx:GBBD47IF...` | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q) |
-| **TSLAx** | Tesla, Inc. (xStock) | `CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG` | `TSLAx:GBBD47IF...` | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG) |
-
----
-
 ### Direct Canonical Equities on Stellar Testnet (Phase 2 Native Roadmap)
 
 For ViApp's direct native tokenization roadmap (issuing and liquidating directly on Stellar without external bridge dependencies):
@@ -255,11 +236,6 @@ For ViApp's direct native tokenization roadmap (issuing and liquidating directly
 | **META** | Meta Platforms | `CC42VT327WQHTBVN5LSE2CD2SS3ZTFKK33ORHH3FB5E325CMKF42Q5GR` | `META:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CC42VT327WQHTBVN5LSE2CD2SS3ZTFKK33ORHH3FB5E325CMKF42Q5GR) |
 | **SPY**  | SPDR S&P 500 ETF | `CBMZOYI5IGWKTR6NFE4EOGRY4F42VGALGAHNKALGMLM4LSBQB2HLSEJI` | `SPY:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBMZOYI5IGWKTR6NFE4EOGRY4F42VGALGAHNKALGMLM4LSBQB2HLSEJI) |
 | **QQQ**  | Invesco QQQ Trust | `CBYFYMD5DHE2L4NVANVATRLGDZ43IKNWKYL36UWIDO6YTV4YZHPNSMI4` | `QQQ:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBYFYMD5DHE2L4NVANVATRLGDZ43IKNWKYL36UWIDO6YTV4YZHPNSMI4) |
-
----
-
-### Installed X Layer Tooling
-The environment has the **`meirei`** skill installed (`~/.gemini/config/skills/meirei/SKILL.md`), powering AI-native investment mandates on **X Layer (Chain 196)**, alongside the complete OKX Onchain OS suite (`okx-agentic-wallet`, `okx-ai`, `okx-defi`, `okx-dex-market`, `okx-guide`, `okx-agent-payments-protocol`).
 
 ---
 
@@ -282,7 +258,7 @@ ViApp provides end-to-end trading and liquidity pool logic in [`packages/core/sr
 
 ## Direct Native Stellar Tokenization & Liquidation Roadmap (Beyond Pegged Assets)
 
-While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture backed by custodial reserves (xStocks & bStocks), **our strategic roadmap moves beyond cross-chain pegging to directly tokenized and natively liquidated equities natively issued on the Stellar blockchain**.
+While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture backed by custodial reserves (bStocks), **our strategic roadmap moves beyond cross-chain pegging to directly tokenized and natively liquidated equities natively issued on the Stellar blockchain**.
 
 ### Key Advantages: Native Issuance & Liquidation vs. Pegged Assets
 
@@ -290,7 +266,7 @@ While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture 
 |---|---|---|
 | **Asset Issuance** | Synthetic SAC issuer on Stellar mapped to cross-chain contracts | **Direct native Stellar issuance** via **SEP-0008 (Regulated Assets)** & **SEP-0041** |
 | **Cross-Chain Dependency** | Requires bridging transactions and multi-chain custody attestations | **Zero cross-chain bridges**; 100% native Stellar ledger state and security |
-| **Liquidation Venue** | Backend bridge liquidation through external DEXs (PancakeSwap/OKX DEX) | **Direct on-chain liquidation** via Stellar SDEX orderbooks and Soroban AMMs |
+| **Liquidation Venue** | Backend bridge liquidation through external DEXs (PancakeSwap) | **Direct on-chain liquidation** via Stellar SDEX orderbooks and Soroban AMMs |
 | **Liquidation Settlement** | Multi-hop settlement to USDC/XLM | **Sub-second instantaneous settlement** directly to native Stellar USDC / XLM |
 | **Counterparty & Bridge Risk** | Dependent on cross-chain bridge uptime and external RPC relays | **Zero bridge exploit vector**; cryptographic guarantees directly under Stellar consensus |
 | **Corporate Actions (Dividends)**| Synthetic manual balance adjustments or cash credit | **Automated on-chain USDC dividend distributions** streamed to Stellar token holders |
@@ -367,7 +343,7 @@ viapp/
 │   │   ├── tests/test_vault.rs    # Rust Soroban integration tests (6 passing)
 │   │   └── scripts/               # One-click Testnet deployment scripts
 │   ├── core/                      # Protocol core library
-│   │   ├── src/bridge.ts          # Multi-venue X Layer / BSC reserve router & allowlists
+│   │   ├── src/bridge.ts          # Institutional BSC reserve router & allowlists
 │   │   ├── src/checks.ts          # Oracle circuit breakers, PIN protection & sanctions
 │   │   ├── src/sep1.ts            # SEP-0001 stellar.toml parser
 │   │   ├── src/sep10.ts           # SEP-0010 Stellar WebAuth challenge validator

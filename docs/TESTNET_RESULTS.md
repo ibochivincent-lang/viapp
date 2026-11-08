@@ -21,7 +21,7 @@ Every transaction, contract state transition, and cryptographic proof described 
 | **4. Create Gift Escrow** | `create_gift(...)` | `ad2a84c5d2dbda6d4c43c9abe7f45916c5e9a107aa3e3bdaf9f8b05d1164ae94` | [View Create Gift Tx](https://stellar.expert/explorer/testnet/tx/ad2a84c5d2dbda6d4c43c9abe7f45916c5e9a107aa3e3bdaf9f8b05d1164ae94) | **SUCCESS** (Gift #1 Minted) |
 | **5. Gasless Relayer Claim** | `claim(relayer, gift_id, ...)` | `21d69188fc46dbee51e4c1f5c138f3dd0654ef8b0af8fd8ebe6b88bc3b28eaff` | [View Claim Tx](https://stellar.expert/explorer/testnet/tx/21d69188fc46dbee51e4c1f5c138f3dd0654ef8b0af8fd8ebe6b88bc3b28eaff) | **SUCCESS** (Gasless Settlement) |
 | **6. Emergency Refund** | `refund(gift_id)` | Simulated & Verified in Test Suite | `test_refund_expired_success` | **SUCCESS** (Unpausable) |
-| **7. Multi-Venue Fallback** | `executeResilientBridgePurchase` | Dual-Venue BSC bStocks ↔ OKX xStocks | `test/bridge.test.ts` | **SUCCESS** (Seamless Failover) |
+| **7. Institutional Reserve Routing** | `executeResilientBridgePurchase` | Institutional BSC bStocks Routing | `test/bridge.test.ts` | **SUCCESS** (1:1 Reserve Maintained) |
 
 ---
 
@@ -196,14 +196,11 @@ stellar contract invoke \
 
 ---
 
-## 3. Resilient Dual-Venue Fallback Engine Demonstration
+## 3. Institutional Reserve Bridge Routing Demonstration
 
-When a primary backing venue (e.g. bStocks on BNB Smart Chain) experiences an RPC outage, API timeout, or liquidity crunch, ViApp's backend bridge **automatically fails over to the secondary backing venue (OKX xStocks on X Layer)** to fulfill backing reserves without interrupting the Stellar user experience:
+ViApp's backend bridge automatically routes tokenized stock purchases directly to institutional reserves via bStocks on BNB Smart Chain:
 
 ```typescript
-// Primary venue (bnb) is marked offline:
-setVenueHealth("bnb", false);
-
 const result = await executeResilientBridgePurchase({
   senderStellarAddress: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
   stockCode: "AAPL",
@@ -225,15 +222,13 @@ const result = await executeResilientBridgePurchase({
   "paymentAmount": "10.00",
   "stellarVaultTxHash": "7374656c6c61723a7661756c743a313031000000000000000000000000000000",
   "backingDetails": {
-    "venue": "okx",
-    "contract": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
-    "backingSymbol": "AAPLx",
-    "executionTxHash": "0x00006261636b696e673a6f6b783a4141504c783a3130313a66616c6c6261636b",
+    "venue": "bnb",
+    "contract": "0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A",
+    "backingSymbol": "AAPLB",
+    "executionTxHash": "0x00006261636b696e673a626e623a4141504c423a313031",
     "pegRatio": "1:1",
-    "reserveAttestationId": "attest:peg:1to1:AAPL:101:okx",
-    "fallbackTriggered": true,
-    "primaryAttempted": "bnb",
-    "fallbackReason": "Primary venue 'bnb' unavailable or failed execution. Seamlessly failed over to 'okx' (AAPLx) to preserve 1:1 backing invariant."
+    "reserveAttestationId": "attest:peg:1to1:AAPL:101:bnb",
+    "primaryAttempted": "bnb"
   }
 }
 ```
@@ -253,7 +248,6 @@ Under Stellar's **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard, ever
 | **Fee-Bump Relayer Wallet** | `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN` | Testnet | **ACTIVE** | [Stellar Expert Account](https://stellar.expert/explorer/testnet/account/GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN) |
 | **Native XLM SAC** | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC) |
 | **USDC SAC (Testnet)** | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA) |
-| **USDG SAC (OKX Settlement)** | `CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL) |
 
 ---
 
@@ -273,21 +267,7 @@ Under Stellar's **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard, ever
 
 ---
 
-### 4.3 Pegged xStocks on Stellar Testnet (OKX X Layer Backing)
-
-| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Underlying X Layer Contract (Chain 196) | Decimals | Explorer Link |
-|:---:|---|---|---|---|:---:|:---:|
-| **AAPLx** | Apple Inc. (xStock) | `CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF` | `AAPLx:GBBD47IF...` | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF) |
-| **MSFTx** | Microsoft Corp (xStock) | `CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT` | `MSFTx:GBBD47IF...` | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT) |
-| **NVDAx** | NVIDIA Corp (xStock) | `CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X` | `NVDAx:GBBD47IF...` | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X) |
-| **GOOGLx**| Alphabet Inc. (xStock) | `CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L` | `GOOGLx:GBBD47IF...` | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L) |
-| **AMZNx** | Amazon.com Inc. (xStock) | `CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS` | `AMZNx:GBBD47IF...` | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS) |
-| **METAx** | Meta Platforms (xStock) | `CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q` | `METAx:GBBD47IF...` | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q) |
-| **TSLAx** | Tesla, Inc. (xStock) | `CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG` | `TSLAx:GBBD47IF...` | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG) |
-
----
-
-### 4.4 Direct Canonical Equities on Stellar Testnet (Phase 2 Native Roadmap)
+### 4.3 Direct Canonical Equities on Stellar Testnet (Phase 2 Native Roadmap)
 
 | Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Decimals | Explorer Link |
 |:---:|---|---|---|:---:|:---:|

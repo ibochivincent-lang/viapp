@@ -27,7 +27,7 @@ Yes. Upon claiming, recipients have direct 1-click access to:
 ## Sending a Gift
 
 ### Which stocks can I give?
-You can give leading tokenized equities including Apple (`AAPL`), NVIDIA (`NVDA`), Tesla (`TSLA`), Microsoft (`MSFT`), Amazon (`AMZN`), Alphabet (`GOOGL`), and Meta (`META`).
+You can give leading tokenized equities including Apple (`AAPL`), NVIDIA (`NVDA`), Tesla (`TSLA`), Microsoft (`MSFT`), Amazon (`AMZN`), Alphabet (`GOOGL`), Meta (`META`), SPDR S&P 500 ETF (`SPY`), and Invesco QQQ Trust (`QQQ`).
 
 ### What payment assets are accepted?
 Senders pay natively on Stellar using **USDC** or **XLM**.
@@ -40,7 +40,7 @@ Yes. Your personal note is encrypted in your browser using AES-GCM encryption wi
 ## Technical & Custody
 
 ### How are the stocks backed?
-Currently, listed equities are backed 1:1 by institutional reserves across X Layer (OKX `xStocks`) and BNB Chain (`bStocks`), escrowed in the Soroban `viapp-gift-vault` contract (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`). ViApp's active roadmap transitions to natively issued and directly liquidated tokenized securities on Stellar.
+Currently, listed equities are backed 1:1 by institutional reserves via BNB Chain (`bStocks`), escrowed in the Soroban `viapp-gift-vault` contract (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`). ViApp's active roadmap transitions to natively issued and directly liquidated tokenized securities on Stellar.
 
 ### Can ViApp take or divert my gift?
 No. The Soroban smart contract enforces non-custodial custody. Only the holder of the ephemeral claim key signature can release a gift to their address. Neither the relayer nor the protocol admin can redirect assets to unauthorized recipients.

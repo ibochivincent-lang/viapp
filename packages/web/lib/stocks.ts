@@ -14,7 +14,7 @@ export type Stock = {
   priceUsd: number | null;
   market: { open: boolean | null; nextOpenTime: number | null };
   logoUrl: string | null;
-  venue?: "bnb" | "okx" | "stellar";
+  venue?: "bnb" | "stellar";
 };
 
 export type StocksState =
@@ -34,8 +34,6 @@ const SHARE_SYMBOL = "NVDAB";
 const NAME_SUFFIXES = [
   " (bStocks)",
   " (bStock)",
-  " (xStocks)",
-  " (xStock)",
   " Corporation",
   " Platforms Inc.",
   " Platforms",
@@ -103,10 +101,8 @@ function parseStocks(body: unknown): Stock[] | null {
     if (typeof decimals !== "number" || !Number.isInteger(decimals) || decimals < 0 || decimals > 77) continue;
     const price = typeof priceUsd === "string" ? Number(priceUsd) : typeof priceUsd === "number" ? priceUsd : Number.NaN;
     const { open, nextOpenTime } = (typeof market === "object" && market !== null ? market : {}) as Record<string, unknown>;
-    const venueVal = typeof venue === "string" && (venue === "bnb" || venue === "okx" || venue === "stellar")
+    const venueVal = typeof venue === "string" && (venue === "bnb" || venue === "stellar")
       ? venue
-      : resolvedSymbol.endsWith("x")
-      ? "okx"
       : resolvedSymbol.endsWith("B")
       ? "bnb"
       : "stellar";
@@ -219,7 +215,7 @@ export function tickerEntries(stocks: readonly Stock[]): TickerEntry[] {
   const seenSymbols = new Set<string>();
   for (const stock of stocks) {
     if (stock.priceUsd === null) continue;
-    const base = stock.symbol.replace(/[Bx]$/, "");
+    const base = stock.symbol.replace(/B$/, "");
     if (seenSymbols.has(base)) continue;
     seenSymbols.add(base);
     entries.push({ symbol: stock.symbol, name: tickerName(stock.name), price: formatPrice(stock.priceUsd) });

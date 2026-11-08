@@ -17,12 +17,11 @@ ViApp's core smart contract is `viapp-gift-vault`, deployed and verified on the 
 
 ---
 
-## Tokenized Stocks & Multi-Venue Backing
+## Tokenized Stocks & Institutional Backing
 
-Under current deployment, tokenized stocks are backed 1:1 by institutional reserves across:
+Under current deployment, tokenized stocks are backed 1:1 by institutional reserves:
 1. **BNB Chain (bStocks, Chain 56)**: Institutional reserve custody (`AAPLB`, `NVDAB`, `TSLAB`, `MSFTB`, `AMZNB`, `GOOGLB`, `METAB`, `SPYB`, `QQQB`).
-2. **X Layer (OKX xStocks, Chain 196)**: Fast programmatic execution via OKX Onchain OS (`AAPLx`, `MSFTx`, `NVDAx`, `GOOGLx`, `AMZNx`, `METAx`, `TSLAx`).
-3. **Stellar Native Roadmap**: Transitioning directly to natively tokenized stocks issued on Stellar and tradeable on the Stellar Decentralized Exchange (SDEX).
+2. **Stellar Native Roadmap**: Transitioning directly to natively tokenized stocks issued on Stellar and tradeable on the Stellar Decentralized Exchange (SDEX).
 
 The vault holds the registry of listed tokenized assets under the **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard:
 
@@ -39,18 +38,6 @@ The vault holds the registry of listed tokenized assets under the **Soroban SEP-
 | **METAB** | Meta Platforms (bStock) | `CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK` | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK) |
 | **SPYB**  | SPDR S&P 500 ETF (bStock)| `CDKMMYABR57HER37CGY4QYVXUHXOMS5BZH2WH5KJXV7N26PZXX56WLU4` | `0x7138b48df7D98D7e3cc221BfE7192D0a178182D8` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDKMMYABR57HER37CGY4QYVXUHXOMS5BZH2WH5KJXV7N26PZXX56WLU4) |
 | **QQQB**  | Invesco QQQ Trust (bStock)| `CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23` | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23) |
-
-### Pegged xStocks on Stellar Testnet (OKX X Layer Backing)
-
-| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Underlying X Layer Contract (Chain 196) | Decimals | Explorer Link |
-|:---:|---|---|---|:---:|:---:|
-| **AAPLx** | Apple Inc. (xStock) | `CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF` | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF) |
-| **MSFTx** | Microsoft Corp (xStock) | `CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT` | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT) |
-| **NVDAx** | NVIDIA Corp (xStock) | `CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X` | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X) |
-| **GOOGLx**| Alphabet Inc. (xStock) | `CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L` | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L) |
-| **AMZNx** | Amazon.com Inc. (xStock) | `CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS` | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS) |
-| **METAx** | Meta Platforms (xStock) | `CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q` | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q) |
-| **TSLAx** | Tesla, Inc. (xStock) | `CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG` | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG) |
 
 ---
 

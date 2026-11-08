@@ -6,7 +6,7 @@ This document defines the strategic and technical roadmap for **ViApp**, detaili
 
 ## Executive Summary: The Shift to Native Stellar Equities
 
-ViApp began on Stellar Testnet with a proven 1:1 synthetic pegged model: users pay with Stellar USDC/XLM, and ViApp locks 1:1 pegged Stellar Asset Contracts (SACs) in the Soroban GiftVault, backed by institutional reserves on BNB Chain (bStocks) and OKX X Layer (xStocks).
+ViApp began on Stellar Testnet with a proven 1:1 synthetic pegged model: users pay with Stellar USDC/XLM, and ViApp locks 1:1 pegged Stellar Asset Contracts (SACs) in the Soroban GiftVault, backed by institutional reserves on BNB Chain (bStocks).
 
 While this proved that gifting equities on Stellar is frictionless and gasless, **our long-term architectural goal is to eliminate cross-chain pegs and bridges entirely**. ViApp is bringing **liquidated and tokenized stocks directly into the Stellar blockchain**:
 
@@ -24,9 +24,9 @@ flowchart TD
         direction TB
         P_Sender["Sender (Stellar USDC/XLM)"] --> P_Vault["Soroban GiftVault\nCDEDHFJ7..."]
         P_Vault --> P_Peg["1:1 Pegged SAC (e.g. AAPL SAC)"]
-        P_Bridge["ViApp Backend Bridge"] -.->|Cross-chain hop| P_Reserves["bStocks (BNB) / xStocks (OKX)\nCustodial Reserves"]
+        P_Bridge["ViApp Backend Bridge"] -.->|Cross-chain hop| P_Reserves["bStocks (BNB)\nCustodial Reserves"]
         P_Friend["Recipient Claim"] --> P_Peg
-        P_Liq["Liquidation"] -.->|Multi-chain bridge| P_ExtDEX["External DEX (PancakeSwap/OKX)"]
+        P_Liq["Liquidation"] -.->|Multi-chain bridge| P_ExtDEX["External DEX (PancakeSwap)"]
     end
 
     subgraph Future["Phases 2-3: Direct Native Tokenization & On-Chain Liquidation (Target)"]
@@ -48,10 +48,10 @@ flowchart TD
 |---|---|---|
 | **Asset Issuance** | Synthetic SAC issuer on Stellar mapped to cross-chain contracts | Native Stellar Asset issued directly by regulated institutional anchors / transfer agents via **SEP-0008** |
 | **Smart Contract Interface** | Standard Soroban SEP-0041 SAC wrapper | Standard Soroban SEP-0041 SAC with native compliance callbacks (SEP-0008) |
-| **Custodial Backing** | Backed by bStocks (BNB Chain) and xStocks (OKX X Layer) | Real shares deposited in SEC-registered/FINMA-regulated trust custody mapped directly to Stellar tokens |
+| **Custodial Backing** | Backed by bStocks (BNB Chain) | Real shares deposited in SEC-registered/FINMA-regulated trust custody mapped directly to Stellar tokens |
 | **Liquidation Venue** | External cross-chain DEX swap routed via backend relayer | **Direct on-chain liquidation** via native Stellar DEX (SDEX) orderbooks and Soroban AMMs |
 | **Liquidation Speed** | 30s to 5 minutes (depending on cross-chain bridge confirmation) | **Sub-second instantaneous finality** directly on Stellar |
-| **Gas & Trading Fees** | Stellar fee + external chain gas (BNB/OKX) + bridge fee | **< $0.0001** Stellar transaction fee; zero cross-chain gas |
+| **Gas & Trading Fees** | Stellar fee + external chain gas (BNB) + bridge fee | **< $0.0001** Stellar transaction fee; zero cross-chain gas |
 | **Bridge Vulnerability** | Potential exposure to cross-chain bridge downtime or vulnerabilities | **Zero bridge exposure**; protected by Stellar network consensus |
 | **Corporate Actions (Dividends)** | Synthetic manual balance adjustments or cash credit | **Automated on-chain USDC dividend distributions** streamed to Stellar token holders |
 | **Cap Table & Regulatory Status** | Derivative / synthetic certificate | Fully compliant, legally recognized tokenized share with direct transfer agent record |
@@ -64,7 +64,7 @@ flowchart TD
 * [x] **Soroban GiftVault Deployment:** Smart contract deployed and verified on Stellar Testnet (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`).
 * [x] **Zero-Knowledge Gift Link Flow:** Client-side Ed25519 claim keys embedded in URL fragments (`#claimSecret`) for zero-custody link distribution.
 * [x] **Gasless Sponsored Claims:** ViApp relayer sponsors all claim transaction fees on Soroban, enabling recipients with zero balance to claim shares.
-* [x] **1:1 Pegged Equity Catalog:** Catalog of 9 top US stocks and ETFs (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ) pegged 1:1 against bStocks and xStocks.
+* [x] **1:1 Pegged Equity Catalog:** Catalog of 9 top US stocks and ETFs (AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ) pegged 1:1 against bStocks.
 * [x] **Full Stellar Protocol Suite:** SEP-0001 (Discovery), SEP-0010 (WebAuth), SEP-0024 (Hosted On-Ramp), SEP-0038 (RFQ Quotes), SEP-0041 (SACs).
 * [x] **Automated Testing & CI:** 508 unit tests, property-based Ed25519 signature fuzz tests, and Rust integration test suite.
 
@@ -83,7 +83,7 @@ flowchart TD
   - Establish dedicated institutional issuing accounts on Stellar for each equity ticker (`AAPL:G...`, `NVDA:G...`).
   - Deploy Soroban SEP-0041 SAC instances for every directly tokenized stock, enabling direct composability with the `viapp-gift-vault`.
 * [ ] **Deprecation of Cross-Chain Bridges:**
-  - Transition backend routing from bStocks/xStocks bridges to native Stellar minting APIs, retiring external chain dependencies.
+  - Transition backend routing from bStocks bridges to native Stellar minting APIs, retiring external chain dependencies.
 
 ---
 

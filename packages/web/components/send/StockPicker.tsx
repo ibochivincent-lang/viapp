@@ -29,25 +29,6 @@ function Check() {
   );
 }
 
-function StockBadge({ isPegged }: { isPegged: boolean }) {
-  if (isPegged) {
-    return (
-      <span className="send-badge-venue send-badge-pegged" title="Tokenized Equity on Stellar">
-        Equity
-      </span>
-    );
-  }
-  return (
-    <span className="send-badge-venue send-badge-stellar" title="Stellar Direct Asset">
-      Stellar
-    </span>
-  );
-}
-
-function checkIsPegged(stock: Stock): boolean {
-  return stock.venue === "bnb" || stock.venue === "okx" || stock.symbol.endsWith("B") || stock.symbol.endsWith("x");
-}
-
 export function StockPicker({
   state,
   selected,
@@ -59,7 +40,6 @@ export function StockPicker({
   onSelect: (address: string) => void;
   onReload: () => void;
 }) {
-  const [filterCategory, setFilterCategory] = useState<"all" | "pegged" | "direct">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   if (state.status === "loading") {
@@ -83,14 +63,9 @@ export function StockPicker({
   }
 
   const now = new Date();
-  const peggedCount = state.stocks.filter(checkIsPegged).length;
-  const directCount = state.stocks.filter((s) => !checkIsPegged(s)).length;
 
   const q = searchQuery.trim().toLowerCase();
   const visibleStocks = state.stocks.filter((stock) => {
-    const isPegged = checkIsPegged(stock);
-    if (filterCategory === "pegged" && !isPegged) return false;
-    if (filterCategory === "direct" && isPegged) return false;
     if (!q) return true;
     return (
       stock.symbol.toLowerCase().includes(q) ||
@@ -101,37 +76,6 @@ export function StockPicker({
 
   return (
     <div className="send-picker-container">
-      {/* Category Filter Tabs */}
-      <div className="send-venue-tabs" role="tablist" aria-label="Filter equities">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filterCategory === "all"}
-          className={`send-venue-tab ${filterCategory === "all" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterCategory("all")}
-        >
-          All Equities ({state.stocks.length})
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filterCategory === "pegged"}
-          className={`send-venue-tab ${filterCategory === "pegged" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterCategory("pegged")}
-        >
-          Equities ({peggedCount})
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filterCategory === "direct"}
-          className={`send-venue-tab ${filterCategory === "direct" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterCategory("direct")}
-        >
-          Direct Assets ({directCount})
-        </button>
-      </div>
-
       <div className="send-search-row">
         <input
           type="text"
@@ -150,7 +94,6 @@ export function StockPicker({
           visibleStocks.map((stock) => {
             const open = isTradable(stock);
             const picked = selected === stock.address;
-            const isPegged = checkIsPegged(stock);
             return (
               <button
                 type="button"
@@ -166,7 +109,6 @@ export function StockPicker({
                 <span className="send-tile-text">
                   <span className="send-tile-name-row">
                     <span className="send-tile-name">{displayName(stock.name)}</span>
-                    <StockBadge isPegged={isPegged} />
                   </span>
                   <span className="send-tile-symbol">{stock.symbol}</span>
                   {open ? null : <span className="send-tile-opens">{opensText(stock.market.nextOpenTime, now)}</span>}

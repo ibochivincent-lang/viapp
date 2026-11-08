@@ -3,7 +3,7 @@
  *
  * Implements SDEX orderbook trading, Soroban SAC token holding,
  * and Constant-Product AMM Liquidity Pools for tokenized equities
- * (bStocks from BNB Chain and xStocks from OKX X Layer) on the Stellar Network.
+ * (bStocks from BNB Chain) on the Stellar Network.
  */
 
 import {
@@ -19,7 +19,7 @@ import {
   TransactionBuilder,
   xdr,
 } from "@stellar/stellar-sdk";
-import { findStellarStock, getStellarStocks, STELLAR_TESTNET_ISSUER, type StellarStock } from "./stocks-stellar.js";
+import { findStellarStock, getStellarStocks, STELLAR_TESTNET_ISSUER, type StellarStock, type StockVenue } from "./stocks-stellar.js";
 
 export const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
 export const MAINNET_PASSPHRASE = "Public Global Stellar Network ; September 2015";
@@ -265,7 +265,7 @@ export function calculateAmmDeposit(
 }
 
 /**
- * Simulates a trade on Stellar across SDEX or Soroban AMM for any stock (bStock or xStock).
+ * Simulates a trade on Stellar across SDEX or Soroban AMM for any bStock.
  */
 export function simulateTrade(
   params: TradeOrderParams,
@@ -428,20 +428,20 @@ export function buildSacTransferOp(params: {
 }
 
 /**
- * Returns list of all tradable stock pairs available on Stellar (both bStocks and xStocks).
+ * Returns list of all tradable stock pairs available on Stellar.
  */
 export function getTradablePairs(networkPassphrase = TESTNET_PASSPHRASE): {
   pair: string;
   stock: StellarStock;
   counter: "USDC" | "XLM";
-  venue: "bnb" | "okx" | "stellar";
+  venue: StockVenue;
 }[] {
   const stocks = getStellarStocks(networkPassphrase);
   const pairs: {
     pair: string;
     stock: StellarStock;
     counter: "USDC" | "XLM";
-    venue: "bnb" | "okx" | "stellar";
+    venue: StockVenue;
   }[] = [];
 
   for (const stock of stocks) {

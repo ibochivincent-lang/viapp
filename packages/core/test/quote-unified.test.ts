@@ -41,13 +41,13 @@ describe("Unified Quote and Stocks routing (Stellar & BNB)", () => {
     );
 
     expect(res.status).toBe(200);
-    if (res.status === 200 && "body" in res && res.body.ok) {
+    if (res.status === 200 && "body" in res && res.body.ok && "chain" in res.body) {
       expect(res.body.chain).toBe("stellar");
       expect(res.body.expectedShares).toBeDefined();
     }
   });
 
-  it("routes handleQuote to Stellar when stock is a pegged stock symbol (NVDAB or AAPLx) without chain parameter", async () => {
+  it("routes handleQuote to Stellar when stock is a pegged stock symbol (NVDAB or METAB) without chain parameter", async () => {
     const resB = await handleQuote(
       { stellarPassphrase: TESTNET_PASSPHRASE },
       {
@@ -59,27 +59,27 @@ describe("Unified Quote and Stocks routing (Stellar & BNB)", () => {
     );
 
     expect(resB.status).toBe(200);
-    if (resB.status === 200 && "body" in resB && resB.body.ok) {
+    if (resB.status === 200 && "body" in resB && resB.body.ok && "chain" in resB.body) {
       expect(resB.body.chain).toBe("stellar");
-      expect(resB.body.stock.code).toBe("NVDAB");
+      expect(resB.body.stock.code).toBe("NVDA");
       expect(resB.body.stock.venue).toBe("bnb");
     }
 
-    const resX = await handleQuote(
+    const resMeta = await handleQuote(
       { stellarPassphrase: TESTNET_PASSPHRASE },
       {
-        stock: "AAPLx",
+        stock: "METAB",
         usdAmount: "40",
         wallet: VALID_STELLAR_WALLET,
       },
       {},
     );
 
-    expect(resX.status).toBe(200);
-    if (resX.status === 200 && "body" in resX && resX.body.ok) {
-      expect(resX.body.chain).toBe("stellar");
-      expect(resX.body.stock.code).toBe("AAPLx");
-      expect(resX.body.stock.venue).toBe("okx");
+    expect(resMeta.status).toBe(200);
+    if (resMeta.status === 200 && "body" in resMeta && resMeta.body.ok && "chain" in resMeta.body) {
+      expect(resMeta.body.chain).toBe("stellar");
+      expect(resMeta.body.stock.code).toBe("META");
+      expect(resMeta.body.stock.venue).toBe("bnb");
     }
   });
 });
