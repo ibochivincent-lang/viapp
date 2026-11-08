@@ -2,7 +2,7 @@
 
 **Project:** ViApp — Tokenized Equities & Gift Vault Protocol on Stellar  
 **Applicant / Maintainer:** `ibochivincent.lang <290086463+ibochivincent-lang@users.noreply.github.com>`  
-**GitHub Repository:** [https://github.com/ibochivincent-lang/viapp](https://github.com/ibochivincent-lang/viapp)  
+**GitHub Repository:** [https://github.com/viappToken/viapp](https://github.com/viappToken/viapp)  
 **Target Track:** SCF Tier-2 / Drips Wave Infrastructure & Product Track ($60,000)  
 **Live Testnet Contract:** [`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)  
 

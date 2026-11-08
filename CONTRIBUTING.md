@@ -29,7 +29,7 @@ The project is structured as an npm workspaces monorepo:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/ibochivincent-lang/viapp.git
+   git clone https://github.com/viappToken/viapp.git
    cd viapp
    ```
 

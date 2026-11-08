@@ -3,7 +3,7 @@ title: API
 description: The six web endpoints ViApp's website and agent use, with example answers, error codes and limits.
 ---
 
-ViApp's server answers six endpoints under `/api`. The website, the sender agent and the scripts all use these same six. Every endpoint answers JSON. Every answer carries `Content-Type: application/json; charset=utf-8`, `X-Content-Type-Options: nosniff` and `Cache-Control: no-store`, except the stock list, which a cache may keep for 30 seconds. A refusal always has the form `{"ok": false, "error": "<code>"}` with a fixed code. No text from Binance, the chain or the store ever reaches the browser. The full list of calls the website makes is in [ARCHITECTURE.md](https://github.com/ibochivincent-lang/viapp/blob/main/ARCHITECTURE.md).
+ViApp's server answers six endpoints under `/api`. The website, the sender agent and the scripts all use these same six. Every endpoint answers JSON. Every answer carries `Content-Type: application/json; charset=utf-8`, `X-Content-Type-Options: nosniff` and `Cache-Control: no-store`, except the stock list, which a cache may keep for 30 seconds. A refusal always has the form `{"ok": false, "error": "<code>"}` with a fixed code. No text from Binance, the chain or the store ever reaches the browser. The full list of calls the website makes is in [ARCHITECTURE.md](https://github.com/viappToken/viapp/blob/main/ARCHITECTURE.md).
 
 ## The interface
 

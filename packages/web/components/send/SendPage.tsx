@@ -29,6 +29,7 @@ import { advanceRun, messageOf, stopRun, walletOnRun, type Run } from "./run";
 import { ConnectRow, SendFields, sendHintFor, type AmountChoice, type Days, type StorageState, type WalletView } from "./SendForm";
 import { openWallet, walletSigner, type WalletPhase } from "./signer";
 import { isTradable } from "./StockPicker";
+import { WalletModal, type ConnectedWalletInfo } from "./WalletModal";
 import { addLink, addPending, dropDeclined, listLinks, listPending, removePending, storageChecked } from "./storage";
 import "./send.css";
 
@@ -103,9 +104,15 @@ export function SendPage() {
   // "checking" on the server and while the page hydrates, then what this browser allows.
   const storage: StorageState = useSyncExternalStore(nothingToWatch, () => (storageChecked() ? "ok" : "blocked"), () => "checking");
 
+  const [manualWallet, setManualWallet] = useState<ConnectedWalletInfo | null>(null);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+
   const listed = walletsReady ? (wallets.find((wallet) => wallet.walletClientType !== "privy") ?? null) : null;
   const external = listed !== null && listed.address.toLowerCase() === left ? null : listed;
-  const address: Address | null = preview !== null ? preview.address : external === null ? null : getAddress(external.address);
+  const resolvedManualAddress = manualWallet !== null
+    ? (manualWallet.address.startsWith("0x") && manualWallet.address.length === 42 ? getAddress(manualWallet.address) : (manualWallet.address as unknown as Address))
+    : null;
+  const address: Address | null = preview !== null ? preview.address : resolvedManualAddress ?? (external === null ? null : getAddress(external.address));
 
   // What this browser has saved for the connected wallet, read again whenever a save or a removal is done.
   const saved = useMemo(() => readSaved(address, listsTick), [address, listsTick]);
@@ -280,18 +287,16 @@ export function SendPage() {
   };
 
   const disconnect = () => {
-    if (external === null) return;
-    setLeft(external.address.toLowerCase());
-    void external.disconnect();
+    setManualWallet(null);
+    if (external !== null) {
+      setLeft(external.address.toLowerCase());
+      void external.disconnect();
+    }
   };
 
-  const wallet: WalletView = !signInAvailable
-    ? { kind: "unavailable" }
-    : address !== null
-      ? { kind: "connected", address, balances, onDisconnect: disconnect }
-      : !ready || !walletsReady
-        ? { kind: "loading" }
-        : { kind: "disconnected", onConnect: () => connectWallet({ walletList: [...WALLET_LIST], walletChainType: "ethereum-only" }) };
+  const wallet: WalletView = address !== null
+    ? { kind: "connected", address: address as string, balances, onDisconnect: disconnect }
+    : { kind: "disconnected", onConnect: () => setShowWalletModal(true) };
 
   const showBanner = address !== null && run.phase === "form" && (pendingCount > 0 || lines !== null);
 
@@ -325,6 +330,11 @@ export function SendPage() {
               their first stock.
             </span>
           </h1>
+          <div className="send-flow-stepper" aria-label="Gift flow">
+            <span className="send-flow-step send-flow-step-active">Buy stocks</span>
+            <span className="send-flow-arrow" aria-hidden="true">&gt;&gt;</span>
+            <span className="send-flow-step send-flow-step-active">Send stocks</span>
+          </div>
         </header>
 
         <div className="send-cols">
@@ -362,6 +372,18 @@ export function SendPage() {
           </aside>
         </div>
       </main>
+      <WalletModal
+        isOpen={showWalletModal}
+        onClose={() => setShowWalletModal(false)}
+        onConnected={(info) => {
+          setManualWallet(info);
+          setLeft(null);
+        }}
+        onPrivyConnect={() => {
+          connectWallet({ walletList: [...WALLET_LIST], walletChainType: "ethereum-only" });
+        }}
+        privyAvailable={signInAvailable && ready && walletsReady}
+      />
       <Grain />
     </div>
   );

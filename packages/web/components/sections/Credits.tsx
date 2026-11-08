@@ -18,7 +18,7 @@ const displayItalic = {
   },
 };
 
-const GITHUB_URL = "https://github.com/ibochivincent-lang/viapp";
+const GITHUB_URL = "https://github.com/viappToken/viapp";
 const RISE_PIXELS = 24;
 const RISE_SECONDS = 0.6;
 const RISE_STAGGER_SECONDS = 0.08;

@@ -81,13 +81,12 @@ export function ConnectRow({ wallet }: { wallet: WalletView }) {
         type="button"
         id={CONNECT_BUTTON_ID}
         className="send-primary send-primary-tall"
-        disabled={wallet.kind !== "disconnected"}
+        disabled={false}
         onClick={wallet.kind === "disconnected" ? wallet.onConnect : undefined}
       >
         Connect your wallet
       </button>
       <p className="send-hint">Freighter, passkey, or email on Stellar. You pay in USDC.</p>
-      {wallet.kind === "unavailable" ? <p className="send-pending-text">Wallet connection is not available right now. Try again later.</p> : null}
     </div>
   );
 }

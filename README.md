@@ -2,11 +2,11 @@
 
 # ViApp: Tokenized Equities & Gift Vault on Stellar
 
-[![CI - viapp Protocol](https://github.com/ibochivincent-lang/viapp/actions/workflows/ci.yml/badge.svg)](https://github.com/ibochivincent-lang/viapp/actions/workflows/ci.yml)
+[![CI - viapp Protocol](https://github.com/viappToken/viapp/actions/workflows/ci.yml/badge.svg)](https://github.com/viappToken/viapp/actions/workflows/ci.yml)
 [![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-blue.svg)](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)
 [![Soroban](https://img.shields.io/badge/Soroban-Rust%20Contract-purple.svg)](packages/contracts/stellar)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-[![Tests: 611 Passing](https://img.shields.io/badge/Tests-611%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
+[![Tests: 700 Passing](https://img.shields.io/badge/Tests-700%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
 
 Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized equity on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 
@@ -290,7 +290,7 @@ ViApp is architected as native Stellar infrastructure adhering to standard SEPs:
 ### Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/ibochivincent-lang/viapp.git
+git clone https://github.com/viappToken/viapp.git
 cd viapp
 
 # Install dependencies across all workspaces

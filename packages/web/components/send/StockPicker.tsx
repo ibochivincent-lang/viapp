@@ -76,11 +76,16 @@ export function StockPicker({
 
   return (
     <div className="send-picker-container">
+      <div className="send-picker-top">
+        <h2 className="send-picker-title">Stocks</h2>
+        <span className="send-picker-count">{state.stocks.length} available</span>
+      </div>
+
       <div className="send-search-row">
         <input
           type="text"
           className="send-search-input"
-          placeholder="Search by ticker or name (e.g. NVDA, Apple, Tesla)..."
+          placeholder="Search 9 leading stocks (e.g. NVDA, Apple, Tesla)..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search equities"
@@ -89,7 +94,7 @@ export function StockPicker({
 
       <div className="send-grid" role="group" aria-label="Stock">
         {visibleStocks.length === 0 ? (
-          <p className="send-empty-search">No matching equities found.</p>
+          <p className="send-empty-search">No matching stocks found.</p>
         ) : (
           visibleStocks.map((stock) => {
             const open = isTradable(stock);

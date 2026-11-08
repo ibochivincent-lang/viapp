@@ -2,7 +2,7 @@
 
 **Date**: 2026-11-05  
 **Project**: viapp (formerly ViApp)  
-**Repository**: [https://github.com/ibochivincent-lang/viapp](https://github.com/ibochivincent-lang/viapp)  
+**Repository**: [https://github.com/viappToken/viapp](https://github.com/viappToken/viapp)  
 **Status**: Approved Design  
 
 ---

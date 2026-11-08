@@ -3,7 +3,7 @@ title: Security
 description: What ViApp promises, what it does not defend against, and the attacks it has been run against.
 ---
 
-ViApp holds other people's stock for up to 90 days, behind a secret carried in a link. This page says what ViApp promises, what it cannot promise, the attacks that were run against it, and how the secret is kept. The full rules are in the [threat model](https://github.com/ibochivincent-lang/viapp/blob/main/docs/security/threat-model.md), where each one has a number. Those numbers appear below in parentheses, so you can look any promise up. The [system description](https://github.com/ibochivincent-lang/viapp/blob/main/docs/security/system-description.md) says what the system does, before any protection is added.
+ViApp holds other people's stock for up to 90 days, behind a secret carried in a link. This page says what ViApp promises, what it cannot promise, the attacks that were run against it, and how the secret is kept. The full rules are in the [threat model](https://github.com/viappToken/viapp/blob/main/docs/security/threat-model.md), where each one has a number. Those numbers appear below in parentheses, so you can look any promise up. The [system description](https://github.com/viappToken/viapp/blob/main/docs/security/system-description.md) says what the system does, before any protection is added.
 
 ## What ViApp promises
 
@@ -79,7 +79,7 @@ Two runs on 8 October 2026 attacked the rules above. All 60 attacks were refused
 
 The contract run acts as the real owner, the real relayer, the stock issuer's own pause and blocklist operators and the Venus vNVDAB market for funding. It does this only on the fork. Nothing is signed for mainnet and no token moves on mainnet. The server run never reads `.env`, never touches the shared store, and exits 0 only when every attack was refused.
 
-The record lists each rule from C1 to C50, the attack run against it, where it ran and what came back. [Read the attack record on GitHub](https://github.com/ibochivincent-lang/viapp/blob/main/docs/security/attacks/README.md). To run the attacks yourself, see [Getting started](/docs/getting-started#run-the-attacks).
+The record lists each rule from C1 to C50, the attack run against it, where it ran and what came back. [Read the attack record on GitHub](https://github.com/viappToken/viapp/blob/main/docs/security/attacks/README.md). To run the attacks yourself, see [Getting started](/docs/getting-started#run-the-attacks).
 
 What the record does not cover:
 
