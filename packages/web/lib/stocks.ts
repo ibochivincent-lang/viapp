@@ -14,6 +14,7 @@ export type Stock = {
   priceUsd: number | null;
   market: { open: boolean | null; nextOpenTime: number | null };
   logoUrl: string | null;
+  venue?: "bnb" | "okx" | "stellar";
 };
 
 export type StocksState =
@@ -83,7 +84,7 @@ function parseStocks(body: unknown): Stock[] | null {
   const stocks: Stock[] = [];
   for (const row of list as unknown[]) {
     if (typeof row !== "object" || row === null) continue;
-    const { address, contractId, symbol, code, name, decimals, priceUsd, market, logoUrl } = row as Record<string, unknown>;
+    const { address, contractId, symbol, code, name, decimals, priceUsd, market, logoUrl, venue } = row as Record<string, unknown>;
     const resolvedAddress = typeof address === "string" && address.length > 0 ? address : typeof contractId === "string" ? contractId : null;
     if (!resolvedAddress || !isValidAddress(resolvedAddress)) continue;
     const resolvedSymbol = typeof symbol === "string" ? symbol : typeof code === "string" ? code : null;
@@ -91,6 +92,13 @@ function parseStocks(body: unknown): Stock[] | null {
     if (typeof decimals !== "number" || !Number.isInteger(decimals) || decimals < 0 || decimals > 77) continue;
     const price = typeof priceUsd === "string" ? Number(priceUsd) : typeof priceUsd === "number" ? priceUsd : Number.NaN;
     const { open, nextOpenTime } = (typeof market === "object" && market !== null ? market : {}) as Record<string, unknown>;
+    const venueVal = typeof venue === "string" && (venue === "bnb" || venue === "okx" || venue === "stellar")
+      ? venue
+      : resolvedSymbol.endsWith("x")
+      ? "okx"
+      : resolvedSymbol.endsWith("B")
+      ? "bnb"
+      : "stellar";
     stocks.push({
       address: resolvedAddress,
       symbol: resolvedSymbol,
@@ -102,6 +110,7 @@ function parseStocks(body: unknown): Stock[] | null {
         nextOpenTime: typeof nextOpenTime === "number" && Number.isFinite(nextOpenTime) && nextOpenTime > 0 ? nextOpenTime : null,
       },
       logoUrl: safeLogo(logoUrl),
+      venue: venueVal,
     });
   }
   return stocks;

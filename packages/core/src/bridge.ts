@@ -153,14 +153,18 @@ export type PeggedStockConfig = {
   pegRatio: "1:1";
 };
 
+const STELLAR_ISSUER = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
+
 /**
  * Mapping of Stellar stocks to their behind-the-scenes backing venue and contract.
+ * Fully supports all 9 bStocks, all 7 xStocks, canonical equities, and settlement tokens.
  */
 export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
+  // --- Canonical Equities ---
   AAPL: {
     code: "AAPL",
     name: "Apple Inc.",
-    stellarAsset: "AAPL:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `AAPL:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.AAPLB.address,
     backingSymbol: "AAPLB",
@@ -169,7 +173,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   NVDA: {
     code: "NVDA",
     name: "NVIDIA Corp",
-    stellarAsset: "NVDA:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `NVDA:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.NVDAB.address,
     backingSymbol: "NVDAB",
@@ -178,7 +182,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   TSLA: {
     code: "TSLA",
     name: "Tesla, Inc.",
-    stellarAsset: "TSLA:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `TSLA:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.TSLAB.address,
     backingSymbol: "TSLAB",
@@ -187,7 +191,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   MSFT: {
     code: "MSFT",
     name: "Microsoft Corp",
-    stellarAsset: "MSFT:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `MSFT:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.MSFTB.address,
     backingSymbol: "MSFTB",
@@ -196,7 +200,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   AMZN: {
     code: "AMZN",
     name: "Amazon.com Inc.",
-    stellarAsset: "AMZN:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `AMZN:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.AMZNB.address,
     backingSymbol: "AMZNB",
@@ -205,7 +209,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   GOOGL: {
     code: "GOOGL",
     name: "Alphabet Inc. Cl A",
-    stellarAsset: "GOOGL:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `GOOGL:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.GOOGLB.address,
     backingSymbol: "GOOGLB",
@@ -214,7 +218,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   META: {
     code: "META",
     name: "Meta Platforms Inc.",
-    stellarAsset: "META:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `META:${STELLAR_ISSUER}`,
     backingVenue: "okx",
     backingContract: XLAYER_XSTOCKS_ALLOWLIST.METAx.address,
     backingSymbol: "METAx",
@@ -223,7 +227,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   SPY: {
     code: "SPY",
     name: "SPDR S&P 500 ETF",
-    stellarAsset: "SPY:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `SPY:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.SPYB.address,
     backingSymbol: "SPYB",
@@ -232,10 +236,167 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
   QQQ: {
     code: "QQQ",
     name: "Invesco QQQ Trust",
-    stellarAsset: "QQQ:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    stellarAsset: `QQQ:${STELLAR_ISSUER}`,
     backingVenue: "bnb",
     backingContract: BSC_BSTOCKS_ALLOWLIST.QQQB.address,
     backingSymbol: "QQQB",
+    pegRatio: "1:1",
+  },
+
+  // --- Full 9 bStocks Allowlist (BNB Smart Chain) ---
+  AAPLB: {
+    code: "AAPLB",
+    name: "Apple Inc. (bStock)",
+    stellarAsset: `AAPLB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.AAPLB.address,
+    backingSymbol: "AAPLB",
+    pegRatio: "1:1",
+  },
+  NVDAB: {
+    code: "NVDAB",
+    name: "NVIDIA Corp (bStock)",
+    stellarAsset: `NVDAB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.NVDAB.address,
+    backingSymbol: "NVDAB",
+    pegRatio: "1:1",
+  },
+  TSLAB: {
+    code: "TSLAB",
+    name: "Tesla, Inc. (bStock)",
+    stellarAsset: `TSLAB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.TSLAB.address,
+    backingSymbol: "TSLAB",
+    pegRatio: "1:1",
+  },
+  MSFTB: {
+    code: "MSFTB",
+    name: "Microsoft Corp (bStock)",
+    stellarAsset: `MSFTB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.MSFTB.address,
+    backingSymbol: "MSFTB",
+    pegRatio: "1:1",
+  },
+  AMZNB: {
+    code: "AMZNB",
+    name: "Amazon.com Inc. (bStock)",
+    stellarAsset: `AMZNB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.AMZNB.address,
+    backingSymbol: "AMZNB",
+    pegRatio: "1:1",
+  },
+  GOOGLB: {
+    code: "GOOGLB",
+    name: "Alphabet Inc. (bStock)",
+    stellarAsset: `GOOGLB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.GOOGLB.address,
+    backingSymbol: "GOOGLB",
+    pegRatio: "1:1",
+  },
+  METAB: {
+    code: "METAB",
+    name: "Meta Platforms (bStock)",
+    stellarAsset: `METAB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.METAB.address,
+    backingSymbol: "METAB",
+    pegRatio: "1:1",
+  },
+  SPYB: {
+    code: "SPYB",
+    name: "SPDR S&P 500 ETF (bStock)",
+    stellarAsset: `SPYB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.SPYB.address,
+    backingSymbol: "SPYB",
+    pegRatio: "1:1",
+  },
+  QQQB: {
+    code: "QQQB",
+    name: "Invesco QQQ Trust (bStock)",
+    stellarAsset: `QQQB:${STELLAR_ISSUER}`,
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.QQQB.address,
+    backingSymbol: "QQQB",
+    pegRatio: "1:1",
+  },
+
+  // --- Full 7 xStocks Allowlist (OKX X Layer Chain 196) ---
+  AAPLX: {
+    code: "AAPLx",
+    name: "Apple xStock",
+    stellarAsset: `AAPLx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.AAPLx.address,
+    backingSymbol: "AAPLx",
+    pegRatio: "1:1",
+  },
+  MSFTX: {
+    code: "MSFTx",
+    name: "Microsoft xStock",
+    stellarAsset: `MSFTx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.MSFTx.address,
+    backingSymbol: "MSFTx",
+    pegRatio: "1:1",
+  },
+  NVDAX: {
+    code: "NVDAx",
+    name: "NVIDIA xStock",
+    stellarAsset: `NVDAx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.NVDAx.address,
+    backingSymbol: "NVDAx",
+    pegRatio: "1:1",
+  },
+  GOOGLX: {
+    code: "GOOGLx",
+    name: "Alphabet xStock",
+    stellarAsset: `GOOGLx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.GOOGLx.address,
+    backingSymbol: "GOOGLx",
+    pegRatio: "1:1",
+  },
+  AMZNX: {
+    code: "AMZNx",
+    name: "Amazon xStock",
+    stellarAsset: `AMZNx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.AMZNx.address,
+    backingSymbol: "AMZNx",
+    pegRatio: "1:1",
+  },
+  METAX: {
+    code: "METAx",
+    name: "Meta xStock",
+    stellarAsset: `METAx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.METAx.address,
+    backingSymbol: "METAx",
+    pegRatio: "1:1",
+  },
+  TSLAX: {
+    code: "TSLAx",
+    name: "Tesla xStock",
+    stellarAsset: `TSLAx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.TSLAx.address,
+    backingSymbol: "TSLAx",
+    pegRatio: "1:1",
+  },
+  USDG: {
+    code: "USDG",
+    name: "Global Dollar (OKX)",
+    stellarAsset: `USDG:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.USDG.address,
+    backingSymbol: "USDG",
     pegRatio: "1:1",
   },
 };
@@ -269,21 +430,29 @@ export type BridgeFulfillmentResult = {
 
 /**
  * Validates that a stock has an active 1:1 backing configuration.
+ * Case-insensitive lookup supporting standard tickers, bStocks, and xStocks.
  */
 export function getPeggedConfig(stockCode: string): PeggedStockConfig {
-  const normalized = stockCode.toUpperCase();
-  const config = PEGGED_STOCK_MAP[normalized];
-  if (!config) {
-    throw new Error(`Unsupported stock for Stellar pegging: ${stockCode}`);
-  }
-  return config;
+  const normalized = stockCode.trim().toUpperCase();
+  const direct = PEGGED_STOCK_MAP[normalized];
+  if (direct) return direct;
+
+  // Fallback if stripped
+  const base = normalized.replace(/[BX]$/, "");
+  const fallback = PEGGED_STOCK_MAP[base];
+  if (fallback) return fallback;
+
+  throw new Error(`Unsupported stock for Stellar pegging: ${stockCode}`);
 }
 
 /**
  * Calculates share quantity from USD amount and stock price.
  */
 export function calculatePeggedShares(stockCode: string, usdAmount: number): { shares: string; sharesBaseUnits: bigint } {
-  const catalogEntry = STELLAR_STOCKS_CATALOG.find((s) => s.code === stockCode.toUpperCase());
+  const normalized = stockCode.toUpperCase();
+  const catalogEntry = STELLAR_STOCKS_CATALOG.find((s) => s.code.toUpperCase() === normalized)
+    ?? STELLAR_STOCKS_CATALOG.find((s) => s.code.toUpperCase().replace(/[BX]$/, "") === normalized.replace(/[BX]$/, ""));
+  
   const price = catalogEntry?.priceUsd ? parseFloat(catalogEntry.priceUsd) : 100.0;
   const rawShares = usdAmount / price;
   // 7 decimal places for Stellar asset precision
@@ -310,7 +479,7 @@ export async function executeBridgePurchase(params: BridgeOrderParams): Promise<
 
   // Behind-the-scenes mock / live execution ID for backing buy on BNB / OKX
   const executionHash = `0x${Buffer.from(`backing:${config.backingVenue}:${config.backingSymbol}:${params.giftId}`).toString("hex").padStart(64, "0").slice(0, 64)}`;
-  const attestationId = `attest:peg:1to1:${params.stockCode}:${params.giftId.toString()}`;
+  const attestationId = `attest:peg:1to1:${config.code}:${params.giftId.toString()}`;
   const stellarTx = Buffer.from(`stellar:vault:${params.giftId}`).toString("hex").padEnd(64, "0").slice(0, 64);
 
   return {
@@ -363,4 +532,3 @@ export function getXLayerStockAllowlist() {
 export function getBscStockAllowlist() {
   return Object.values(BSC_BSTOCKS_ALLOWLIST);
 }
-

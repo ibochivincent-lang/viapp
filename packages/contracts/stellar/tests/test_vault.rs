@@ -275,3 +275,99 @@ fn test_unpausable_refund() {
     let refunded_gift = client.get_gift(&gift_id).unwrap();
     assert_eq!(refunded_gift.state, State::Refunded);
 }
+
+#[test]
+fn test_multi_venue_tokenized_stocks_and_liabilities() {
+    let env = Env::default();
+    env.mock_all_auths();
+    env.ledger().set_timestamp(1_000_000);
+
+    let admin = Address::generate(&env);
+    let relayer = Address::generate(&env);
+    let sender = Address::generate(&env);
+    let recipient = Address::generate(&env);
+
+    // Register 2 distinct SACs representing bStock (e.g. AAPLB) and xStock (e.g. NVDAx)
+    let bstock_admin = Address::generate(&env);
+    let xstock_admin = Address::generate(&env);
+    let bstock_id = env.register_stellar_asset_contract_v2(bstock_admin.clone());
+    let xstock_id = env.register_stellar_asset_contract_v2(xstock_admin.clone());
+
+    let bstock_client = TokenClient::new(&env, &bstock_id.address());
+    let bstock_asset = StellarAssetClient::new(&env, &bstock_id.address());
+    let xstock_client = TokenClient::new(&env, &xstock_id.address());
+    let xstock_asset = StellarAssetClient::new(&env, &xstock_id.address());
+
+    // Mint balances to sender
+    bstock_asset.mint(&sender, &500_0000000);
+    xstock_asset.mint(&sender, &500_0000000);
+
+    let contract_id = env.register(GiftVault, ());
+    let client = GiftVaultClient::new(&env, &contract_id);
+
+    let mut tokens = Vec::new(&env);
+    tokens.push_back(bstock_id.address());
+    tokens.push_back(xstock_id.address());
+    client.initialize(&admin, &relayer, &tokens);
+
+    assert_eq!(client.listed_tokens().len(), 2);
+    assert_eq!(client.is_listed(&bstock_id.address()), true);
+    assert_eq!(client.is_listed(&xstock_id.address()), true);
+
+    // Create gift 1 with bStock (AAPLB)
+    let (_seed1, pubkey1, signing_key1) = generate_keypair();
+    let claim_key1 = BytesN::from_array(&env, &pubkey1);
+    let key_proof1 = compute_register_proof(&env, &contract_id, &sender, &signing_key1);
+    let expiry1 = 1_000_000 + 86400;
+    let note1 = Bytes::from_slice(&env, b"Gift of AAPLB stock");
+
+    let gift_id1 = client.create_gift(
+        &sender,
+        &bstock_id.address(),
+        &100_0000000,
+        &claim_key1,
+        &expiry1,
+        &note1,
+        &key_proof1,
+    );
+
+    // Create gift 2 with xStock (NVDAx)
+    let seed2: [u8; 32] = [88u8; 32];
+    let signing_key2 = SigningKey::from_bytes(&seed2);
+    let pubkey2 = signing_key2.verifying_key().to_bytes();
+    let claim_key2 = BytesN::from_array(&env, &pubkey2);
+    let key_proof2 = compute_register_proof(&env, &contract_id, &sender, &signing_key2);
+    let expiry2 = 1_000_000 + 86400;
+    let note2 = Bytes::from_slice(&env, b"Gift of NVDAx stock");
+
+    let gift_id2 = client.create_gift(
+        &sender,
+        &xstock_id.address(),
+        &200_0000000,
+        &claim_key2,
+        &expiry2,
+        &note2,
+        &key_proof2,
+    );
+
+    // Check independent liabilities per stock token
+    assert_eq!(client.liabilities(&bstock_id.address()), 100_0000000);
+    assert_eq!(client.liabilities(&xstock_id.address()), 200_0000000);
+
+    // Claim gift 1 via relayer
+    let claim_sig1 = compute_claim_sig(&env, &contract_id, gift_id1, &recipient, &signing_key1);
+    client.claim(&gift_id1, &recipient, &claim_sig1);
+
+    // Recipient received bStock, liabilities updated
+    assert_eq!(bstock_client.balance(&recipient), 100_0000000);
+    assert_eq!(client.liabilities(&bstock_id.address()), 0);
+    // xStock liabilities untouched
+    assert_eq!(client.liabilities(&xstock_id.address()), 200_0000000);
+
+    // Fast forward and refund gift 2
+    env.ledger().set_timestamp(expiry2 + 100);
+    client.refund(&gift_id2);
+
+    assert_eq!(xstock_client.balance(&sender), 500_0000000);
+    assert_eq!(client.liabilities(&xstock_id.address()), 0);
+}
