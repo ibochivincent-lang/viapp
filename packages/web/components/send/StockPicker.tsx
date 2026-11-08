@@ -29,12 +29,23 @@ function Check() {
   );
 }
 
-function VenueBadge({ venue }: { venue?: "bnb" | "okx" | "stellar" }) {
+function VenueBadge({ venue, symbol }: { venue?: "bnb" | "okx" | "stellar"; symbol?: string }) {
+  const norm = (symbol ?? "").replace(/[BX]$/i, "").toUpperCase();
+  const isDual = ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "GOOGL", "META"].includes(norm);
+
   if (venue === "okx") {
-    return <span className="send-badge-venue send-badge-okx">OKX L2</span>;
+    return (
+      <span className="send-badge-venue send-badge-okx" title={isDual ? "OKX X Layer · Automatically fails over to BNB bStocks" : "OKX X Layer"}>
+        OKX L2{isDual ? " · Dual" : ""}
+      </span>
+    );
   }
   if (venue === "bnb") {
-    return <span className="send-badge-venue send-badge-bnb">bStock</span>;
+    return (
+      <span className="send-badge-venue send-badge-bnb" title={isDual ? "BNB bStock · Automatically fails over to OKX xStocks" : "BNB bStock"}>
+        bStock{isDual ? " · Dual" : ""}
+      </span>
+    );
   }
   return <span className="send-badge-venue send-badge-stellar">Stellar</span>;
 }
@@ -144,7 +155,7 @@ export function StockPicker({
               <span className="send-tile-text">
                 <span className="send-tile-name-row">
                   <span className="send-tile-name">{displayName(stock.name)}</span>
-                  <VenueBadge venue={stock.venue} />
+                  <VenueBadge venue={stock.venue} symbol={stock.symbol} />
                 </span>
                 <span className="send-tile-symbol">{stock.symbol}</span>
                 {open ? null : <span className="send-tile-opens">{opensText(stock.market.nextOpenTime, now)}</span>}
