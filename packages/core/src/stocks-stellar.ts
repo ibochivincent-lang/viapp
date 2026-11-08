@@ -440,6 +440,28 @@ export function getStellarStocks(networkPassphrase: string, venue?: StockVenue):
 }
 
 /**
+ * Returns all assets in the catalog (including settlement currencies: USDC, XLM, USDG)
+ * complete with SAC contract IDs for the given passphrase.
+ */
+export function getAllStellarCatalogAssets(networkPassphrase: string): StellarStock[] {
+  return STELLAR_STOCKS_CATALOG.map((item) => {
+    const asset = item.code === "XLM" ? Asset.native() : new Asset(item.code, item.issuer);
+    let contractId = "";
+    try {
+      contractId = asset.contractId(networkPassphrase);
+    } catch {
+      contractId = item.code;
+    }
+    return {
+      ...item,
+      address: contractId,
+      symbol: item.code,
+      contractId,
+    };
+  });
+}
+
+/**
  * Returns all 9 BSC bStocks on Stellar.
  */
 export function getBscStocks(networkPassphrase: string): StellarStock[] {
@@ -454,21 +476,52 @@ export function getXLayerStocks(networkPassphrase: string): StellarStock[] {
 }
 
 /**
- * Looks up a single Stellar stock by its symbol/code.
- * Matches exact code first, then normalized symbol.
+ * Looks up a single Stellar stock or settlement asset by its symbol/code/address.
+ * Normalizes case, prefixes (b/x), separators (-, _, ., /), and checks both equities and currencies.
  */
 export function findStellarStock(code: string, networkPassphrase: string): StellarStock | undefined {
-  const normalized = code.trim().toUpperCase();
-  const stocks = getStellarStocks(networkPassphrase);
-  
-  // 1. Try case-insensitive exact code or symbol match
-  const exact = stocks.find((s) => s.code.toUpperCase() === normalized || s.symbol.toUpperCase() === normalized);
-  if (exact) return exact;
+  if (!code || typeof code !== "string") return undefined;
+  const raw = code.trim();
+  if (raw.length === 0) return undefined;
 
-  // 2. Try stripped suffix (e.g. "NVDAX" -> "NVDA" or "NVDA" -> "NVDAX" or "NVDAB")
-  const base = normalized.replace(/[BX]$/, "");
-  return stocks.find((s) => {
-    const sBase = s.code.toUpperCase().replace(/[BX]$/, "");
-    return sBase === base;
-  });
+  // Clean trailing pair info (e.g. "NVDA/USDC" -> "NVDA", "AAPL-XLM" -> "AAPL")
+  const strippedPair = raw.replace(/\/(USDC|XLM|USDG)$/i, "").replace(/-(USDC|XLM|USDG)$/i, "");
+  const normalized = strippedPair.toUpperCase();
+  const allAssets = getAllStellarCatalogAssets(networkPassphrase);
+
+  // 1. Direct case-insensitive match on code, symbol, address, or contractId
+  const direct = allAssets.find(
+    (s) =>
+      s.code.toUpperCase() === normalized ||
+      s.symbol.toUpperCase() === normalized ||
+      s.contractId.toUpperCase() === normalized ||
+      s.address.toUpperCase() === normalized,
+  );
+  if (direct) return direct;
+
+  // 2. Normalized alphanumeric (removes hyphens, underscores, dots, e.g. "AAPL-B" -> "AAPLB", "NVDA.X" -> "NVDAX")
+  const cleanAlnum = normalized.replace(/[^A-Z0-9]/g, "");
+  const alnumMatch = allAssets.find((s) => s.code.toUpperCase().replace(/[^A-Z0-9]/g, "") === cleanAlnum);
+  if (alnumMatch) return alnumMatch;
+
+  // 3. Handle prefix notations: "bNVDA" -> "NVDAB", "xAAPL" -> "AAPLx"
+  if (/^[BX][A-Z0-9]+$/i.test(cleanAlnum)) {
+    const prefix = cleanAlnum[0];
+    const rest = cleanAlnum.slice(1);
+    const suffixNotation = `${rest}${prefix}`;
+    const prefixMatch = allAssets.find((s) => s.code.toUpperCase() === suffixNotation);
+    if (prefixMatch) return prefixMatch;
+  }
+
+  // 4. Try stripped suffix base (e.g. "NVDAX" -> "NVDA" or "NVDA" -> "NVDAX" or "NVDAB")
+  const base = cleanAlnum.replace(/[BX]$/, "");
+  if (base.length > 0) {
+    const baseMatch = allAssets.find((s) => {
+      const sBase = s.code.toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/[BX]$/, "");
+      return sBase === base;
+    });
+    if (baseMatch) return baseMatch;
+  }
+
+  return undefined;
 }

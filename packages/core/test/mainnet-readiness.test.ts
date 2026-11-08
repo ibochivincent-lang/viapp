@@ -138,7 +138,7 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
         networkPassphrase: MAINNET_PASSPHRASE,
       });
       expect(bStockTx.networkPassphrase).toBe(MAINNET_PASSPHRASE);
-      expect(bStockTx.operations[0].type).toBe("manageBuyOffer");
+      expect(bStockTx.operations[0]!.type).toBe("manageBuyOffer");
 
       // xStock sell order on Mainnet
       const xStockTx = buildSdexOrderTx({
@@ -151,7 +151,7 @@ describe("ViApp Mainnet Readiness & Multi-Venue Verification", () => {
         networkPassphrase: MAINNET_PASSPHRASE,
       });
       expect(xStockTx.networkPassphrase).toBe(MAINNET_PASSPHRASE);
-      expect(xStockTx.operations[0].type).toBe("manageSellOffer");
+      expect(xStockTx.operations[0]!.type).toBe("manageSellOffer");
     });
 
     it("simulates mainnet AMM swaps across all 9 bStocks and 7 xStocks", () => {

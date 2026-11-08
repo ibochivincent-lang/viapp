@@ -27,7 +27,7 @@ Everything on ViApp's user surface runs natively on **Stellar**: users pay in **
 | **D5** | **Docs & Grant Framing** | Comprehensive architecture specification (`docs/ARCHITECTURE.md`), native tokenization roadmap (`docs/ROADMAP.md`), security threat model with 60 attack refusal proofs (`docs/security/`), itemized 3-month milestone budget buckets ($60k), audit mitigation fix-log, and live judge verification guide. | **10/10** |
 | **D6** | **Live Deployment** | Smart contract deployed, initialized, and verified on Stellar Testnet (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`); verified deploy, init, gift creation, and gift claim transaction receipts verifiable on Stellar Expert. | **10/10** |
 | **D7** | **Community & Hygiene** | Apache 2.0 open-source license; single verified author commit history (`ibochivincent.lang`); zero legacy artifacts; responsive dark-mode UI with GSAP smooth animations; comprehensive README with badges, sequence diagrams, and video walkthrough references. | **10/10** |
-| **D8** | **Test & CI Rigor** | **531 unit tests** in `@viapp/core` across 40 test files, **6 integration tests** in Soroban Rust test harness, property-based Ed25519 fuzz tests, full mainnet readiness tests, and 100% green automated CI on GitHub Actions. | **10/10** |
+| **D8** | **Test & CI Rigor** | **539 unit tests** in `@viapp/core` across 40 test files, **6 integration tests** in Soroban Rust test harness, property-based Ed25519 fuzz tests, full mainnet readiness tests, and 100% green automated CI on GitHub Actions. | **10/10** |
 
 ---
 
@@ -234,7 +234,7 @@ cd viapp
 # Install dependencies across all workspaces
 npm install
 
-# Run all TypeScript test suites (531 core tests across 40 test files)
+# Run all TypeScript test suites (539 core tests across 40 test files)
 npm test
 
 # Run Soroban smart contract tests (Rust, 6 integration tests)
@@ -289,7 +289,7 @@ viapp/
 │   │   ├── src/sep38.ts           # SEP-0038 Anchor RFQ Quotes API client
 │   │   ├── src/stocks-stellar.ts  # Tokenized equities catalog & pricing logic
 │   │   ├── src/trade-stellar.ts   # SDEX orderbook trade logic & Soroban AMM pools
-│   │   └── test/                  # 531 TypeScript test cases & property-based fuzz tests
+│   │   └── test/                  # 539 TypeScript test cases & property-based fuzz tests
 │   ├── web/                       # Next.js 15 Web Application with Stellar UI
 │   └── agent/                     # ViApp CLI Agent
 ├── vercel.json                    # 1-Click Front-End production deployment configuration

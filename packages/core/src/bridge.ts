@@ -336,7 +336,25 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     backingSymbol: "AAPLx",
     pegRatio: "1:1",
   },
+  AAPLx: {
+    code: "AAPLx",
+    name: "Apple xStock",
+    stellarAsset: `AAPLx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.AAPLx.address,
+    backingSymbol: "AAPLx",
+    pegRatio: "1:1",
+  },
   MSFTX: {
+    code: "MSFTx",
+    name: "Microsoft xStock",
+    stellarAsset: `MSFTx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.MSFTx.address,
+    backingSymbol: "MSFTx",
+    pegRatio: "1:1",
+  },
+  MSFTx: {
     code: "MSFTx",
     name: "Microsoft xStock",
     stellarAsset: `MSFTx:${STELLAR_ISSUER}`,
@@ -354,7 +372,25 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     backingSymbol: "NVDAx",
     pegRatio: "1:1",
   },
+  NVDAx: {
+    code: "NVDAx",
+    name: "NVIDIA xStock",
+    stellarAsset: `NVDAx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.NVDAx.address,
+    backingSymbol: "NVDAx",
+    pegRatio: "1:1",
+  },
   GOOGLX: {
+    code: "GOOGLx",
+    name: "Alphabet xStock",
+    stellarAsset: `GOOGLx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.GOOGLx.address,
+    backingSymbol: "GOOGLx",
+    pegRatio: "1:1",
+  },
+  GOOGLx: {
     code: "GOOGLx",
     name: "Alphabet xStock",
     stellarAsset: `GOOGLx:${STELLAR_ISSUER}`,
@@ -372,6 +408,15 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     backingSymbol: "AMZNx",
     pegRatio: "1:1",
   },
+  AMZNx: {
+    code: "AMZNx",
+    name: "Amazon xStock",
+    stellarAsset: `AMZNx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.AMZNx.address,
+    backingSymbol: "AMZNx",
+    pegRatio: "1:1",
+  },
   METAX: {
     code: "METAx",
     name: "Meta xStock",
@@ -381,7 +426,25 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     backingSymbol: "METAx",
     pegRatio: "1:1",
   },
+  METAx: {
+    code: "METAx",
+    name: "Meta xStock",
+    stellarAsset: `METAx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.METAx.address,
+    backingSymbol: "METAx",
+    pegRatio: "1:1",
+  },
   TSLAX: {
+    code: "TSLAx",
+    name: "Tesla xStock",
+    stellarAsset: `TSLAx:${STELLAR_ISSUER}`,
+    backingVenue: "okx",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.TSLAx.address,
+    backingSymbol: "TSLAx",
+    pegRatio: "1:1",
+  },
+  TSLAx: {
     code: "TSLAx",
     name: "Tesla xStock",
     stellarAsset: `TSLAx:${STELLAR_ISSUER}`,
@@ -433,14 +496,39 @@ export type BridgeFulfillmentResult = {
  * Case-insensitive lookup supporting standard tickers, bStocks, and xStocks.
  */
 export function getPeggedConfig(stockCode: string): PeggedStockConfig {
-  const normalized = stockCode.trim().toUpperCase();
-  const direct = PEGGED_STOCK_MAP[normalized];
-  if (direct) return direct;
+  if (!stockCode || typeof stockCode !== "string") {
+    throw new Error(`Unsupported stock for Stellar pegging: ${stockCode}`);
+  }
+  const raw = stockCode.trim();
 
-  // Fallback if stripped
-  const base = normalized.replace(/[BX]$/, "");
-  const fallback = PEGGED_STOCK_MAP[base];
-  if (fallback) return fallback;
+  // 1. Direct match by exact key or uppercase key
+  if (PEGGED_STOCK_MAP[raw]) return PEGGED_STOCK_MAP[raw]!;
+  const normalized = raw.toUpperCase();
+  if (PEGGED_STOCK_MAP[normalized]) return PEGGED_STOCK_MAP[normalized]!;
+
+  // 2. Direct lookup by contract address (case-insensitive)
+  const byAddress = Object.values(PEGGED_STOCK_MAP).find(
+    (cfg) => cfg.backingContract.toLowerCase() === raw.toLowerCase(),
+  );
+  if (byAddress) return byAddress;
+
+  // 3. Clean separators (e.g. "AAPL-B", "NVDA.X", "TSLA/USDC")
+  const cleanAlnum = normalized.replace(/\/(USDC|XLM|USDG)$/i, "").replace(/[^A-Z0-9]/g, "");
+  if (PEGGED_STOCK_MAP[cleanAlnum]) return PEGGED_STOCK_MAP[cleanAlnum]!;
+
+  // 4. Handle prefix notation (e.g. "bNVDA" -> "NVDAB", "xAAPL" -> "AAPLX")
+  if (/^[BX][A-Z0-9]+$/i.test(cleanAlnum)) {
+    const prefix = cleanAlnum[0];
+    const rest = cleanAlnum.slice(1);
+    const suffixNotation = `${rest}${prefix}`;
+    if (PEGGED_STOCK_MAP[suffixNotation]) return PEGGED_STOCK_MAP[suffixNotation]!;
+  }
+
+  // 5. Fallback to stripped suffix base
+  const base = cleanAlnum.replace(/[BX]$/, "");
+  if (base.length > 0 && PEGGED_STOCK_MAP[base]) {
+    return PEGGED_STOCK_MAP[base]!;
+  }
 
   throw new Error(`Unsupported stock for Stellar pegging: ${stockCode}`);
 }

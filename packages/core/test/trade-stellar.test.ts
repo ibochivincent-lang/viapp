@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Account, Keypair } from "@stellar/stellar-sdk";
+import { Account, Asset, Keypair } from "@stellar/stellar-sdk";
 import {
   buildChangeTrustOp,
   buildSacTransferOp,
@@ -16,7 +16,16 @@ import {
   TESTNET_PASSPHRASE,
   toBaseUnits,
 } from "../src/trade-stellar.js";
-import { STELLAR_TESTNET_ISSUER } from "../src/stocks-stellar.js";
+import {
+  findStellarStock,
+  getAllStellarCatalogAssets,
+  STELLAR_TESTNET_ISSUER,
+} from "../src/stocks-stellar.js";
+import {
+  getPeggedConfig,
+  PEGGED_STOCK_MAP,
+  XLAYER_XSTOCKS_ALLOWLIST,
+} from "../src/bridge.js";
 
 const DUMMY_PUBLIC_KEY = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN";
 const DUMMY_RECIPIENT = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
@@ -79,7 +88,7 @@ describe("ViApp Stellar Trading & Liquidity Pool Engine", () => {
 
       expect(tx).toBeDefined();
       expect(tx.operations.length).toBe(1);
-      expect(tx.operations[0].type).toBe("manageBuyOffer");
+      expect(tx.operations[0]!.type).toBe("manageBuyOffer");
     });
 
     it("builds un-simulated Stellar transaction for SDEX sell order", () => {
@@ -95,11 +104,10 @@ describe("ViApp Stellar Trading & Liquidity Pool Engine", () => {
 
       expect(tx).toBeDefined();
       expect(tx.operations.length).toBe(1);
-      expect(tx.operations[0].type).toBe("manageSellOffer");
+      expect(tx.operations[0]!.type).toBe("manageSellOffer");
     });
 
     it("builds path payment operation for instant SDEX execution", () => {
-      const { Asset } = require("@stellar/stellar-sdk");
       const op = buildSdexPathPaymentStrictReceiveOp({
         sourceAsset: Asset.native(),
         maxSourceAmount: "500.0",
@@ -211,6 +219,57 @@ describe("ViApp Stellar Trading & Liquidity Pool Engine", () => {
       expect(result.sacContractId).toMatch(/^[A-Z0-9]{56}$/);
     });
 
+    it("rejects simulation with zero or negative trade amount", () => {
+      expect(() => {
+        simulateTrade({
+          stockCode: "AAPLB",
+          counterAssetCode: "USDC",
+          side: "buy",
+          amount: "0",
+          limitPrice: "228.50",
+          userStellarAddress: DUMMY_PUBLIC_KEY,
+        });
+      }).toThrow(/greater than zero/);
+
+      expect(() => {
+        simulateTrade({
+          stockCode: "NVDAx",
+          counterAssetCode: "USDC",
+          side: "sell",
+          amount: "-5.0",
+          limitPrice: "142.20",
+          userStellarAddress: DUMMY_PUBLIC_KEY,
+        });
+      }).toThrow(/greater than zero/);
+    });
+
+    it("rejects simulation when trade amount is too small to yield output", () => {
+      expect(() => {
+        simulateTrade({
+          stockCode: "AAPLB",
+          counterAssetCode: "USDC",
+          side: "buy",
+          amount: "0.0000001", // 1 stroop of USDC
+          limitPrice: "228.50",
+          userStellarAddress: DUMMY_PUBLIC_KEY,
+        });
+      }).toThrow(/too small/);
+    });
+
+    it("clamps extreme slippage BPS gracefully", () => {
+      const result = simulateTrade({
+        stockCode: "AAPLB",
+        counterAssetCode: "USDC",
+        side: "buy",
+        amount: "50.0",
+        limitPrice: "228.50",
+        userStellarAddress: DUMMY_PUBLIC_KEY,
+        slippageBps: 20000, // > 10000 (100%)
+      });
+      expect(result.ok).toBe(true);
+      expect(result.minOutputAmount).toBe("0.0");
+    });
+
     it("rejects simulation of unlisted stock", () => {
       expect(() => {
         simulateTrade({
@@ -222,6 +281,68 @@ describe("ViApp Stellar Trading & Liquidity Pool Engine", () => {
           userStellarAddress: DUMMY_PUBLIC_KEY,
         });
       }).toThrow(/not listed on Stellar/);
+    });
+  });
+
+  describe("Edge-Case Robustness: AMM Math & Boundary Conditions", () => {
+    it("handles zero reserves and non-positive inputs safely in calculateAmmSwapOutput", () => {
+      expect(calculateAmmSwapOutput(0n, 1000n, 10n)).toEqual({ amountOut: 0n, feeAmount: 0n });
+      expect(calculateAmmSwapOutput(1000n, 0n, 10n)).toEqual({ amountOut: 0n, feeAmount: 0n });
+      expect(calculateAmmSwapOutput(1000n, 1000n, 0n)).toEqual({ amountOut: 0n, feeAmount: 0n });
+    });
+
+    it("handles AMM deposit with 0 reserve stock without BigInt divide-by-zero", () => {
+      const emptyStockPool = {
+        reserveStock: 0n,
+        reserveCounter: 1000000000n,
+        feeBps: 30,
+        totalLpSupply: 0n,
+      };
+      const res = calculateAmmDeposit(emptyStockPool, 10000000n);
+      expect(res.amountCounter).toBe(10000000n);
+      expect(res.lpTokensMinted).toBe(10000000n);
+    });
+
+    it("handles price impact when amounts or reserves are zero", () => {
+      expect(calculatePriceImpact(0n, 1000n, 10n, 10n)).toBe(0);
+      expect(calculatePriceImpact(1000n, 0n, 10n, 10n)).toBe(0);
+      expect(calculatePriceImpact(1000n, 1000n, 0n, 10n)).toBe(0);
+      expect(calculatePriceImpact(1000n, 1000n, 10n, 0n)).toBe(0);
+    });
+  });
+
+  describe("Ticker Resolution & Cross-Chain Pegging Lookups", () => {
+    it("resolves prefix notations, mixed case, and punctuation via findStellarStock", () => {
+      // Mixed casing
+      expect(findStellarStock("nvdaX", TESTNET_PASSPHRASE)?.code).toBe("NVDAx");
+      expect(findStellarStock("aaplB", TESTNET_PASSPHRASE)?.code).toBe("AAPLB");
+      // Prefix notation
+      expect(findStellarStock("bNVDA", TESTNET_PASSPHRASE)?.code).toBe("NVDAB");
+      expect(findStellarStock("xAAPL", TESTNET_PASSPHRASE)?.code).toBe("AAPLx");
+      // Punctuation / separators
+      expect(findStellarStock("AAPL-B", TESTNET_PASSPHRASE)?.code).toBe("AAPLB");
+      expect(findStellarStock("NVDA_X", TESTNET_PASSPHRASE)?.code).toBe("NVDAx");
+      expect(findStellarStock("TSLA/USDC", TESTNET_PASSPHRASE)?.code).toBe("TSLA");
+      // Settlement currencies
+      expect(findStellarStock("USDG", TESTNET_PASSPHRASE)?.code).toBe("USDG");
+      expect(findStellarStock("USDC", TESTNET_PASSPHRASE)?.code).toBe("USDC");
+    });
+
+    it("resolves direct case-sensitive and contract address lookups in PEGGED_STOCK_MAP & getPeggedConfig", () => {
+      // Direct access by stock.code with lowercase 'x'
+      expect(PEGGED_STOCK_MAP["AAPLx"]).toBeDefined();
+      expect(PEGGED_STOCK_MAP["AAPLx"]?.backingVenue).toBe("okx");
+
+      // getPeggedConfig by contract address
+      const xlayerAaplAddr = XLAYER_XSTOCKS_ALLOWLIST.AAPLx.address;
+      const configByAddr = getPeggedConfig(xlayerAaplAddr);
+      expect(configByAddr.code).toBe("AAPLx");
+      expect(configByAddr.backingVenue).toBe("okx");
+
+      // getPeggedConfig with prefix
+      const prefixCfg = getPeggedConfig("bNVDA");
+      expect(prefixCfg.code).toBe("NVDAB");
+      expect(prefixCfg.backingVenue).toBe("bnb");
     });
   });
 

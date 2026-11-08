@@ -179,10 +179,14 @@ export function calculateAmmSwapOutput(
     return { amountOut: 0n, feeAmount: 0n };
   }
 
-  const feeAmount = (amountIn * BigInt(feeBps)) / 10000n;
+  const boundedFeeBps = Math.max(0, Math.min(10000, feeBps));
+  const feeAmount = (amountIn * BigInt(boundedFeeBps)) / 10000n;
   const amountInWithFee = amountIn - feeAmount;
   const numerator = amountInWithFee * reserveOut;
   const denominator = reserveIn + amountInWithFee;
+  if (denominator <= 0n) {
+    return { amountOut: 0n, feeAmount };
+  }
   const amountOut = numerator / denominator;
 
   return { amountOut, feeAmount };
@@ -201,10 +205,14 @@ export function calculateAmmSwapInput(
     throw new Error("Invalid reserves or output amount exceeds pool reserve");
   }
 
+  const boundedFeeBps = Math.max(0, Math.min(9999, feeBps));
   const numerator = reserveIn * amountOut * 10000n;
-  const denominator = (reserveOut - amountOut) * BigInt(10000 - feeBps);
+  const denominator = (reserveOut - amountOut) * BigInt(10000 - boundedFeeBps);
+  if (denominator <= 0n) {
+    throw new Error("Invalid fee or pool denominator");
+  }
   const amountIn = (numerator + denominator - 1n) / denominator; // ceiling division
-  const feeAmount = (amountIn * BigInt(feeBps)) / 10000n;
+  const feeAmount = (amountIn * BigInt(boundedFeeBps)) / 10000n;
 
   return { amountIn, feeAmount };
 }
@@ -224,8 +232,13 @@ export function calculatePriceImpact(
   // Mid-market price = reserveOut / reserveIn
   // Effective price = amountOut / amountIn
   const midPrice = Number(reserveOut) / Number(reserveIn);
+  if (midPrice <= 0 || !Number.isFinite(midPrice)) return 0;
+
   const execPrice = Number(amountOut) / Number(amountIn);
+  if (execPrice <= 0 || !Number.isFinite(execPrice)) return 0;
+
   const impact = ((midPrice - execPrice) / midPrice) * 100;
+  if (!Number.isFinite(impact)) return 0;
   return Math.max(0, Math.min(100, impact));
 }
 
@@ -236,8 +249,11 @@ export function calculateAmmDeposit(
   pool: AmmPoolState,
   amountStock: bigint,
 ): { amountCounter: bigint; lpTokensMinted: bigint } {
-  if (pool.totalLpSupply === 0n) {
-    // Initial deposit
+  if (amountStock <= 0n) {
+    return { amountCounter: 0n, lpTokensMinted: 0n };
+  }
+  if (pool.totalLpSupply === 0n || pool.reserveStock === 0n) {
+    // Initial deposit or unseeded stock reserve
     const amountCounter = amountStock; // 1:1 initial price ratio if empty
     const lpTokensMinted = amountStock;
     return { amountCounter, lpTokensMinted };
@@ -261,8 +277,13 @@ export function simulateTrade(
     throw new Error(`Stock not listed on Stellar: ${params.stockCode}`);
   }
 
+  const inputUnits = toBaseUnits(params.amount);
+  if (inputUnits <= 0n) {
+    throw new Error("Trade amount must be greater than zero");
+  }
+
   const priceNum = parseFloat(stock.priceUsd);
-  const slippageBps = params.slippageBps ?? 50;
+  const slippageBps = Math.max(0, Math.min(10000, params.slippageBps ?? 50));
   const venueType = params.venueType ?? "amm";
 
   // Default simulated pool depth: 5,000 shares & proportional counter asset
@@ -277,7 +298,6 @@ export function simulateTrade(
 
   if (params.side === "buy") {
     // Buyer provides counter asset (e.g. 50 USDC) to acquire stock shares
-    const inputUnits = toBaseUnits(params.amount);
     const { amountOut, feeAmount } = calculateAmmSwapOutput(
       pool.reserveCounter,
       pool.reserveStock,
@@ -285,9 +305,15 @@ export function simulateTrade(
       pool.feeBps,
     );
 
+    if (amountOut <= 0n) {
+      throw new Error("Trade input amount is too small to yield any output shares");
+    }
+
     const minOutputUnits = (amountOut * BigInt(10000 - slippageBps)) / 10000n;
     const impact = calculatePriceImpact(pool.reserveCounter, pool.reserveStock, inputUnits, amountOut);
-    const execPrice = Number(fromBaseUnits(inputUnits)) / Number(fromBaseUnits(amountOut));
+    const inDec = Number(fromBaseUnits(inputUnits));
+    const outDec = Number(fromBaseUnits(amountOut));
+    const execPrice = outDec > 0 ? (inDec / outDec).toFixed(4) : priceNum.toFixed(4);
 
     return {
       ok: true,
@@ -297,7 +323,7 @@ export function simulateTrade(
       inputAmount: params.amount,
       expectedOutputAmount: fromBaseUnits(amountOut),
       minOutputAmount: fromBaseUnits(minOutputUnits),
-      executionPrice: execPrice.toFixed(4),
+      executionPrice: execPrice,
       priceImpactPct: impact.toFixed(2),
       feeAmount: fromBaseUnits(feeAmount),
       venueType,
@@ -305,7 +331,6 @@ export function simulateTrade(
     };
   } else {
     // Seller provides stock shares (e.g. 2 AAPL) to receive counter asset
-    const inputUnits = toBaseUnits(params.amount);
     const { amountOut, feeAmount } = calculateAmmSwapOutput(
       pool.reserveStock,
       pool.reserveCounter,
@@ -313,9 +338,15 @@ export function simulateTrade(
       pool.feeBps,
     );
 
+    if (amountOut <= 0n) {
+      throw new Error("Trade input shares too small to yield any counter asset output");
+    }
+
     const minOutputUnits = (amountOut * BigInt(10000 - slippageBps)) / 10000n;
     const impact = calculatePriceImpact(pool.reserveStock, pool.reserveCounter, inputUnits, amountOut);
-    const execPrice = Number(fromBaseUnits(amountOut)) / Number(fromBaseUnits(inputUnits));
+    const inDec = Number(fromBaseUnits(inputUnits));
+    const outDec = Number(fromBaseUnits(amountOut));
+    const execPrice = inDec > 0 ? (outDec / inDec).toFixed(4) : priceNum.toFixed(4);
 
     return {
       ok: true,
@@ -325,7 +356,7 @@ export function simulateTrade(
       inputAmount: params.amount,
       expectedOutputAmount: fromBaseUnits(amountOut),
       minOutputAmount: fromBaseUnits(minOutputUnits),
-      executionPrice: execPrice.toFixed(4),
+      executionPrice: execPrice,
       priceImpactPct: impact.toFixed(2),
       feeAmount: fromBaseUnits(feeAmount),
       venueType,

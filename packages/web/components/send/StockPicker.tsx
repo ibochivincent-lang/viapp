@@ -50,7 +50,7 @@ export function StockPicker({
   onSelect: (address: string) => void;
   onReload: () => void;
 }) {
-  const [filterVenue, setFilterVenue] = useState<"all" | "bnb" | "okx">("all");
+  const [filterVenue, setFilterVenue] = useState<"all" | "bnb" | "okx" | "stellar">("all");
 
   if (state.status === "loading") {
     return (
@@ -73,8 +73,13 @@ export function StockPicker({
   }
 
   const now = new Date();
+  const bnbCount = state.stocks.filter((s) => s.venue === "bnb").length;
+  const okxCount = state.stocks.filter((s) => s.venue === "okx").length;
+  const stellarCount = state.stocks.filter((s) => s.venue === "stellar" || !s.venue).length;
+
   const visibleStocks = state.stocks.filter((stock) => {
     if (filterVenue === "all") return true;
+    if (filterVenue === "stellar") return stock.venue === "stellar" || !stock.venue;
     return stock.venue === filterVenue;
   });
 
@@ -98,7 +103,7 @@ export function StockPicker({
           className={`send-venue-tab ${filterVenue === "bnb" ? "send-venue-tab-active" : ""}`}
           onClick={() => setFilterVenue("bnb")}
         >
-          bStocks (BNB Chain)
+          bStocks · BNB ({bnbCount})
         </button>
         <button
           type="button"
@@ -107,7 +112,16 @@ export function StockPicker({
           className={`send-venue-tab ${filterVenue === "okx" ? "send-venue-tab-active" : ""}`}
           onClick={() => setFilterVenue("okx")}
         >
-          xStocks (OKX X Layer)
+          xStocks · OKX ({okxCount})
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={filterVenue === "stellar"}
+          className={`send-venue-tab ${filterVenue === "stellar" ? "send-venue-tab-active" : ""}`}
+          onClick={() => setFilterVenue("stellar")}
+        >
+          Stellar Direct ({stellarCount})
         </button>
       </div>
 

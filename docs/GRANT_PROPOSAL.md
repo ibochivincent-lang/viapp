@@ -34,7 +34,7 @@ Every share is:
 | **D5** | **Docs & Grant Framing** | Comprehensive architecture specification (`docs/ARCHITECTURE.md`), native tokenization roadmap (`docs/ROADMAP.md`), security threat model with 60 attack refusal proofs (`docs/security/`), itemized 3-month milestone budget buckets ($60k), audit mitigation fix-log, and live judge verification guide. | **10/10** |
 | **D6** | **Live Deployment** | Smart contract deployed, initialized, and verified on Stellar Testnet (`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`); verified deploy, init, gift creation, and gift claim transaction receipts verifiable on Stellar Expert. | **10/10** |
 | **D7** | **Community & Hygiene** | Apache 2.0 open-source license; single verified author commit history (`ibochivincent.lang`); zero legacy artifacts; responsive dark-mode UI with GSAP smooth animations; comprehensive README with badges, sequence diagrams, and video walkthrough references. | **10/10** |
-| **D8** | **Test & CI Rigor** | **531 unit tests** in `@viapp/core`, **6 integration tests** in Soroban Rust test harness, property-based Ed25519 fuzz tests, full mainnet readiness tests, and 100% green automated CI on GitHub Actions. | **10/10** |
+| **D8** | **Test & CI Rigor** | **539 unit tests** in `@viapp/core`, **6 integration tests** in Soroban Rust test harness, property-based Ed25519 fuzz tests, full mainnet readiness tests, and 100% green automated CI on GitHub Actions. | **10/10** |
 
 ---
 
@@ -108,7 +108,7 @@ The protocol is guarded by automated test suites executed on every commit via Gi
 | Test Suite | File Location | Tests | Status |
 |---|---|:---:|:---:|
 | **Soroban Smart Contract Tests** | `packages/contracts/stellar/tests/test_vault.rs` | 6 | **PASS (100%)** |
-| **Stellar Trading & AMM Pools** | `packages/core/test/trade-stellar.test.ts` | 15 | **PASS (100%)** |
+| **Stellar Trading & AMM Pools** | `packages/core/test/trade-stellar.test.ts` | 23 | **PASS (100%)** |
 | **Mainnet Readiness & Multi-Venue** | `packages/core/test/mainnet-readiness.test.ts` | 8 | **PASS (100%)** |
 | **Property-Based Ed25519 Fuzzing** | `packages/core/test/fuzz-stellar-claim.test.ts` | 3 | **PASS (100%)** |
 | **Stellar Transaction Builders** | `packages/core/test/stellar-client.test.ts` | 3 | **PASS (100%)** |
@@ -118,8 +118,8 @@ The protocol is guarded by automated test suites executed on every commit via Gi
 | **Unified Multi-Chain Quote Engine** | `packages/core/test/quote-unified.test.ts` | 2 | **PASS (100%)** |
 | **1:1 Peg Invariant & Bridge Engine** | `packages/core/test/bridge.test.ts` | 4 | **PASS (100%)** |
 | **SEP Compliance (SEP-1, 10, 24, 38, 41)** | `packages/core/test/sep.test.ts` | 11 | **PASS (100%)** |
-| **Total Protocol Core Tests** | Across 40 Vitest Test Suites | **531** | **100% PASS** |
-| **Combined Test Battery** | Rust + Vitest Suites | **537** | **100% PASS** |
+| **Total Protocol Core Tests** | Across 40 Vitest Test Suites | **539** | **100% PASS** |
+| **Combined Test Battery** | Rust + Vitest Suites | **545** | **100% PASS** |
 
 ---
 
