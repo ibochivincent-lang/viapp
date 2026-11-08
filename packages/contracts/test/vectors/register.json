@@ -1,0 +1,8 @@
+{
+  "vault": "0x4eA52508CE8f03064aEf5FF5ACC813ed5009eFA0",
+  "chainId": 56,
+  "sender": "0x40194751A70b5F827C8d64DBFCF7eB9153453D5f",
+  "domainSeparator": "0x1292e297cad59abc730de94454170f7224e625f15f5ccea402481fa00220f0cf",
+  "structHash": "0x303c778ae1d34af9017925f4121955a6e2df7fb3f5823ae48a6699ff9f48a8b7",
+  "digest": "0x3985f3bf039a39068a57eb310bb90dd1dd90b1cc80b1fbaf925a63784126c765"
+}

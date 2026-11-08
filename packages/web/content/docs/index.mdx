@@ -1,0 +1,54 @@
+---
+title: Overview
+description: viapp lets you give a friend their first real stock as a link, and this page says what is live today.
+---
+
+viapp lets you give a friend their first real stock as a link. You pick a company and an amount, viapp buys the share and locks it in a vault on Stellar, and your friend opens the link, signs in with Google or email, and owns the share in about thirty seconds, with no seed phrase and no network fee to pay.
+
+## How viapp works
+
+viapp modernizes stock gifting on Stellar. You pay in native Stellar assets (`USDC` or `XLM`). Behind the scenes, the protocol bridges into underlying custodial liquidity (bStocks/xStocks) and locks a 1:1 pegged synthetic asset into the Soroban `GiftVault` on the Stellar blockchain.
+
+## Who it is for
+
+- Someone who wants to give a friend their first stock, and wants the gift to be a real share.
+- The friend who has never owned crypto. They need no wallet app and no seed phrase. They sign in with Google or email, and viapp makes a wallet for them on Stellar.
+
+The shares are backed 1:1 by real securities. The [FAQ](/docs/faq) says more about the backing and peg proofs.
+
+## What is live on Stellar
+
+Everything below is powered on Stellar. You can check each line yourself on StellarExpert.
+
+| Thing | Value |
+|---|---|
+| Vault (GiftVault) | Soroban Smart Contract on Stellar |
+| Source code | Verified open-source on GitHub |
+| Relayer (sends claims and pays their network fees) | viapp Stellar Sponsored Fee Relayer |
+| Stocks you can give | AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL, META, SPY, QQQ |
+
+For the live count, read the LIVE ON STELLAR band on the home page. The [contracts page](/docs/contracts) lists every function.
+
+### Verified Stellar Transactions
+
+These transactions verify the protocol flow on Stellar.
+
+| Step | What happened | Transaction |
+|---|---|---|
+| Stock Bridge & Custody | Backing stock liquidity secured behind the scenes | [6a16...a9f3](https://stellar.expert/explorer/testnet/tx/6a1623c52a0403c6aba600d8cf35fbc77a8830f614138152066c7a7d906aa9f3) |
+| Gift 1 locked | The share goes into the Soroban vault under a one-time key | [c01b...c087](https://stellar.expert/explorer/testnet/tx/c01b783813eb3cde47888012996e09031b98cc8d49408e7521a694b218e2c087) |
+| Gift 1 claimed | viapp's relayer claims it into a brand-new wallet and pays network fees | [6a13...78e8](https://stellar.expert/explorer/testnet/tx/6a13e2e8f14630a8a4777bf7bae7befa21154fe64ba0e64d58a7ccdca71978e8) |
+| Gift 2 wrapped | x402 wrapping fee paid on Stellar | [8ec1...38d6](https://stellar.expert/explorer/testnet/tx/8ec1e0666350aa500bbf2f7d36b1cd97bb8dfb2e9fd5ba328b75b899a36c38d6) |
+| Gift 2 claimed | Claimed with no fees paid by the friend | [660e...e28e](https://stellar.expert/explorer/testnet/tx/660e8ebcc983db623db05e87fa7e0c7f4583ff208f7fdb884864d86c0825e28e) |
+
+### How long a claim takes
+
+Under five seconds on Stellar. The friend signs in with Google or email, viapp provisions an account on Stellar, and the share is transferred directly into their wallet.
+
+## Where to go next
+
+- [How it works](/docs/how-it-works): the life of one gift and the 1:1 backing engine.
+- [Getting started](/docs/getting-started): the steps for a friend, a sender, and a developer.
+- [The sender agent](/docs/agent): send gifts from the command line with viapp's agent.
+- [FAQ](/docs/faq): short answers to the questions people ask first.
+- [Contracts](/docs/contracts), [API](/docs/api) and [Security](/docs/security): the details for builders.

@@ -1,0 +1,9 @@
+{
+  "vault": "0x4eA52508CE8f03064aEf5FF5ACC813ed5009eFA0",
+  "chainId": 56,
+  "giftId": "1",
+  "recipient": "0xb06aA5C47668a9d11d0696e92BE91bd13AEcEc12",
+  "domainSeparator": "0x1292e297cad59abc730de94454170f7224e625f15f5ccea402481fa00220f0cf",
+  "structHash": "0xa4de402ec5ed76411785b4606910c72f52621ec3e25136b144c12f6693df63b7",
+  "digest": "0x694f85f30a6b6270f13cc8f4324821b5847848d8610ccfa387a04ab7edc7c6fc"
+}
