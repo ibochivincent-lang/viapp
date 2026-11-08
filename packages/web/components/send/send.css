@@ -385,6 +385,44 @@
   border: 1px solid rgba(168, 85, 247, 0.3);
 }
 
+.send-badge-pegged {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.send-search-row {
+  margin-bottom: 12px;
+}
+
+.send-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-raised);
+  color: var(--ink);
+  font: 400 13px/1.4 var(--font-body);
+  transition: border-color 150ms;
+}
+
+.send-search-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.send-search-input::placeholder {
+  color: var(--ink-muted);
+}
+
+.send-empty-search {
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+  color: var(--ink-muted);
+  font: 400 14px/1.5 var(--font-body);
+}
+
 /* Stock tiles */
 .send-grid {
   display: grid;

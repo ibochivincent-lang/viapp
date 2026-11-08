@@ -72,26 +72,26 @@ flowchart TD
 ```mermaid
 sequenceDiagram
   autonumber
-  participant S as Sender (Freighter/Passkey)
+  actor S as Sender (Freighter/Passkey)
   participant UI as ViApp Web App (Next.js 15)
   participant API as ViApp API / SEP Engine
   participant V as Soroban GiftVault (CDEDHFJ7...DEV5M)
   participant R as ViApp Fee-Bump Relayer
-  participant F as Recipient (Friend)
+  actor F as Recipient (Friend)
 
-  S->>UI: 1. Select stock ($25 NVDA) & pay XLM/USDC
-  UI->>API: 2. Request quote & routing (SEP-38 RFQ)
-  API-->>UI: 3. Firm quote & simulated execution
+  S->>UI: 1. Select stock ($25 NVDA) and pay XLM/USDC
+  UI->>API: 2. Request quote and routing (SEP-38 RFQ)
+  API-->>UI: 3. Firm quote and simulated execution
   UI->>V: 4. Invoke create_gift(token, amount, claimKey, expiry, sealedNote)
-  V-->>UI: 5. Tokens locked in escrow; giftId emitted
+  V-->>UI: 5. Tokens locked in escrow, giftId emitted
   UI->>UI: 6. Generate claim link: https://viapp.gift/g/{id}#{claimSecret}
   UI-->>S: 7. Link ready to share via WhatsApp, Telegram, Email, or SMS
   S->>F: 8. Shares the private gift link
-  F->>UI: 9. Opens link; authenticates via Google/Privy embedded Stellar wallet
+  F->>UI: 9. Opens link, authenticates via Google/Privy embedded Stellar wallet
   F->>UI: 10. Signs claim proof with link's ephemeral key
   UI->>API: 11. POST /api/claim {giftId, recipient, signature}
-  API->>R: 12. Verify signature & rate limits; trigger relayer
-  R->>V: 13. Relayer invokes claim(giftId, recipient, signature) & pays gas
+  API->>R: 12. Verify signature and rate limits, trigger relayer
+  R->>V: 13. Relayer invokes claim(giftId, recipient, signature) and pays gas
   V-->>F: 14. Stock transferred directly to friend's Stellar account!
 ```
 
@@ -116,7 +116,7 @@ sequenceDiagram
 </p>
 
 <p align="center">
-  <em>Left: Streamlined send interface with preset amounts, 30-day expiration, and AES-GCM encrypted notes. Right: Interactive modal selecting from leading global equities with venue tabs (All, bStocks, xStocks).</em>
+  <em>Left: Streamlined send interface with preset amounts, 30-day expiration, and AES-GCM encrypted notes. Right: Interactive modal selecting from leading tokenized and pegged equities on Stellar.</em>
 </p>
 
 <br>
@@ -181,9 +181,9 @@ For full CLI command walkthroughs, contract JSON responses, and live RPC invocat
 - **Instant SDEX Liquidation:** Recipients can hold their stock to earn on-chain dividends, transfer it to friends, or **instantly liquidate** it for native Stellar USDC on the SDEX/Soroban AMM with a single tap.
 - **Global Retail Cash-Out:** Recipients in 180+ countries can cash out their stock gifts for physical currency at over 400,000 MoneyGram retail locations worldwide.
 
-### For Hackathon Judges & Security Auditors
+### For Hackathon Testers & Security Auditors
 - **Live On-Chain Verification:** Inspect the deployed Soroban contract on [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) with live ledger state reads.
-- **Dedicated Judge Handout Section:** The home page includes a dedicated "For Judges" flow allowing evaluators to claim a free live test gift ($1 of NVDAB/AAPL) without spending personal funds.
+- **Dedicated Tester Handout Section:** The home page includes a dedicated "For Testers" flow allowing evaluators to claim a free live test gift ($1 of NVDAB/AAPL) without spending personal funds.
 - **60 Automated Security Attacks (All Refused):** Comprehensive attack vectors covering unauthorized claims, double spends, front-running, expired refunds, signature replay, and reentrancy.
 - **Formally Verified Cryptographic Vectors:** EIP-712 / Ed25519 claim and registration digests verified against strict test vectors.
 

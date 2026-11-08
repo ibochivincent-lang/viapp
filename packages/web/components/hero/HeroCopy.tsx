@@ -93,7 +93,7 @@ export function HeroCopy() {
               Send a gift
             </Link>
             <a className="hero-btn hero-btn-secondary" href="#judges">
-              Judges: claim a real share
+              Testers: claim a real share
             </a>
           </motion.div>
         </div>

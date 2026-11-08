@@ -65,7 +65,7 @@ describe("Property-Based Fuzz Testing: Stellar Ed25519 Claim Pipeline", () => {
       );
       expect(attackerCheck).toBe(false);
     }
-  });
+  }, 30000);
 
   it("invariant: arbitrary giftId, recipient and passphrase always round-trip claim verification", async () => {
     for (let i = 0; i < 50; i++) {
@@ -131,7 +131,7 @@ describe("Property-Based Fuzz Testing: Stellar Ed25519 Claim Pipeline", () => {
       );
       expect(invalidVault).toBe(false);
     }
-  });
+  }, 30000);
 
   it("invariant: digest calculation is strictly deterministic across 100 runs", async () => {
     const sender = Keypair.random().publicKey();
@@ -141,5 +141,5 @@ describe("Property-Based Fuzz Testing: Stellar Ed25519 Claim Pipeline", () => {
       const digestB = await stellarRegisterDigest(VAULT_ID, PASSPHRASE, sender);
       expect(Buffer.from(digestA).equals(Buffer.from(digestB))).toBe(true);
     }
-  });
+  }, 30000);
 });

@@ -31,7 +31,18 @@ const REQUEST_TIMEOUT_MS = 20_000;
 const RETRY_DELAY_MS = 5_000;
 const SHARE_SYMBOL = "NVDAB";
 // Display only: the on-chain name with its legal suffix stripped, so "NVIDIA Corp" reads "NVIDIA".
-const NAME_SUFFIXES = [" (bStocks)", " Corporation", " Platforms", " Corp", " Inc.", " Inc"];
+const NAME_SUFFIXES = [
+  " (bStocks)",
+  " (bStock)",
+  " (xStocks)",
+  " (xStock)",
+  " Corporation",
+  " Platforms Inc.",
+  " Platforms",
+  " Corp",
+  " Inc.",
+  " Inc",
+];
 
 const stateByChain: Record<"stellar" | "bnb", StocksState> = {
   stellar: LOADING,
@@ -205,8 +216,12 @@ type TickerEntry = { symbol: string; name: string; price: string };
 /** One entry per stock that has a live price. A stock without a price is left out, never guessed. */
 export function tickerEntries(stocks: readonly Stock[]): TickerEntry[] {
   const entries: TickerEntry[] = [];
+  const seenSymbols = new Set<string>();
   for (const stock of stocks) {
     if (stock.priceUsd === null) continue;
+    const base = stock.symbol.replace(/[Bx]$/, "");
+    if (seenSymbols.has(base)) continue;
+    seenSymbols.add(base);
     entries.push({ symbol: stock.symbol, name: tickerName(stock.name), price: formatPrice(stock.priceUsd) });
   }
   return entries;

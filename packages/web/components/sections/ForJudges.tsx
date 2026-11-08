@@ -148,7 +148,7 @@ function Ticket({ phase, owned, number }: { phase: TicketPhase; owned: Owned | n
             <div className="jt-face jt-front" aria-hidden="true">
               <p className="jt-presents">VIAPP PRESENTS</p>
               <p className="jt-title">Your first stock</p>
-              <p className="jt-fine">STELLAR NETWORK · ONE PER JUDGE · SEAT: YOURS</p>
+              <p className="jt-fine">STELLAR NETWORK · ONE PER TESTER · SEAT: YOURS</p>
               <p className="jt-number" data-state={number.status}>
                 {number.status === "ready" ? `NO. ${number.value}` : number.status === "loading" ? <span className="jt-number-skeleton" /> : null}
               </p>
@@ -249,7 +249,7 @@ function Steps({ signIn, onSignIn, onSignOut, code, onCode, declared, onDeclared
             value={code}
             onChange={(event) => onCode(event.target.value)}
             placeholder="From our submission"
-            aria-label="Judge code"
+            aria-label="Tester code"
             aria-describedby="judges-code-hint"
             autoComplete="off"
             autoCapitalize="off"
@@ -257,7 +257,7 @@ function Steps({ signIn, onSignIn, onSignOut, code, onCode, declared, onDeclared
             maxLength={64}
           />
           <p className="judges-hint" id="judges-code-hint">
-            It is in the judging instructions of our submission.
+            It is in the instructions of our submission.
           </p>
         </div>
       </li>
@@ -434,7 +434,7 @@ function JudgesStage() {
   const claiming = phase.kind === "claiming";
   const canClaim = signIn.kind === "signedIn" && code.trim() !== "" && declared && !claiming;
   const missing =
-    signIn.kind === "signedOut" ? "Sign in first (step 1)." : code.trim() === "" ? "Enter the judge code (step 2)." : !declared ? "Tick the box (step 3)." : null;
+    signIn.kind === "signedOut" ? "Sign in first (step 1)." : code.trim() === "" ? "Enter the tester code (step 2)." : !declared ? "Tick the box (step 3)." : null;
 
   // Google sign-in leaves the page and comes back to its top, so the judge is brought back here.
   const startSignIn = () => {
@@ -520,7 +520,7 @@ function JudgesStage() {
   return (
     <div className="judges-grid">
       <div className="judges-text">
-        <p className="judges-label">FOR JUDGES</p>
+        <p className="judges-label">FOR TESTERS</p>
         <h2 className="judges-title" id="judges-title">
           Claim a real share.
           <br />
@@ -529,7 +529,7 @@ function JudgesStage() {
           </span>
         </h2>
         <p className="judges-body">
-          Sign in with Google or email, enter the judge code from our submission, and a real tokenized share lands in a wallet made for you, exactly as it would for a friend. One per judge.
+          Sign in with Google or email, enter the tester code from our submission, and a real tokenized share lands in a wallet made for you, exactly as it would for a friend. One per tester.
         </p>
       </div>
       <div className="judges-ticket">

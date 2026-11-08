@@ -29,25 +29,23 @@ function Check() {
   );
 }
 
-function VenueBadge({ venue, symbol }: { venue?: "bnb" | "okx" | "stellar"; symbol?: string }) {
-  const norm = (symbol ?? "").replace(/[BX]$/i, "").toUpperCase();
-  const isDual = ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "GOOGL", "META"].includes(norm);
+function StockBadge({ isPegged }: { isPegged: boolean }) {
+  if (isPegged) {
+    return (
+      <span className="send-badge-venue send-badge-pegged" title="1:1 Pegged Equity on Stellar">
+        Pegged 1:1
+      </span>
+    );
+  }
+  return (
+    <span className="send-badge-venue send-badge-stellar" title="Direct Tokenized Equity on Stellar">
+      Stellar
+    </span>
+  );
+}
 
-  if (venue === "okx") {
-    return (
-      <span className="send-badge-venue send-badge-okx" title={isDual ? "OKX X Layer · Automatically fails over to BNB bStocks" : "OKX X Layer"}>
-        OKX L2{isDual ? " · Dual" : ""}
-      </span>
-    );
-  }
-  if (venue === "bnb") {
-    return (
-      <span className="send-badge-venue send-badge-bnb" title={isDual ? "BNB bStock · Automatically fails over to OKX xStocks" : "BNB bStock"}>
-        bStock{isDual ? " · Dual" : ""}
-      </span>
-    );
-  }
-  return <span className="send-badge-venue send-badge-stellar">Stellar</span>;
+function checkIsPegged(stock: Stock): boolean {
+  return stock.venue === "bnb" || stock.venue === "okx" || stock.symbol.endsWith("B") || stock.symbol.endsWith("x");
 }
 
 export function StockPicker({
@@ -61,7 +59,8 @@ export function StockPicker({
   onSelect: (address: string) => void;
   onReload: () => void;
 }) {
-  const [filterVenue, setFilterVenue] = useState<"all" | "bnb" | "okx" | "stellar">("all");
+  const [filterCategory, setFilterCategory] = useState<"all" | "pegged" | "direct">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   if (state.status === "loading") {
     return (
@@ -84,87 +83,100 @@ export function StockPicker({
   }
 
   const now = new Date();
-  const bnbCount = state.stocks.filter((s) => s.venue === "bnb").length;
-  const okxCount = state.stocks.filter((s) => s.venue === "okx").length;
-  const stellarCount = state.stocks.filter((s) => s.venue === "stellar" || !s.venue).length;
+  const peggedCount = state.stocks.filter(checkIsPegged).length;
+  const directCount = state.stocks.filter((s) => !checkIsPegged(s)).length;
 
+  const q = searchQuery.trim().toLowerCase();
   const visibleStocks = state.stocks.filter((stock) => {
-    if (filterVenue === "all") return true;
-    if (filterVenue === "stellar") return stock.venue === "stellar" || !stock.venue;
-    return stock.venue === filterVenue;
+    const isPegged = checkIsPegged(stock);
+    if (filterCategory === "pegged" && !isPegged) return false;
+    if (filterCategory === "direct" && isPegged) return false;
+    if (!q) return true;
+    return (
+      stock.symbol.toLowerCase().includes(q) ||
+      stock.name.toLowerCase().includes(q) ||
+      displayName(stock.name).toLowerCase().includes(q)
+    );
   });
 
   return (
     <div className="send-picker-container">
-      {/* Venue Switcher Tabs */}
-      <div className="send-venue-tabs" role="tablist" aria-label="Filter equities by venue">
+      {/* Category Filter Tabs */}
+      <div className="send-venue-tabs" role="tablist" aria-label="Filter equities">
         <button
           type="button"
           role="tab"
-          aria-selected={filterVenue === "all"}
-          className={`send-venue-tab ${filterVenue === "all" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterVenue("all")}
+          aria-selected={filterCategory === "all"}
+          className={`send-venue-tab ${filterCategory === "all" ? "send-venue-tab-active" : ""}`}
+          onClick={() => setFilterCategory("all")}
         >
           All Equities ({state.stocks.length})
         </button>
         <button
           type="button"
           role="tab"
-          aria-selected={filterVenue === "bnb"}
-          className={`send-venue-tab ${filterVenue === "bnb" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterVenue("bnb")}
+          aria-selected={filterCategory === "pegged"}
+          className={`send-venue-tab ${filterCategory === "pegged" ? "send-venue-tab-active" : ""}`}
+          onClick={() => setFilterCategory("pegged")}
         >
-          bStocks · BNB ({bnbCount})
+          Stellar Pegged ({peggedCount})
         </button>
         <button
           type="button"
           role="tab"
-          aria-selected={filterVenue === "okx"}
-          className={`send-venue-tab ${filterVenue === "okx" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterVenue("okx")}
+          aria-selected={filterCategory === "direct"}
+          className={`send-venue-tab ${filterCategory === "direct" ? "send-venue-tab-active" : ""}`}
+          onClick={() => setFilterCategory("direct")}
         >
-          xStocks · OKX ({okxCount})
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filterVenue === "stellar"}
-          className={`send-venue-tab ${filterVenue === "stellar" ? "send-venue-tab-active" : ""}`}
-          onClick={() => setFilterVenue("stellar")}
-        >
-          Stellar Direct ({stellarCount})
+          Stellar Direct ({directCount})
         </button>
       </div>
 
+      <div className="send-search-row">
+        <input
+          type="text"
+          className="send-search-input"
+          placeholder="Search by ticker or name (e.g. NVDA, Apple, Tesla)..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          aria-label="Search equities"
+        />
+      </div>
+
       <div className="send-grid" role="group" aria-label="Stock">
-        {visibleStocks.map((stock) => {
-          const open = isTradable(stock);
-          const picked = selected === stock.address;
-          return (
-            <button
-              type="button"
-              className="send-tile"
-              key={stock.address}
-              disabled={!open}
-              aria-pressed={picked}
-              data-selected={picked ? "true" : undefined}
-              data-closed={open ? undefined : "true"}
-              onClick={() => onSelect(stock.address)}
-            >
-              <Logo stock={stock} />
-              <span className="send-tile-text">
-                <span className="send-tile-name-row">
-                  <span className="send-tile-name">{displayName(stock.name)}</span>
-                  <VenueBadge venue={stock.venue} symbol={stock.symbol} />
+        {visibleStocks.length === 0 ? (
+          <p className="send-empty-search">No matching equities found.</p>
+        ) : (
+          visibleStocks.map((stock) => {
+            const open = isTradable(stock);
+            const picked = selected === stock.address;
+            const isPegged = checkIsPegged(stock);
+            return (
+              <button
+                type="button"
+                className="send-tile"
+                key={stock.address}
+                disabled={!open}
+                aria-pressed={picked}
+                data-selected={picked ? "true" : undefined}
+                data-closed={open ? undefined : "true"}
+                onClick={() => onSelect(stock.address)}
+              >
+                <Logo stock={stock} />
+                <span className="send-tile-text">
+                  <span className="send-tile-name-row">
+                    <span className="send-tile-name">{displayName(stock.name)}</span>
+                    <StockBadge isPegged={isPegged} />
+                  </span>
+                  <span className="send-tile-symbol">{stock.symbol}</span>
+                  {open ? null : <span className="send-tile-opens">{opensText(stock.market.nextOpenTime, now)}</span>}
                 </span>
-                <span className="send-tile-symbol">{stock.symbol}</span>
-                {open ? null : <span className="send-tile-opens">{opensText(stock.market.nextOpenTime, now)}</span>}
-              </span>
-              <span className="send-tile-price">{stock.priceUsd === null ? "" : `$${usd(stock.priceUsd)}`}</span>
-              {picked ? <Check /> : null}
-            </button>
-          );
-        })}
+                <span className="send-tile-price">{stock.priceUsd === null ? "" : `$${usd(stock.priceUsd)}`}</span>
+                {picked ? <Check /> : null}
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );

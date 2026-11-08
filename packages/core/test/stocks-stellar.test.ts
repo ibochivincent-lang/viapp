@@ -74,6 +74,51 @@ describe("Stellar Stocks and Quotation", () => {
     expect(tooLarge.body).toEqual({ ok: false, error: "amount_too_large" });
   });
 
+  it("quotes pegged stocks on Stellar (bStocks and xStocks)", () => {
+    // bStock pegged equity quote
+    const bnvda = handleStellarQuote({
+      stock: "NVDAB",
+      usdAmount: "30",
+      wallet: VALID_STELLAR_WALLET,
+      networkPassphrase: TESTNET_PASSPHRASE,
+      slippageBps: 50,
+    });
+    expect(bnvda.status).toBe(200);
+    if (bnvda.status === 200 && bnvda.body.ok) {
+      expect(bnvda.body.chain).toBe("stellar");
+      expect(bnvda.body.stock.code).toBe("NVDAB");
+      expect(parseFloat(bnvda.body.expectedShares)).toBeGreaterThan(0);
+      expect(parseFloat(bnvda.body.minShares)).toBeLessThan(parseFloat(bnvda.body.expectedShares));
+    }
+
+    // xStock pegged equity quote
+    const xaapl = handleStellarQuote({
+      stock: "AAPLx",
+      usdAmount: "50",
+      wallet: VALID_STELLAR_WALLET,
+      networkPassphrase: TESTNET_PASSPHRASE,
+      slippageBps: 50,
+    });
+    expect(xaapl.status).toBe(200);
+    if (xaapl.status === 200 && xaapl.body.ok) {
+      expect(xaapl.body.chain).toBe("stellar");
+      expect(xaapl.body.stock.code).toBe("AAPLx");
+      expect(parseFloat(xaapl.body.expectedShares)).toBeGreaterThan(0);
+    }
+  });
+
+  it("finds pegged stocks by contract ID or code", () => {
+    const nvdab = findStellarStock("NVDAB", TESTNET_PASSPHRASE);
+    expect(nvdab).toBeDefined();
+    expect(nvdab?.venue).toBe("bnb");
+    expect(nvdab?.contractId).toMatch(/^[A-Z0-9]{56}$/);
+
+    const tslaX = findStellarStock("TSLAx", TESTNET_PASSPHRASE);
+    expect(tslaX).toBeDefined();
+    expect(tslaX?.venue).toBe("okx");
+    expect(tslaX?.contractId).toMatch(/^[A-Z0-9]{56}$/);
+  });
+
   it("rejects unknown stock symbol", () => {
     const response = handleStellarQuote({
       stock: "NONEXISTENT",

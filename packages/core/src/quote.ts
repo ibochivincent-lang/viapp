@@ -129,7 +129,8 @@ export async function handleQuote(
   const parsedBody = typeof body === "object" && body !== null ? (body as Record<string, unknown>) : {};
   const isStellar =
     parsedBody.chain === "stellar" ||
-    (typeof parsedBody.wallet === "string" && parsedBody.wallet.startsWith("G"));
+    (typeof parsedBody.wallet === "string" && parsedBody.wallet.startsWith("G")) ||
+    (typeof parsedBody.stock === "string" && parsedBody.stock.startsWith("C") && parsedBody.stock.length === 56);
 
   if (isStellar) {
     const stock = typeof parsedBody.stock === "string" ? parsedBody.stock : "";
