@@ -1,0 +1,61 @@
+name: 🌊 Drips Wave 10 Bounty Task
+description: Propose or claim a community bounty task for Drips Wave 10
+title: "[Wave 10 Bounty]: "
+labels: ["wave-10", "bounty"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### ViApp Community Bounty Program
+        Thank you for contributing to ViApp! All tasks are eligible for Drips Wave points and community recognition.
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Bounty Tier & Points Economy
+      description: Select the complexity tier according to the contributor ladder
+      options:
+        - "Trivial: 100 pts (Documentation, minor UI styling, test fixtures)"
+        - "Medium: 150 pts (Test suites, SEP integration improvements, SDK helpers)"
+        - "High: 200 pts (Soroban contract optimization, security hardening, zero-knowledge proofs)"
+    validations:
+      required: true
+
+  - type: input
+    id: component
+    attributes:
+      label: Target Subsystem
+      description: e.g. packages/contracts/stellar, packages/core, packages/web, docs
+      placeholder: packages/core
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Clear and concise specification of the proposed contribution
+      placeholder: Describe the problem being solved or feature being added...
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification & Test Plan
+      description: How will this contribution be tested? (All PRs require automated test coverage)
+      placeholder: cargo test -p viapp-gift-vault OR npx vitest run ...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Contributor Checklist
+      options:
+        - label: I have reviewed CONTRIBUTING.md and the Contributor Ladder
+          required: true
+        - label: I will provide automated tests passing in CI
+          required: true
+        - label: I agree to license my contribution under Apache-2.0
+          required: true
