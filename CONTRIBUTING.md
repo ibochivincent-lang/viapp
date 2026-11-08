@@ -70,21 +70,34 @@ The project is structured as an npm workspaces monorepo:
 
 ---
 
-## 🏷 Issue Conventions & Contribution Ladder
+## 🏷 Issue Conventions, Wave Labels & Points Economy
 
-We tag issues to help new contributors get started:
+We tag issues to help new contributors get started and reward participation through the **Drips Wave / SCF Points Economy**:
 
+* `wave-10`: Designated tasks for the current Drips Wave grant cycle.
+* `bounty:100` (`Trivial: 100 pts`): Documentation updates, component styling, test fixture additions.
+* `bounty:150` (`Medium: 150 pts`): New test suites, SEP integration improvements, SDK helper functions.
+* `bounty:200` (`High: 200 pts`): Soroban contract optimizations, cryptographic verification, gasless relayer enhancements.
 * `good-first-issue`: Clear scope, low barrier to entry, ideal for newcomers.
-* `help-wanted`: Moderate complexity, well-defined architecture.
-* `bounty`: Qualified for Stellar Community Fund (SCF) or ecosystem developer micro-grants.
 * `soroban`: Rust smart contract tasks.
 * `protocol`: SEP standard integrations and cryptographic primitives.
 
-### Contributor Ladder
+### Contributor Governance Ladder
 
-1. **Contributor**: Submits bug reports, documentation improvements, or fixes labeled `good-first-issue`.
-2. **Reviewer**: Reviews PRs, provides feedback, and triages issues.
-3. **Maintainer**: Has commit rights and guides protocol design decisions.
+ViApp follows an open meritocratic contributor governance model:
+
+1. **Level 1 — Community Member**:
+   - Joins discussions, reports issues, tests preview deployments on Testnet.
+2. **Level 2 — Active Contributor**:
+   - Submits PRs with automated tests.
+   - Earns Wave Bounty points (`Trivial 100`, `Medium 150`, `High 200`).
+   - Listed in [`CONTRIBUTORS.md`](./CONTRIBUTORS.md).
+3. **Level 3 — Triager & Reviewer**:
+   - Reviews community PRs, assists with issue triage, tests edge cases.
+   - Requires $\ge 3$ merged non-trivial PRs.
+4. **Level 4 — Core Maintainer**:
+   - Guided by `ibochivincent.lang` and organization administrators.
+   - Review and merge authority, release signing, and Soroban contract governance multi-sig participation.
 
 ---
 
