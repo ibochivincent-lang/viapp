@@ -197,7 +197,7 @@ export function Certificate({ figure: given, holding, worth }: CertificateProps 
         <rect x={24} y={24} width={WIDTH - 48} height={HEIGHT - 48} className="cert-frame cert-frame-inner" />
         <rect x={86} y={86} width={WIDTH - 172} height={HEIGHT - 172} className="cert-frame cert-frame-edge" />
 
-        <path d={V_MARK_PATH} transform="translate(425.8 97) scale(1.18)" className="cert-vmark" />
+        <path d={V_MARK_PATH} transform="translate(427 97) scale(1.0)" className="cert-vmark" />
         <text x={440 + 5.7} y={158} textAnchor="middle" className="cert-viapp">
           VIAPP
         </text>
@@ -253,7 +253,7 @@ export function Certificate({ figure: given, holding, worth }: CertificateProps 
             VIAPP · VIAPP · VIAPP · VIAPP ·
           </textPath>
         </text>
-        <path d={V_MARK_PATH} transform={`translate(${SEAL.x - 13.2} ${SEAL.y - 8}) scale(1.2)`} className="cert-seal-v" />
+        <path d={V_MARK_PATH} transform={`translate(${SEAL.x - 14} ${SEAL.y - 9}) scale(1.0)`} className="cert-seal-v" />
       </svg>
       <div className="cert-sheen" ref={sheen} aria-hidden="true" />
     </div>

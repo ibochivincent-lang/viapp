@@ -4,7 +4,7 @@ import { VMark } from "@/components/hero/VMark";
 export function Brand() {
   return (
     <span className="docs-brand" aria-label="viapp, home" role="img">
-      <VMark width={12} />
+      <VMark width={18} />
       <span className="docs-wordmark">viapp</span>
     </span>
   );

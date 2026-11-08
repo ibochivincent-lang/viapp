@@ -18,7 +18,7 @@ export function SiteNav({ page = "landing" }: { page?: "landing" | "send" }) {
   const sheetId = useId();
   const brand = (
     <>
-      <VMark width={12} />
+      <VMark width={18} />
       <span className="site-wordmark">viapp</span>
     </>
   );

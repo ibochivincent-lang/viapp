@@ -136,8 +136,8 @@ function Ticket({ phase, owned, number }: { phase: TicketPhase; owned: Owned | n
         <div className="jt-stub" ref={stub}>
           <span className="jt-shadow" aria-hidden="true" />
           <div className="jt-face jt-stub-face" aria-hidden="true">
-            <svg className="jt-v" viewBox="0 0 24 14" fill="none" focusable="false">
-              <path d={V_MARK_PATH} stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+            <svg className="jt-v" viewBox="0 0 28 18" fill="none" focusable="false">
+              <path d={V_MARK_PATH} stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className="jt-admit">ADMIT ONE</span>
           </div>

@@ -40,7 +40,7 @@ function contentSecurityPolicy(nonce: string): string {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://*.bnbstatic.com https://explorer-api.walletconnect.com",
     "font-src 'self'",
-    ["connect-src 'self'", BSC_RPC_ORIGIN, ...PRIVY_CONNECT].join(" "),
+    ["connect-src 'self'", BSC_RPC_ORIGIN, "https://*.stellar.org", "https://soroban-testnet.stellar.org", ...PRIVY_CONNECT].join(" "),
     ["child-src", ...PRIVY_FRAMES].join(" "),
     ["frame-src", ...PRIVY_FRAMES, TURNSTILE].join(" "),
     "worker-src 'self'",

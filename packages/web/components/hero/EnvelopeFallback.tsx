@@ -52,9 +52,9 @@ export function EnvelopeFallback({ open }: { open: boolean }) {
           <circle cx={SEAL.x} cy={SEAL.y} r={SEAL.r - 5} fill="none" stroke="var(--gold-deep)" strokeWidth="1.5" />
           <path
             d={V_MARK_PATH}
-            transform={`translate(${SEAL.x - 13} ${SEAL.y - 8}) scale(1.08)`}
+            transform={`translate(${SEAL.x - 14} ${SEAL.y - 9}) scale(1.0)`}
             stroke="#1E0E10"
-            strokeWidth="2.6"
+            strokeWidth="2.0"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"

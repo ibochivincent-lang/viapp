@@ -97,7 +97,7 @@ export function ClaimView({ view }: { view: View }) {
     <div className="claim-page" data-scene={scene === null ? "none" : "shown"}>
       <header className="claim-bar">
         <Link className="claim-brand" href="/" prefetch={false} aria-label="viapp, home">
-          <VMark width={12} />
+          <VMark width={18} />
           <span className="claim-wordmark">viapp</span>
         </Link>
       </header>
@@ -311,6 +311,26 @@ function OpenedPanel({ view }: { view: Extract<View, { screen: "opened" }> }) {
           What is viapp?
         </Link>
       </p>
+
+      {/* Direct Liquidation & MoneyGram Cash-Out Mitigations */}
+      <div style={{ display: "flex", gap: "10px", marginTop: "16px", marginBottom: "16px", flexWrap: "wrap" }}>
+        <button
+          type="button"
+          className="claim-primary"
+          style={{ flex: 1, minWidth: "180px", fontSize: "13px", padding: "10px 12px", background: "var(--gold)", color: "#1A0F11", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: 700 }}
+          onClick={() => alert(`Direct Liquidation: Swapping ${formatShares(gift.shares)} ${gift.symbol} to native Stellar USDC on SDEX...`)}
+        >
+          ⚡ Liquidate to USDC on SDEX
+        </button>
+        <button
+          type="button"
+          className="claim-secondary"
+          style={{ flex: 1, minWidth: "180px", fontSize: "13px", padding: "10px 12px", borderRadius: "6px", cursor: "pointer", textAlign: "center" }}
+          onClick={() => alert("MoneyGram Access (SEP-24): Direct cash-out available across 180+ countries.")}
+        >
+          💵 Cash Out at MoneyGram
+        </button>
+      </div>
       <Link className="claim-secondary" href="/send" prefetch={false}>
         Send someone their first stock
       </Link>
