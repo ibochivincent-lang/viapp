@@ -13,6 +13,7 @@
     "test": "npm test --workspaces --if-present",
     "slice": "npm run slice --workspace=@viapp/core",
     "prove": "npm run prove --workspace=@viapp/core",
+    "community:check": "node scripts/community-check.js",
     "viapp": "npm run viapp --workspace=@viapp/agent --"
   },
   "dependencies": {

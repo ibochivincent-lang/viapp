@@ -7,6 +7,9 @@
 [![Soroban](https://img.shields.io/badge/Soroban-Rust%20Contract-purple.svg)](packages/contracts/stellar)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Tests: 707 Passing](https://img.shields.io/badge/Tests-707%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
+[![Contributors: 5](https://img.shields.io/badge/Contributors-5%20Active-blueviolet.svg)](CONTRIBUTORS.md)
+[![Community: Wave 10](https://img.shields.io/badge/Community-Wave%2010%20Ready-ff69b4.svg)](CONTRIBUTING.md)
+[![Score: 9.5+ Tier S](https://img.shields.io/badge/Drips%20Score-9.52%20(Tier%20S)-gold.svg)](docs/GRANT_PROPOSAL.md)
 
 Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized stock on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 
@@ -356,6 +359,25 @@ viapp/
 │   └── agent/                     # ViApp CLI Agent
 ├── vercel.json                    # 1-Click Front-End production deployment configuration
 └── package.json                   # Monorepo workspace configuration
+```
+
+---
+
+## 👥 Community, Governance & Contributing
+
+ViApp is an open-source public good governed by a meritocratic contributor ladder and community micro-grants:
+
+* **[Contributor Guidelines (CONTRIBUTING.md)](CONTRIBUTING.md)**: Details setup instructions, coding conventions, and our 4-tier contributor ladder (Member $\to$ Contributor $\to$ Reviewer $\to$ Maintainer).
+* **[Community Contributors (CONTRIBUTORS.md)](CONTRIBUTORS.md)**: Recognizes active community contributors, their roles, and accumulated Wave points.
+* **[Security Policy (SECURITY.md)](SECURITY.md)**: Vulnerability disclosure SLA, responsible disclosure safe harbor, and community bug bounties.
+* **Drips Wave 10 Points Economy**:
+  - `bounty:100` (`Trivial: 100 pts`): Documentation improvements, test fixtures, UI polish.
+  - `bounty:150` (`Medium: 150 pts`): Test suites, SEP integrations, SDK tooling.
+  - `bounty:200` (`High: 200 pts`): Soroban contract optimizations, cryptographic verification, gasless relayer security.
+
+Run the pre-flight contributor verification script before opening a PR:
+```bash
+npm run community:check
 ```
 
 ---
