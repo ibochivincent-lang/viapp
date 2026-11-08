@@ -240,7 +240,70 @@ const result = await executeResilientBridgePurchase({
 
 ---
 
-## 4. Full Automated Test Battery Verification
+## 4. Verified Pegged Asset Contract Addresses (CA) on Stellar Testnet
+
+Under Stellar's **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard, every asset `Asset(code, issuer)` has a unique, deterministic 56-character Contract Address (CA) on the network (`Test SDF Network ; September 2015`).
+
+### 4.1 Core Protocol Infrastructure
+
+| Resource / Role | Address / Contract Address (CA) | Network | Status | Explorer Link |
+|---|---|:---:|:---:|---|
+| **Soroban GiftVault Contract** | `CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M` | Testnet | **ACTIVE** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) |
+| **Asset Issuer Account** | `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5` | Testnet | **ACTIVE** | [Stellar Expert Account](https://stellar.expert/explorer/testnet/account/GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5) |
+| **Fee-Bump Relayer Wallet** | `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN` | Testnet | **ACTIVE** | [Stellar Expert Account](https://stellar.expert/explorer/testnet/account/GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN) |
+| **Native XLM SAC** | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC) |
+| **USDC SAC (Testnet)** | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA) |
+| **USDG SAC (OKX Settlement)** | `CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL) |
+
+---
+
+### 4.2 Pegged bStocks on Stellar Testnet (BNB Chain Backing)
+
+| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Underlying BSC Contract (Chain 56) | Decimals | Explorer Link |
+|:---:|---|---|---|---|:---:|:---:|
+| **AAPLB** | Apple Inc. (bStock) | `CATA5NBHXMEDAIWIOPCVKWCAKJKNZHJYNM6TAVYUWWJBYI34GCPCOCPC` | `AAPLB:GBBD47IF...` | `0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CATA5NBHXMEDAIWIOPCVKWCAKJKNZHJYNM6TAVYUWWJBYI34GCPCOCPC) |
+| **NVDAB** | NVIDIA Corp (bStock) | `CASL52FJPTMLW6OF7WW22BKJR65ZKJDVN6FUPPITOORD6XHVLPMKQPXK` | `NVDAB:GBBD47IF...` | `0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CASL52FJPTMLW6OF7WW22BKJR65ZKJDVN6FUPPITOORD6XHVLPMKQPXK) |
+| **TSLAB** | Tesla, Inc. (bStock) | `CDYWUJWE3MHA6XFCWE2KQAPHTB6I6KLENR22CEMRMRNADOQKSIH2G66T` | `TSLAB:GBBD47IF...` | `0x5b1910eAaD6450E50f816082Aa078C41F10C292f` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDYWUJWE3MHA6XFCWE2KQAPHTB6I6KLENR22CEMRMRNADOQKSIH2G66T) |
+| **MSFTB** | Microsoft Corp (bStock) | `CDLZDMMEDN7JHALRZP7YNHDWYE4ZPGD2OS4WPW5RFL5NIUY6FCYULQA2` | `MSFTB:GBBD47IF...` | `0x80106cb3EAD06659A5ad19DF39D9b4733863B9b0` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDLZDMMEDN7JHALRZP7YNHDWYE4ZPGD2OS4WPW5RFL5NIUY6FCYULQA2) |
+| **AMZNB** | Amazon.com Inc. (bStock) | `CDJUNTLCCHCBGZ5WRYCKP7DTNNSC432LVZFPBDPZGGOK6TXHHZDBKOJW` | `AMZNB:GBBD47IF...` | `0x1a4b499833A79A09ad7Cf1D42D7DacF71e92eb00` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDJUNTLCCHCBGZ5WRYCKP7DTNNSC432LVZFPBDPZGGOK6TXHHZDBKOJW) |
+| **GOOGLB**| Alphabet Inc. (bStock) | `CCJGTL3OEZHPVK4F6JDE33CQEB5BIGNWMIXSNVQKDMBQXOSTG3YSAYAB` | `GOOGLB:GBBD47IF...` | `0x3F53De71c126BdaBAe20f9cD64848d317f6C3238` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCJGTL3OEZHPVK4F6JDE33CQEB5BIGNWMIXSNVQKDMBQXOSTG3YSAYAB) |
+| **METAB** | Meta Platforms (bStock) | `CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK` | `METAB:GBBD47IF...` | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK) |
+| **SPYB**  | SPDR S&P 500 ETF (bStock)| `CDKMMYABR57HER37CGY4QYVXUHXOMS5BZH2WH5KJXV7N26PZXX56WLU4` | `SPYB:GBBD47IF...` | `0x7138b48df7D98D7e3cc221BfE7192D0a178182D8` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDKMMYABR57HER37CGY4QYVXUHXOMS5BZH2WH5KJXV7N26PZXX56WLU4) |
+| **QQQB**  | Invesco QQQ Trust (bStock)| `CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23` | `QQQB:GBBD47IF...` | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23) |
+
+---
+
+### 4.3 Pegged xStocks on Stellar Testnet (OKX X Layer Backing)
+
+| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Underlying X Layer Contract (Chain 196) | Decimals | Explorer Link |
+|:---:|---|---|---|---|:---:|:---:|
+| **AAPLx** | Apple Inc. (xStock) | `CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF` | `AAPLx:GBBD47IF...` | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF) |
+| **MSFTx** | Microsoft Corp (xStock) | `CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT` | `MSFTx:GBBD47IF...` | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT) |
+| **NVDAx** | NVIDIA Corp (xStock) | `CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X` | `NVDAx:GBBD47IF...` | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X) |
+| **GOOGLx**| Alphabet Inc. (xStock) | `CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L` | `GOOGLx:GBBD47IF...` | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L) |
+| **AMZNx** | Amazon.com Inc. (xStock) | `CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS` | `AMZNx:GBBD47IF...` | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS) |
+| **METAx** | Meta Platforms (xStock) | `CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q` | `METAx:GBBD47IF...` | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q) |
+| **TSLAx** | Tesla, Inc. (xStock) | `CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG` | `TSLAx:GBBD47IF...` | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG) |
+
+---
+
+### 4.4 Direct Canonical Equities on Stellar Testnet (Phase 2 Native Roadmap)
+
+| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Decimals | Explorer Link |
+|:---:|---|---|---|:---:|:---:|
+| **AAPL** | Apple Inc. | `CCAPPOAZYAHIJVWFQFTL3AUPCVRADODVIFTXQZ2GMAYMYPLUPA3PRMYB` | `AAPL:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCAPPOAZYAHIJVWFQFTL3AUPCVRADODVIFTXQZ2GMAYMYPLUPA3PRMYB) |
+| **NVDA** | NVIDIA Corp | `CCU5ABICR2MGWDRYS66DHG2XFFVEAH3L24RW7YVJG2V64JZNAKDFN273` | `NVDA:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCU5ABICR2MGWDRYS66DHG2XFFVEAH3L24RW7YVJG2V64JZNAKDFN273) |
+| **TSLA** | Tesla, Inc. | `CCB43KY52JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | `TSLA:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCB43KY52JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV) |
+| **MSFT** | Microsoft Corp | `CCGG56J2LV7IBSD3EJJKVNAG7ERW3VGCPJZLLDXX7CROPKWWUFSPH7BN` | `MSFT:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCGG56J2LV7IBSD3EJJKVNAG7ERW3VGCPJZLLDXX7CROPKWWUFSPH7BN) |
+| **AMZN** | Amazon.com Inc. | `CCR3BXQHQZCQKA2QRJEAVTBHKPJHQ4SKODEUGRYYJ7G6Z2B6I4XFR7SF` | `AMZN:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCR3BXQHQZCQKA2QRJEAVTBHKPJHQ4SKODEUGRYYJ7G6Z2B6I4XFR7SF) |
+| **GOOGL**| Alphabet Inc. | `CDC2D42E5XKGWZMEMYPAXBIQDGB3K5XOLFRFWXQL7GWVA6FON53SVM4Q` | `GOOGL:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDC2D42E5XKGWZMEMYPAXBIQDGB3K5XOLFRFWXQL7GWVA6FON53SVM4Q) |
+| **META** | Meta Platforms | `CC42VT327WQHTBVN5LSE2CD2SS3ZTFKK33ORHH3FB5E325CMKF42Q5GR` | `META:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CC42VT327WQHTBVN5LSE2CD2SS3ZTFKK33ORHH3FB5E325CMKF42Q5GR) |
+| **SPY**  | SPDR S&P 500 ETF | `CBMZOYI5IGWKTR6NFE4EOGRY4F42VGALGAHNKALGMLM4LSBQB2HLSEJI` | `SPY:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBMZOYI5IGWKTR6NFE4EOGRY4F42VGALGAHNKALGMLM4LSBQB2HLSEJI) |
+| **QQQ**  | Invesco QQQ Trust | `CBYFYMD5DHE2L4NVANVATRLGDZ43IKNWKYL36UWIDO6YTV4YZHPNSMI4` | `QQQ:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBYFYMD5DHE2L4NVANVATRLGDZ43IKNWKYL36UWIDO6YTV4YZHPNSMI4) |
+
+---
+
+## 5. Full Automated Test Battery Verification
 
 ### 4.1 Soroban Smart Contracts Test Suite (`cargo test`)
 
@@ -301,3 +364,4 @@ test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 ```
 
 **Total Verified Automated Test Count:** **611 Passed / 0 Failed / 100% Green CI**
+

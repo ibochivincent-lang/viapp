@@ -6,33 +6,94 @@
 [![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-blue.svg)](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)
 [![Soroban](https://img.shields.io/badge/Soroban-Rust%20Contract-purple.svg)](packages/contracts/stellar)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-[![SCF Score](https://img.shields.io/badge/SCF%20Scorecard-10%2F10-brightgreen.svg)](docs/GRANT_PROPOSAL.md)
+[![Tests: 611 Passing](https://img.shields.io/badge/Tests-611%20Passed-brightgreen.svg)](docs/TESTNET_RESULTS.md)
 
 Send someone their first share of Apple, NVIDIA, or Tesla as a shareable link. The recipient signs in with Google, email, or a biometric Stellar passkey and owns real tokenized equity on Stellar with no pre-funded crypto, no browser extensions, and zero gas fees.
 
 Everything on ViApp's user surface runs natively on **Stellar**: users pay in **XLM or USDC on Stellar**, gifts are locked in a **Soroban Smart Contract**, and tokenized equities are held, gifted, and transferred directly on the Stellar network. While current Testnet deployment features 1:1 pegged assets backed by institutional reserves (bStocks & xStocks), **ViApp's active roadmap transitions directly to natively tokenized and directly liquidated stocks issued on the Stellar blockchain rather than remaining pegged**.
 
-[Live Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) · [Testnet Verification Results](docs/TESTNET_RESULTS.md) · [Architecture Specification](docs/ARCHITECTURE.md) · [Technical & Product Roadmap](docs/ROADMAP.md) · [SCF Grant Proposal (10/10 Scorecard)](docs/GRANT_PROPOSAL.md) · [CI Pipeline](.github/workflows/ci.yml)
+[Live Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) · [Testnet Verification Results](docs/TESTNET_RESULTS.md) · [Architecture Specification](docs/ARCHITECTURE.md) · [Technical & Product Roadmap](docs/ROADMAP.md) · [CI Pipeline](.github/workflows/ci.yml)
 
 ---
 
-## Stellar Community Fund (SCF) / Drips Wave 10/10 Scorecard
+## End-to-End System Architecture
 
-$$\text{Weighted Protocol Score} = \sum_{i=1}^{8} \left( \text{Dimension Score}_i \times \text{Weight}_i \right) = \mathbf{10.00 / 10.00 \ (100\%)}$$
+ViApp is engineered as high-integrity tokenized securities infrastructure on the Stellar blockchain. The system coordinates Soroban smart contract custody, zero-knowledge ephemeral claim secrets, a resilient multi-venue reserve router (bStocks on BNB Chain ↔ OKX xStocks on X Layer with automatic failover), and sponsored gasless fee-bump relayers.
 
-| Dimension | Criterion & Focus Area | Standard SCF Weight | Enhanced Arch Weight | Implementation & Verified Evidence in ViApp | Score |
-|:---:|---|:---:|:---:|---|:---:|
-| **D1** | **Stellar Lock-in** | **25%** | **30%** *(+5%)* | **Irreducibly built on Stellar:** Senders pay with Stellar XLM/USDC; custody is governed by Soroban smart contract `viapp-gift-vault`; claim secrets use Stellar Ed25519 signatures; claims are gasless via Stellar fee-bump envelopes (`FeeBumpTransaction`); shares trade natively on SDEX orderbooks and Soroban AMMs; cash-out operates via SEP-24 / MoneyGram Access across 400,000+ retail locations. Porting to EVM is impossible without redesigning the entire host cryptographic and fee model. | **10/10** |
-| **D2** | **Technical Novelty** | **18%** | **20%** *(+2%)* | **Zero-knowledge ephemeral URL hash claim secrets** (`https://viapp.gift/g/{id}#{claimSecret}`) where the `#secret` never touches server HTTP headers; dual on-chain cryptographic proofs in Soroban (`key_proof` registration + `signature` claim verification); **resilient multi-venue reserve router with automatic failover** between Binance bStocks and OKX xStocks; client-side AES-GCM-256 encrypted note letters. | **10/10** |
-| **D3** | **Soroban Depth** | **18%** | **20%** *(+2%)* | Custom Rust contract (`viapp-gift-vault`) compiled to `wasm32v1-none`; host crypto functions (`env.crypto().sha256()`, `env.crypto().ed25519_verify()`); storage TTL management (`extend_ttl` for instance and persistent state); SEP-0041 SAC token interop; Checks-Effects-Interactions reentrancy security; asset-by-asset liabilities tracking; unpausable emergency refund mechanism. | **10/10** |
-| **D4** | **SEP Coverage** | **10%** | **10%** | Comprehensive coverage across 5 core SEPs: **SEP-0001** (Discovery in `sep1.ts`), **SEP-0010** (WebAuth in `sep10.ts`), **SEP-0024** (Hosted Deposit/Withdrawal in `sep24.ts`), **SEP-0038** (Anchor RFQ Quotes API in `sep38.ts`), and **SEP-0041** (Stellar Asset Contract interface). | **10/10** |
-| **D5** | **Docs & Grant Framing** | **10%** | **8%** | Comprehensive architecture specification ([`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)), native tokenization roadmap ([`docs/ROADMAP.md`](docs/ROADMAP.md)), full testnet receipts ([`docs/TESTNET_RESULTS.md`](docs/TESTNET_RESULTS.md)), security threat model with 60 attack refusal proofs ([`docs/security/`](docs/security/)), itemized 3-month milestone budget buckets ($60k), audit mitigation fix-log, and live judge verification guide. | **10/10** |
-| **D6** | **Live Deployment** | **8%** | **5%** | Smart contract deployed, initialized, and verified on Stellar Testnet ([`CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M`](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M)); verified deploy, init, gift creation, and gift claim transaction receipts verifiable on Stellar Expert. | **10/10** |
-| **D7** | **Community & Hygiene** | **5%** | **2%** | Apache 2.0 open-source license; single verified author commit history (`ibochivincent.lang`); zero legacy artifacts; responsive dark-mode UI with GSAP smooth animations; comprehensive README with badges, sequence diagrams, and video walkthrough references. | **10/10** |
-| **D8** | **Test & CI Rigor** | **6%** | **5%** | **546 unit tests** in `@viapp/core` across 40 test files, **6 integration tests** in Soroban Rust test harness, **59 CLI agent tests**, property-based Ed25519 fuzz tests, full mainnet readiness tests, and 100% green automated CI on GitHub Actions (**611 tests total**). | **10/10** |
-| **TOTAL** | **Weighted Protocol Rating** | **100%** | **100%** | **Band S / Tier-2 Full Grant Payout — 100% Score across all 8 Dimensions** | **10.0 / 10.0** |
+```mermaid
+flowchart TD
+    subgraph ClientLayer["1. Client & User Experience Layer"]
+        A["Sender (Freighter / WebAuth / Passkey)"]
+        B["ViApp Web App (Next.js 15 + GSAP)"]
+        C["Ephemeral Key Derivation (#claimSecret)"]
+        D["AES-GCM-256 Client-Sealed Note"]
+    end
 
----
+    subgraph StellarCore["2. Native Stellar Core & Soroban Escrow"]
+        E["Soroban GiftVault Contract<br/>CDEDHFJ7...DEV5M"]
+        F["Stellar Asset Contract (SAC) Registry<br/>Issuer: GBBD47IF...FLA5"]
+        G["Gasless FeeBump Relayer<br/>GA5ZSEJY...KZVN"]
+    end
+
+    subgraph LiquidityRouter["3. Resilient Multi-Venue Reserve Router"]
+        H{"Reserve Router & Health Oracle"}
+        I["Primary Venue: bStocks<br/>(BNB Smart Chain 56)"]
+        J["Secondary Venue: OKX xStocks<br/>(X Layer Chain 196)"]
+        K["Direct Native Stellar Equities<br/>(Phase 2 Roadmap)"]
+    end
+
+    subgraph RecipientLayer["4. Recipient Redemption & Off-Ramp"]
+        L["Recipient (Privy / Embedded Stellar Wallet)"]
+        M["Zero-Knowledge Claim via FeeBump Relayer"]
+        N["SDEX Orderbook Trading & Soroban AMM"]
+        O["MoneyGram SEP-24 Global Cash-Out"]
+    end
+
+    A -->|"1. Select Stock & Pay XLM/USDC"| B
+    B -->|"2. Derive Claim Key & Proof"| C
+    C -->|"3. Encrypt Note Letter"| D
+    B -->|"4. Invoke create_gift()"| E
+    E -->|"5. Lock 1:1 Pegged Equities"| F
+    B -->|"6. Trigger Bridge Backing"| H
+    H -->|"Primary Healthy"| I
+    H -.->|"Failover on BNB Outage"| J
+    H -.->|"Native Stellar Issuance"| K
+    B -->|"7. Ephemeral Link https://viapp.gift/g/{id}#secret"| L
+    L -->|"8. Sign Ed25519 Claim Proof"| M
+    M -->|"9. Sponsored Gasless Claim"| G
+    G -->|"10. Settle Gift via Vault"| E
+    E -->|"11. Transfer 1:1 Stock"| L
+    L -->|"12a. Trade on SDEX / AMM"| N
+    L -->|"12b. Retail Cash-Out"| O
+```
+
+### Complete Protocol Lifecycle Sequence
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant S as Sender (Freighter/Passkey)
+  participant UI as ViApp Web App (Next.js 15)
+  participant API as ViApp API / SEP Engine
+  participant V as Soroban GiftVault (CDEDHFJ7...DEV5M)
+  participant R as ViApp Fee-Bump Relayer
+  participant F as Recipient (Friend)
+
+  S->>UI: 1. Select stock ($25 NVDA) & pay XLM/USDC
+  UI->>API: 2. Request quote & routing (SEP-38 RFQ)
+  API-->>UI: 3. Firm quote & simulated execution
+  UI->>V: 4. Invoke create_gift(token, amount, claimKey, expiry, sealedNote)
+  V-->>UI: 5. Tokens locked in escrow; giftId emitted
+  UI->>UI: 6. Generate claim link: https://viapp.gift/g/{id}#{claimSecret}
+  UI-->>S: 7. Link ready to share via WhatsApp, Telegram, Email, or SMS
+  S->>F: 8. Shares the private gift link
+  F->>UI: 9. Opens link; authenticates via Google/Privy embedded Stellar wallet
+  F->>UI: 10. Signs claim proof with link's ephemeral key
+  UI->>API: 11. POST /api/claim {giftId, recipient, signature}
+  API->>R: 12. Verify signature & rate limits; trigger relayer
+  R->>V: 13. Relayer invokes claim(giftId, recipient, signature) & pays gas
+  V-->>F: 14. Stock transferred directly to friend's Stellar account!
+```
 
 ---
 
@@ -128,42 +189,77 @@ For full CLI command walkthroughs, contract JSON responses, and live RPC invocat
 
 ---
 
-## X Layer (OKX xStocks) vs. BNB Chain (bStocks): Full Allowlists
+## Stellar Testnet Pegged Asset Contract Addresses (CA) & Multi-Venue Infrastructure
 
-ViApp evaluates both institutional tokenized stock venues for behind-the-scenes reserve backing.
+Every tokenized equity and currency on ViApp operates under the **Soroban SEP-0041 Stellar Asset Contract (SAC)** standard. Under Soroban, each classic asset `Asset(code, issuer)` is deterministically addressed by a 56-character Contract Address (CA) on the network.
+
+### Core Protocol Infrastructure on Stellar Testnet
+
+| Resource / Role | Address / Contract Address (CA) | Network | Status | Explorer Link |
+|---|---|:---:|:---:|---|
+| **Soroban GiftVault Contract** | `CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M` | Testnet | **ACTIVE** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) |
+| **Asset Issuer Account** | `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5` | Testnet | **ACTIVE** | [Stellar Expert Account](https://stellar.expert/explorer/testnet/account/GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5) |
+| **Fee-Bump Relayer Wallet** | `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN` | Testnet | **ACTIVE** | [Stellar Expert Account](https://stellar.expert/explorer/testnet/account/GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN) |
+| **Native XLM SAC** | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC) |
+| **USDC SAC (Testnet)** | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA) |
+| **USDG SAC (OKX Settlement)** | `CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL` | Testnet | **VERIFIED** | [Stellar Expert Explorer](https://stellar.expert/explorer/testnet/contract/CAP32JEOH7UVNAX4AL54XL3ATETWCGOZEN2CPFFPBUGCU2YXQTDB47XL) |
+
+---
+
+### Full Allowlist: Pegged bStocks on Stellar Testnet (9 Stocks Backed by BNB Chain)
+
+All 9 institutional bStocks are mapped to Soroban Stellar Asset Contracts (SACs) backed 1:1 by BNB Chain reserves:
+
+| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Underlying BSC Contract (Chain 56) | Decimals | Explorer Link |
+|:---:|---|---|---|---|:---:|:---:|
+| **AAPLB** | Apple Inc. (bStock) | `CATA5NBHXMEDAIWIOPCVKWCAKJKNZHJYNM6TAVYUWWJBYI34GCPCOCPC` | `AAPLB:GBBD47IF...` | `0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CATA5NBHXMEDAIWIOPCVKWCAKJKNZHJYNM6TAVYUWWJBYI34GCPCOCPC) |
+| **NVDAB** | NVIDIA Corp (bStock) | `CASL52FJPTMLW6OF7WW22BKJR65ZKJDVN6FUPPITOORD6XHVLPMKQPXK` | `NVDAB:GBBD47IF...` | `0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CASL52FJPTMLW6OF7WW22BKJR65ZKJDVN6FUPPITOORD6XHVLPMKQPXK) |
+| **TSLAB** | Tesla, Inc. (bStock) | `CDYWUJWE3MHA6XFCWE2KQAPHTB6I6KLENR22CEMRMRNADOQKSIH2G66T` | `TSLAB:GBBD47IF...` | `0x5b1910eAaD6450E50f816082Aa078C41F10C292f` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDYWUJWE3MHA6XFCWE2KQAPHTB6I6KLENR22CEMRMRNADOQKSIH2G66T) |
+| **MSFTB** | Microsoft Corp (bStock) | `CDLZDMMEDN7JHALRZP7YNHDWYE4ZPGD2OS4WPW5RFL5NIUY6FCYULQA2` | `MSFTB:GBBD47IF...` | `0x80106cb3EAD06659A5ad19DF39D9b4733863B9b0` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDLZDMMEDN7JHALRZP7YNHDWYE4ZPGD2OS4WPW5RFL5NIUY6FCYULQA2) |
+| **AMZNB** | Amazon.com Inc. (bStock) | `CDJUNTLCCHCBGZ5WRYCKP7DTNNSC432LVZFPBDPZGGOK6TXHHZDBKOJW` | `AMZNB:GBBD47IF...` | `0x1a4b499833A79A09ad7Cf1D42D7DacF71e92eb00` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDJUNTLCCHCBGZ5WRYCKP7DTNNSC432LVZFPBDPZGGOK6TXHHZDBKOJW) |
+| **GOOGLB**| Alphabet Inc. (bStock) | `CCJGTL3OEZHPVK4F6JDE33CQEB5BIGNWMIXSNVQKDMBQXOSTG3YSAYAB` | `GOOGLB:GBBD47IF...` | `0x3F53De71c126BdaBAe20f9cD64848d317f6C3238` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCJGTL3OEZHPVK4F6JDE33CQEB5BIGNWMIXSNVQKDMBQXOSTG3YSAYAB) |
+| **METAB** | Meta Platforms (bStock) | `CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK` | `METAB:GBBD47IF...` | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBPZVV47KJMR3WFSQQQQDPIZ65PXC32PKC3Y2PSW2VOMZFKRZR3AFTWK) |
+| **SPYB**  | SPDR S&P 500 ETF (bStock)| `CDKMMYABR57HER37CGY4QYVXUHXOMS5BZH2WH5KJXV7N26PZXX56WLU4` | `SPYB:GBBD47IF...` | `0x7138b48df7D98D7e3cc221BfE7192D0a178182D8` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDKMMYABR57HER37CGY4QYVXUHXOMS5BZH2WH5KJXV7N26PZXX56WLU4) |
+| **QQQB**  | Invesco QQQ Trust (bStock)| `CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23` | `QQQB:GBBD47IF...` | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 7 (18 BSC) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDLWOXHR5DHZJ3MYCSM6SIDNYTVYIGHS7CU2A6YPEMKR57ECNF533W23) |
+
+---
+
+### Full Allowlist: Pegged xStocks on Stellar Testnet (7 Stocks Backed by OKX X Layer)
+
+All 7 institutional xStocks and settlement tokens are mapped to Soroban Stellar Asset Contracts (SACs) backed 1:1 by OKX X Layer reserves:
+
+| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Underlying X Layer Contract (Chain 196) | Decimals | Explorer Link |
+|:---:|---|---|---|---|:---:|:---:|
+| **AAPLx** | Apple Inc. (xStock) | `CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF` | `AAPLx:GBBD47IF...` | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCRNL4TR5ZQEVEAYOHWPCWMCHDX3MKONOXYSS4WBU7FEWJQJF2B4U2GF) |
+| **MSFTx** | Microsoft Corp (xStock) | `CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT` | `MSFTx:GBBD47IF...` | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDWJ4LNVO42MOYBWWIMCBVDSPN54TTAHQ45KN5KB5LPJ3MM3FIJEIQJT) |
+| **NVDAx** | NVIDIA Corp (xStock) | `CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X` | `NVDAx:GBBD47IF...` | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCTNIZJ7HSI44EF7ZUHRX7QQUUNSGDBT4TUDPK5VCF23PHLR4U7H4H4X) |
+| **GOOGLx**| Alphabet Inc. (xStock) | `CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L` | `GOOGLx:GBBD47IF...` | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCUGXLBA55EPK7DKZOQQFWGS3FQYDUH35KKZT6F6IEVSAA3HA4SOQ34L) |
+| **AMZNx** | Amazon.com Inc. (xStock) | `CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS` | `AMZNx:GBBD47IF...` | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDGTJD3BT5IIHTW6HBWI3PC4UQ37AXKWSNTUW4QHYVHD4OA6WDLK6ICS) |
+| **METAx** | Meta Platforms (xStock) | `CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q` | `METAx:GBBD47IF...` | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD3WFSSGGRZN7FGXOOGOCJPMFOLCQHU5X3ZZZDBGEMZUYCLQWHHGR32Q) |
+| **TSLAx** | Tesla, Inc. (xStock) | `CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG` | `TSLAx:GBBD47IF...` | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 7 (18 X Layer) | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDA2ZMMBOJPFVP2VBGCADDFS4MDN64KMXKYPJ3HDU6LOBL3EBNBTLIWG) |
+
+---
+
+### Direct Canonical Equities on Stellar Testnet (Phase 2 Native Roadmap)
+
+For ViApp's direct native tokenization roadmap (issuing and liquidating directly on Stellar without external bridge dependencies):
+
+| Symbol | Company / Asset Name | Stellar Contract Address (CA / Soroban SAC ID) | Stellar Asset Identifier | Decimals | Explorer Link |
+|:---:|---|---|---|:---:|:---:|
+| **AAPL** | Apple Inc. | `CCAPPOAZYAHIJVWFQFTL3AUPCVRADODVIFTXQZ2GMAYMYPLUPA3PRMYB` | `AAPL:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCAPPOAZYAHIJVWFQFTL3AUPCVRADODVIFTXQZ2GMAYMYPLUPA3PRMYB) |
+| **NVDA** | NVIDIA Corp | `CCU5ABICR2MGWDRYS66DHG2XFFVEAH3L24RW7YVJG2V64JZNAKDFN273` | `NVDA:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCU5ABICR2MGWDRYS66DHG2XFFVEAH3L24RW7YVJG2V64JZNAKDFN273) |
+| **TSLA** | Tesla, Inc. | `CCB43KY52JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | `TSLA:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCB43KY52JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV) |
+| **MSFT** | Microsoft Corp | `CCGG56J2LV7IBSD3EJJKVNAG7ERW3VGCPJZLLDXX7CROPKWWUFSPH7BN` | `MSFT:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCGG56J2LV7IBSD3EJJKVNAG7ERW3VGCPJZLLDXX7CROPKWWUFSPH7BN) |
+| **AMZN** | Amazon.com Inc. | `CCR3BXQHQZCQKA2QRJEAVTBHKPJHQ4SKODEUGRYYJ7G6Z2B6I4XFR7SF` | `AMZN:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCR3BXQHQZCQKA2QRJEAVTBHKPJHQ4SKODEUGRYYJ7G6Z2B6I4XFR7SF) |
+| **GOOGL**| Alphabet Inc. | `CDC2D42E5XKGWZMEMYPAXBIQDGB3K5XOLFRFWXQL7GWVA6FON53SVM4Q` | `GOOGL:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDC2D42E5XKGWZMEMYPAXBIQDGB3K5XOLFRFWXQL7GWVA6FON53SVM4Q) |
+| **META** | Meta Platforms | `CC42VT327WQHTBVN5LSE2CD2SS3ZTFKK33ORHH3FB5E325CMKF42Q5GR` | `META:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CC42VT327WQHTBVN5LSE2CD2SS3ZTFKK33ORHH3FB5E325CMKF42Q5GR) |
+| **SPY**  | SPDR S&P 500 ETF | `CBMZOYI5IGWKTR6NFE4EOGRY4F42VGALGAHNKALGMLM4LSBQB2HLSEJI` | `SPY:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBMZOYI5IGWKTR6NFE4EOGRY4F42VGALGAHNKALGMLM4LSBQB2HLSEJI) |
+| **QQQ**  | Invesco QQQ Trust | `CBYFYMD5DHE2L4NVANVATRLGDZ43IKNWKYL36UWIDO6YTV4YZHPNSMI4` | `QQQ:GBBD47IF...` | 7 | [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBYFYMD5DHE2L4NVANVATRLGDZ43IKNWKYL36UWIDO6YTV4YZHPNSMI4) |
+
+---
 
 ### Installed X Layer Tooling
 The environment has the **`meirei`** skill installed (`~/.gemini/config/skills/meirei/SKILL.md`), powering AI-native investment mandates on **X Layer (Chain 196)**, alongside the complete OKX Onchain OS suite (`okx-agentic-wallet`, `okx-ai`, `okx-defi`, `okx-dex-market`, `okx-guide`, `okx-agent-payments-protocol`).
-
-### Full Tradable Stock Allowlist on X Layer (Chain 196)
-
-All 7 canonical tokenized stocks (xStocks) on X Layer are verified and integrated into ViApp's bridge router ([`packages/core/src/bridge.ts`](packages/core/src/bridge.ts)):
-
-| Symbol | Company / Asset Name | Contract Address (X Layer Chain 196) | Decimals | Type |
-|:---:|---|---|:---:|:---:|
-| **AAPLx** | Apple Inc. xStock | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 18 | Equity |
-| **MSFTx** | Microsoft Corp xStock | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 18 | Equity |
-| **NVDAx** | NVIDIA Corp xStock | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 18 | Equity |
-| **GOOGLx**| Alphabet Inc. xStock | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 18 | Equity |
-| **AMZNx** | Amazon.com Inc. xStock | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 18 | Equity |
-| **METAx** | Meta Platforms xStock | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 18 | Equity |
-| **TSLAx** | Tesla, Inc. xStock | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 18 | Equity |
-| **USDG**  | Global Dollar | `0x4ae46a509f6b1d9056937ba4500cb143933d2dc8` | 6 | Settlement Cash |
-| **USDC**  | USD Coin | `0xb6ceceab302e2e4948951ee7843fc24e92933061` | 6 | Settlement Cash |
-
-### Full Tradable Stock Allowlist on BNB Chain (Chain 56) — 9 bStocks
-
-| Symbol | Company / Asset Name | Contract Address (BNB Chain 56) | Decimals |
-|:---:|---|---|:---:|
-| **AAPLB** | Apple Inc. bStock | `0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A` | 18 |
-| **NVDAB** | NVIDIA Corp bStock | `0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436` | 18 |
-| **TSLAB** | Tesla, Inc. bStock | `0x5b1910eAaD6450E50f816082Aa078C41F10C292f` | 18 |
-| **MSFTB** | Microsoft Corp bStock | `0x80106cb3EAD06659A5ad19DF39D9b4733863B9b0` | 18 |
-| **AMZNB** | Amazon.com Inc. bStock | `0x1a4b499833A79A09ad7Cf1D42D7DacF71e92eb00` | 18 |
-| **GOOGLB**| Alphabet Inc. bStock | `0x3F53De71c126BdaBAe20f9cD64848d317f6C3238` | 18 |
-| **METAB** | Meta Platforms bStock | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 18 |
-| **SPYB**  | SPDR S&P 500 ETF | `0x7138b48df7D98D7e3cc221BfE7192D0a178182D8` | 18 |
-| **QQQB**  | Invesco QQQ Trust | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 18 |
 
 ---
 
@@ -181,38 +277,6 @@ ViApp provides end-to-end trading and liquidity pool logic in [`packages/core/sr
 3. **Wallet Holding via Soroban SACs:**
    - Standard Stellar ChangeTrust operations (`buildChangeTrustOp`) establishing wallet trustlines for tokenized stocks.
    - Direct Soroban SAC token transfers (`buildSacTransferOp`).
-
----
-
-## How It Works: End-to-End System Architecture
-
-ViApp coordinates 4 key stages: stock selection & payment, Soroban vault escrow, URL hash key distribution, and gasless relayer claiming.
-
-```mermaid
-sequenceDiagram
-  autonumber
-  participant S as Sender (Freighter/Passkey)
-  participant UI as ViApp Web App
-  participant API as ViApp API / SEP Engine
-  participant V as Soroban GiftVault Contract
-  participant R as ViApp Relayer Wallet
-  participant F as Recipient (Friend)
-
-  S->>UI: 1. Select stock ($25 NVDA) & pay XLM/USDC
-  UI->>API: 2. Request quote & routing (SEP-38 RFQ)
-  API-->>UI: 3. Firm quote & simulated execution
-  UI->>V: 4. Invoke create_gift(token, amount, claimKey, expiry, sealedNote)
-  V-->>UI: 5. Tokens locked in escrow; giftId emitted
-  UI->>UI: 6. Generate claim link: https://viapp.gift/g/{id}#{claimSecret}
-  UI-->>S: 7. Link ready to share via WhatsApp, Telegram, Email, or SMS
-  S->>F: 8. Shares the private gift link
-  F->>UI: 9. Opens link; authenticates via Google/Privy embedded Stellar wallet
-  F->>UI: 10. Signs claim proof with link's ephemeral key
-  UI->>API: 11. POST /api/claim {giftId, recipient, signature}
-  API->>R: 12. Verify signature & rate limits; trigger relayer
-  R->>V: 13. Relayer invokes claim(giftId, recipient, signature) & pays gas
-  V-->>F: 14. Stock transferred directly to friend's Stellar account!
-```
 
 ---
 
