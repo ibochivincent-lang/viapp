@@ -84,12 +84,12 @@ sequenceDiagram
   API-->>UI: 3. Firm quote and simulated execution
   UI->>V: 4. Invoke create_gift(token, amount, claimKey, expiry, sealedNote)
   V-->>UI: 5. Tokens locked in escrow, giftId emitted
-  UI->>UI: 6. Generate claim link: https://viapp.gift/g/{id}#{claimSecret}
+  UI->>UI: 6. Generate private claim link (viapp.gift/g/id#claimSecret)
   UI-->>S: 7. Link ready to share via WhatsApp, Telegram, Email, or SMS
   S->>F: 8. Shares the private gift link
   F->>UI: 9. Opens link, authenticates via Google/Privy embedded Stellar wallet
   F->>UI: 10. Signs claim proof with link's ephemeral key
-  UI->>API: 11. POST /api/claim {giftId, recipient, signature}
+  UI->>API: 11. POST /api/claim with giftId, recipient, signature
   API->>R: 12. Verify signature and rate limits, trigger relayer
   R->>V: 13. Relayer invokes claim(giftId, recipient, signature) and pays gas
   V-->>F: 14. Stock transferred directly to friend's Stellar account!
@@ -345,8 +345,8 @@ Copy `.env.example` to `.env` at the repository root and configure the required 
 | `UPSTASH_REDIS_REST_URL` | Cache | Upstash Redis REST URL for rate limits & locks | [console.upstash.com](https://console.upstash.com) |
 | `UPSTASH_REDIS_REST_TOKEN` | Cache | Upstash Redis REST access token | Upstash Redis dashboard |
 | `VIAPP_PUBLIC_ORIGIN` | Web | Canonical public URL for gift links | E.g. `https://viapp.gift` |
-| `VIAPP_JUDGE_CODE` | Judge | Secret passcode for hackathon judge claims | Submission documentation |
-| `VIAPP_JUDGE_SEED` | Judge | 32-byte hexadecimal seed for deriving judge claim keys | Secure random generator |
+| `VIAPP_JUDGE_CODE` | Tester | Secret passcode for hackathon tester claims | Submission documentation |
+| `VIAPP_JUDGE_SEED` | Tester | 32-byte hexadecimal seed for deriving tester claim keys | Secure random generator |
 
 ---
 

@@ -46,5 +46,41 @@ describe("Unified Quote and Stocks routing (Stellar & BNB)", () => {
       expect(res.body.expectedShares).toBeDefined();
     }
   });
+
+  it("routes handleQuote to Stellar when stock is a pegged stock symbol (NVDAB or AAPLx) without chain parameter", async () => {
+    const resB = await handleQuote(
+      { stellarPassphrase: TESTNET_PASSPHRASE },
+      {
+        stock: "NVDAB",
+        usdAmount: "30",
+        wallet: VALID_STELLAR_WALLET,
+      },
+      {},
+    );
+
+    expect(resB.status).toBe(200);
+    if (resB.status === 200 && "body" in resB && resB.body.ok) {
+      expect(resB.body.chain).toBe("stellar");
+      expect(resB.body.stock.code).toBe("NVDAB");
+      expect(resB.body.stock.venue).toBe("bnb");
+    }
+
+    const resX = await handleQuote(
+      { stellarPassphrase: TESTNET_PASSPHRASE },
+      {
+        stock: "AAPLx",
+        usdAmount: "40",
+        wallet: VALID_STELLAR_WALLET,
+      },
+      {},
+    );
+
+    expect(resX.status).toBe(200);
+    if (resX.status === 200 && "body" in resX && resX.body.ok) {
+      expect(resX.body.chain).toBe("stellar");
+      expect(resX.body.stock.code).toBe("AAPLx");
+      expect(resX.body.stock.venue).toBe("okx");
+    }
+  });
 });
 

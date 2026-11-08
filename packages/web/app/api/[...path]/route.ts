@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { EnvError } from "@viapp/core/src/env.js";
 import { clientFromHeaders, json, MAX_BODY_BYTES, route, type ViappRequest, type ViappResponse, type ServerDeps } from "@viapp/core/src/http.js";
 import { handleStocks } from "@viapp/core/src/stocks.js";
+import { handleQuote } from "@viapp/core/src/quote.js";
 import { BootError, createServerDeps } from "@viapp/core/src/server-deps.js";
 
 export const runtime = "nodejs";
@@ -94,13 +95,50 @@ async function handle(request: NextRequest): Promise<Response> {
       answer = json(res.status, res.body);
       return new Response(answer.body, { status: answer.status, headers: answer.headers });
     }
+
+    const headers = plainHeaders(request.headers);
+    const place = clientFromHeaders(headers, PLATFORM, { socketIp: LOCAL_SOCKET_IP, devCountry: process.env.VIAPP_DEV_COUNTRY ?? null });
+    const rawBody = await readCappedBody(request);
+
+    if (path === "/api/quote" && request.method === "POST") {
+      let parsedBody: unknown = null;
+      try {
+        parsedBody = rawBody ? JSON.parse(rawBody) : null;
+      } catch {
+        answer = json(400, { ok: false, error: "bad_json" });
+        return new Response(answer.body, { status: answer.status, headers: answer.headers });
+      }
+
+      const deps = await serverDeps();
+      const res = await handleQuote(
+        {
+          api: deps?.api,
+          client: deps?.client,
+          vault: deps?.vault,
+          devAllowUnknownCountry: deps ? true : false,
+          stellarPassphrase: process.env.STELLAR_NETWORK_PASSPHRASE ?? "Test SDF Network ; September 2015",
+        },
+        parsedBody,
+        place,
+      );
+
+      if (res.status === 200 || (res.status === 400 && res.body.error !== "not_listed")) {
+        answer = json(res.status, res.body);
+        return new Response(answer.body, { status: answer.status, headers: answer.headers });
+      }
+      if (deps === null) {
+        answer = json(503, { ok: false, error: "server_not_configured" });
+        return new Response(answer.body, { status: answer.status, headers: answer.headers });
+      }
+      answer = json(res.status, res.body);
+      return new Response(answer.body, { status: answer.status, headers: answer.headers });
+    }
+
     const deps = await serverDeps();
     if (deps === null) {
       answer = json(503, { ok: false, error: "server_not_configured" });
     } else {
-      const headers = plainHeaders(request.headers);
-      const place = clientFromHeaders(headers, PLATFORM, { socketIp: LOCAL_SOCKET_IP, devCountry: process.env.VIAPP_DEV_COUNTRY ?? null });
-      const viappRequest: ViappRequest = { method: request.method, path, headers, body: await readCappedBody(request), ...place };
+      const viappRequest: ViappRequest = { method: request.method, path, headers, body: rawBody, ...place };
       answer = await route(deps, viappRequest);
     }
   } catch {

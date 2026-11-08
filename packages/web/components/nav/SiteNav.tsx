@@ -61,7 +61,7 @@ export function SiteNav({ page = "landing" }: { page?: "landing" | "send" }) {
           <a className="site-link" href={onSend ? "/#how" : "#how"}>
             How it works
           </a>
-          <a className="site-link" href={onSend ? "/#judges" : "#judges"}>
+          <a className="site-link" href={onSend ? "/#testers" : "#testers"}>
             For testers
           </a>
           <Link className="site-link" href="/docs" prefetch={false}>
@@ -88,7 +88,7 @@ export function SiteNav({ page = "landing" }: { page?: "landing" | "send" }) {
         <a className="site-sheet-link" href={onSend ? "/#how" : "#how"} onClick={close}>
           <span className="site-sheet-label">How it works</span>
         </a>
-        <a className="site-sheet-link" href={onSend ? "/#judges" : "#judges"} onClick={close}>
+        <a className="site-sheet-link" href={onSend ? "/#testers" : "#testers"} onClick={close}>
           <span className="site-sheet-label">For testers</span>
         </a>
         <Link className="site-sheet-link" href="/docs" prefetch={false} onClick={close}>

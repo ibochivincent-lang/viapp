@@ -308,11 +308,11 @@ function readPreview(search: string): PreviewName | null {
   return PREVIEW_NAMES.find((candidate) => candidate === name) ?? null;
 }
 
-/** Development only, and all of it made up: a signed-in judge with the form filled in, and the screen the name asks for. */
+/** Development only, and all of it made up: a signed-in tester with the form filled in, and the screen the name asks for. */
 function previewState(name: PreviewName) {
   const address: Address = "0x1234567890abcdef1234567890abcdef12345678";
   const owned: Owned = { shares: "0.0042", name: "NVIDIA", txHash: "0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789" };
-  const refused = new ClaimFlowError("refused", "That judge code is not right. It is in the submission's instructions for judges.", "bad_judge_code");
+  const refused = new ClaimFlowError("refused", "That tester code is not right. It is in the submission's instructions for testers.", "bad_judge_code");
   const unreachable = new ClaimFlowError("server_unreachable", "viapp's server could not be reached. Try again in a minute.");
   const phase: Phase =
     name === "claiming"
@@ -572,7 +572,8 @@ function JudgesStage() {
 
 export function ForJudges({ nonce }: { nonce: string | undefined }) {
   return (
-    <section className="judges" id="judges" aria-labelledby="judges-title">
+    <section className="judges" id="testers" aria-labelledby="judges-title">
+      <div id="judges" aria-hidden="true" />
       <ViappPrivy nonce={nonce}>
         <JudgesStage />
       </ViappPrivy>

@@ -22,7 +22,7 @@ function hashTarget(): HTMLElement | null {
  * Starts Lenis and hands its scroll position to GSAP ScrollTrigger, so pinned scenes follow the
  * smoothed scroll. Under reduced motion nothing starts: the page scrolls natively.
  *
- * It also lands a page that was opened with a hash (/#how, /#judges). The browser jumps to the
+ * It also lands a page that was opened with a hash (/#how, /#testers, /#judges). The browser jumps to the
  * hash before the pinned scenes have added their spacing, so it ends up in the wrong place. Once
  * fonts are ready and the pins are measured, this jumps again to where the section really is.
  */

@@ -9,6 +9,7 @@ import { checkEligibility } from "./eligibility.js";
 import { readListedTokens } from "./vault.js";
 import { Web3ApiError, type Web3Api } from "./web3api.js";
 import { handleStellarQuote, type StellarQuoteResponse } from "./quote-stellar.js";
+import { findStellarStock } from "./stocks-stellar.js";
 
 /** Every error a quote request can get back. Short, fixed, and never built from upstream text (C19). */
 export type QuoteErrorCode =
@@ -127,16 +128,18 @@ export async function handleQuote(
   ctx: { country?: string | null; region?: string | null },
 ): Promise<UnifiedQuoteResponse> {
   const parsedBody = typeof body === "object" && body !== null ? (body as Record<string, unknown>) : {};
+  const networkPassphrase = deps.stellarPassphrase ?? "Test SDF Network ; September 2015";
+  const stockParam = typeof parsedBody.stock === "string" ? parsedBody.stock : "";
   const isStellar =
     parsedBody.chain === "stellar" ||
     (typeof parsedBody.wallet === "string" && parsedBody.wallet.startsWith("G")) ||
-    (typeof parsedBody.stock === "string" && parsedBody.stock.startsWith("C") && parsedBody.stock.length === 56);
+    (stockParam.startsWith("C") && stockParam.length === 56) ||
+    Boolean(findStellarStock(stockParam, networkPassphrase));
 
   if (isStellar) {
-    const stock = typeof parsedBody.stock === "string" ? parsedBody.stock : "";
+    const stock = stockParam;
     const usdAmount = typeof parsedBody.usdAmount === "string" ? parsedBody.usdAmount : "";
     const wallet = typeof parsedBody.wallet === "string" ? parsedBody.wallet : "";
-    const networkPassphrase = deps.stellarPassphrase ?? "Test SDF Network ; September 2015";
     return handleStellarQuote({ stock, usdAmount, wallet, networkPassphrase });
   }
   // WHY true for the declaration: the "not a US person, not in a restricted place" statement is

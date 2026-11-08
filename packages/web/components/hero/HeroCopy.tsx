@@ -92,7 +92,7 @@ export function HeroCopy() {
             <Link className="hero-btn hero-btn-primary" href="/send" prefetch={false}>
               Send a gift
             </Link>
-            <a className="hero-btn hero-btn-secondary" href="#judges">
+            <a className="hero-btn hero-btn-secondary" href="#testers">
               Testers: claim a real share
             </a>
           </motion.div>
