@@ -29,7 +29,7 @@ bscscan-verify/
 gifts/
 **/gifts/
 
-# private evidence for the DX report Ram writes himself
+# private evidence for the internal DX benchmarks
 dx/
 
 # private research briefs

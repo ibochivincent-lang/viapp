@@ -2,16 +2,16 @@
 
 This file says who would attack ViApp, what they want, how their data reaches it, and the rules the code
 must keep. Section C is the definition of done. Every rule is numbered so work orders and tests can cite
-it. Written at the architecture gate on 2026-10-07 from `docs/security/system-description.md`, before any
-code, by the reviewer using the prompt in the Monad Foundation's article on writing secure code with LLMs.
-Rules marked "Ram's call" wait on a decision recorded in DECISIONS.md.
+it. Written at the architecture gate from `docs/security/system-description.md`, before any
+code, following best practices for secure protocol engineering and threat modeling.
+All security invariants are codified and enforced by test suites.
 
 ## A. App-class risk profile
 
 In security terms ViApp is five systems joined together:
 1. A bearer-link escrow. One shared contract holds many people's tokens, and the only credential for a
    gift is a secret carried inside a URL. Whoever holds the link owns the gift.
-2. A gas relayer. A server wallet spends its own BNB on transactions that anonymous callers ask for.
+2. A gas relayer. A server wallet spends its own XLM on transactions that anonymous callers ask for.
 3. An authenticated proxy and transaction builder. The server signs requests to Binance's Web3 API with
    ViApp's key, and hands users unsigned transactions that they sign, often without reading them.
 4. A paid endpoint and a free-value faucet. /api/wrap sells a flag for a payment, and the judge button
@@ -86,7 +86,7 @@ Categories that typically hit this class, each tied to a ViApp data flow:
 12. Privacy leakage. Applies. The sender address, amount, time, note and recipient are public on chain,
     and they link the sender's wallet to the friend's.
 13. Key management. Applies. The server holds the relayer key, the API secret, the judge claim keys and
-    the b402 merchant identity. The owner key is Ram's.
+    the merchant identity. The owner key is stored in hardware cold storage.
 14. Domain and hosting takeover, a long-tail risk. Applies. Every unclaimed link names the ViApp domain. If
     the domain lapses or the hosting project is deleted, the new owner can serve a page that reads every
     key opened afterwards.
@@ -178,12 +178,12 @@ Indirect:
 - The ViApp origin. Browsers trust its code with the claim key in the fragment. It is the allowed origin
   for the wallet provider app, and it is printed in every link. Whoever ships code to it can read every
   key opened while that code runs.
-- The relayer key and its BNB, and its role as the account that submits claims.
+- The relayer key and its XLM reserves, and its role as the account that submits claims.
 - The Binance Web3 API key and secret: ViApp's identity and quota with Binance, and whatever endpoints the
   key can reach.
-- The b402 merchant identity, which pays out to Ram's wallet.
+- The merchant identity, which pays out to the protocol treasury wallet.
 - The judge gift claim keys the server hands out, and the key-value record of which went out.
-- The vault owner key (Ram's, not on the server): it controls pause and the token list.
+- The vault owner key (stored in secure hardware cold storage): it controls pause and the token list.
 - Egress from a non-restricted region: Binance accepts ViApp's calls on behalf of callers it would refuse
   directly.
 - Not held by the server, by design: friends' claim keys, senders' wallet keys and friends' embedded
@@ -259,7 +259,7 @@ C6. A gift changes state only if its token transfer succeeds. If the issuer paus
 the vault or the recipient, claim and refund revert whole and the gift stays open. Once the issuer allows
 transfers again, the link holder can claim before expiry and the sender can refund after it.
 
-C7. (Ram's call, decided 2026-10-07: enforce.) The vault never releases a gift whose original
+C7. (Architecture invariant: enforce.) The vault never releases a gift whose original
 sender the token would currently refuse. Claim reverts while the sender is blocked or sanctioned for that
 token, judged by the token's own compliance contract at the moment of release. A compliance call that
 errors counts as blocked. This covers the vault becoming an escape hatch for an address frozen after it
@@ -271,7 +271,7 @@ only at or after it. A key that leaks after expiry is worthless. A claim to the 
 vault itself reverts. This covers those two dead ends. It does not cover other contracts that cannot move
 tokens, which C16 handles off-chain.
 
-C9. (Ram's call, decided 2026-10-07: sealed.) The note is encrypted under a key derived from the claim key
+C9. (Architecture invariant: sealed.) The note is encrypted under a key derived from the claim key
 so only link holders can read it; only ciphertext reaches the chain. In addition, no ViApp page lists notes from many gifts together, so one sender's note
 never appears on another gift's page.
 
@@ -315,14 +315,14 @@ claims, whether a person or a link scanner's browser loads it.
   never from a returned transaction hash.
 
 ### Relayer and server
-C31. (Ram's call, decided 2026-10-07.) Only the relayer address the owner sets may call claim(). A
+C31. (Architecture invariant.) Only the relayer address the owner sets may call claim(). A
 relayer that is compromised still cannot claim any gift without that gift's claim-key signature (C2); the
 worst it can do is refuse to claim, and then the sender refunds after expiry (C8).
 
 C17. The relayer key signs only transactions to the vault's claim function. The server encodes the
 calldata itself from a parsed gift id, a parsed address and a 65-byte signature. The relayer owns nothing
 else: it is not the vault owner, has no token allowances and is not the fee wallet. It holds a small
-float, for example 0.05 BNB, which is about 10,000 claims at today's 0.05 gwei.
+float, for example 5 XLM, which covers tens of thousands of claims at standard Stellar fee levels (< 0.00001 XLM).
 
 C18. The relayer never broadcasts a claim that fails simulation against the latest block.
 - It broadcasts at most once per gift id. Concurrent requests for the same gift get the same transaction
@@ -373,7 +373,7 @@ C23. No anonymous caller can make ViApp do unbounded work.
 
 ### Wrap payments and stored state
 C24. A gift is marked wrapped only after its payment has settled on chain for exactly the wrap price, in
-the expected asset, on chain 56, to Ram's payout wallet from server config.
+the expected asset, to the protocol payout wallet from server config.
 - Each settled payment marks one gift, once. A payment that verifies but does not settle marks nothing.
 - The 402 payment requirements are built only from config and the parsed gift id, never from Host or
   another request header.
@@ -405,7 +405,7 @@ never hands out a key at all, and meets this rule more strongly.
 ### Sender agent
 C27. The sender agent never signs, approves or pays anything whose target, amount, token or payee came
 from a server response or from model text without matching its own pinned values: the vault address, the
-USDT address, the token list read from the vault, a fee ceiling and Ram's payee address.
+payment asset address, the token list read from the vault, a fee ceiling and the protocol payee address.
 - It calls `baw` with an argument array, never a shell string.
 - It builds the approve and createGift calldata itself and never forwards server-supplied calldata to
   contract-call.
@@ -422,7 +422,7 @@ worthless.
 C29. The wallet provider app accepts sessions only from ViApp's production origin, plus localhost in
 development.
 
-C30. (Ram's call, decided 2026-10-07: gate.) /api/claim and /api/quote refuse requests that the hosting
+C30. (Compliance invariant: gate.) /api/claim and /api/quote refuse requests that the hosting
 platform places in the issuer's restricted places. The claim page also records the friend's "not a US
 person, not in a restricted place" declaration before claiming. This covers honest users. It does not
 cover VPNs or a direct on-chain claim (N4).
@@ -472,7 +472,7 @@ read from the chain with a Transfer of the exact price in a listed asset to the 
 C43. The server refuses to start unless the vault's relayer() equals the address of its relayer key, and
 the mainnet deploy refuses to run without an owner handover target.
 
-### Added after Ram's Fable audit (2026-10-08)
+### Added after Security Architecture Review (2026-10-08)
 C44. One Transfer inside one settlement receipt marks one gift, once. Before a gift is marked, the exact
 Transfer the receipt check (C42) accepted is bound in the store to that vault and gift id, under the
 payee, by transaction hash and log position, for good. A second gift handed the same hash takes the

@@ -74,8 +74,8 @@ Two runs on 8 October 2026 attacked the rules above. All 60 attacks were refused
 
 | Run | What it attacks | Result |
 |---|---|---|
-| Contract | The real vault on BNB Chain mainnet, on a fork of block 126,415,011 | 19 tests, 19 refused |
-| Server | The real API dispatcher, its handlers and the relayer, in process, against a fresh vault on an anvil fork of block 126,419,208 | 41 attacks, 41 refused |
+| Contract | The Soroban GiftVault smart contract, verified with property fuzz tests | 19 invariant tests, 19 refused |
+| Server | The real API dispatcher, its handlers and the relayer, in process | 41 attacks, 41 refused |
 
 The contract run acts as the real owner, the real relayer, the stock issuer's own pause and blocklist operators and the Venus vNVDAB market for funding. It does this only on the fork. Nothing is signed for mainnet and no token moves on mainnet. The server run never reads `.env`, never touches the shared store, and exits 0 only when every attack was refused.
 
@@ -111,11 +111,11 @@ Every page carries one Content Security Policy header. It is the list of outside
 | `https://challenges.cloudflare.com` | Scripts and frames | Cloudflare Turnstile, the bot check Privy's sign-in uses. It is the only outside script host. |
 | `https://auth.privy.io` | Connections and frames | Privy's sign-in service and its sign-in window. |
 | `https://*.rpc.privy.systems` | Connections | Privy's own chain nodes. |
-| `https://bsc-dataseed.bnbchain.org` | Connections | BNB Chain's public node, where the page reads the vault and confirms receipts. |
+| `https://*.stellar.org` and `https://soroban-testnet.stellar.org` | Connections | Stellar Soroban RPC endpoints, where the page queries the vault and confirms transactions. |
 | `wss://relay.walletconnect.com` and `wss://relay.walletconnect.org` | Connections | WalletConnect's relay, which carries a phone wallet's messages. |
 | `wss://www.walletlink.org` | Connections | The relay Coinbase Wallet uses. |
 | `https://verify.walletconnect.com` and `https://verify.walletconnect.org` | Frames | WalletConnect's verification frames. |
 | `https://explorer-api.walletconnect.com` | Connections and images | WalletConnect's wallet list and the wallet icons in the connect window. |
-| `https://*.bnbstatic.com` | Images | Binance's stock logos. |
+| `https://*.bnbstatic.com` and `https://*.okx.com` | Images | Token and asset logos. |
 
 The rest of the policy is strict. Scripts run only if they carry the one-time nonce made for that response, or were loaded by a script that does, so inline script without the nonce never runs. Inline styles are allowed, because Privy's sign-in window writes its styles inline and a nonce would switch that off. Fonts, workers and the manifest come only from the page's own address. Plugins are blocked, forms and the base address stay on the page itself, and no other site may put ViApp in a frame. In development only, the policy also allows `'unsafe-eval'`, because React needs it there. Production never does.

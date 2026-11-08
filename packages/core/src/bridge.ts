@@ -14,6 +14,135 @@ import { STELLAR_STOCKS_CATALOG, type StellarStock } from "./stocks-stellar.js";
 
 export type BackingVenue = "bnb" | "okx";
 
+/**
+ * Tradable Allowlist on X Layer (Chain 196) via OKX Onchain OS / Meirei
+ */
+export const XLAYER_XSTOCKS_ALLOWLIST = {
+  AAPLx: {
+    symbol: "AAPLx",
+    name: "Apple xStock",
+    address: "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+    decimals: 18,
+    type: "Equity",
+  },
+  MSFTx: {
+    symbol: "MSFTx",
+    name: "Microsoft xStock",
+    address: "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+    decimals: 18,
+    type: "Equity",
+  },
+  NVDAx: {
+    symbol: "NVDAx",
+    name: "NVIDIA xStock",
+    address: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+    decimals: 18,
+    type: "Equity",
+  },
+  GOOGLx: {
+    symbol: "GOOGLx",
+    name: "Alphabet xStock",
+    address: "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+    decimals: 18,
+    type: "Equity",
+  },
+  AMZNx: {
+    symbol: "AMZNx",
+    name: "Amazon xStock",
+    address: "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+    decimals: 18,
+    type: "Equity",
+  },
+  METAx: {
+    symbol: "METAx",
+    name: "Meta xStock",
+    address: "0x96702be57cd9777f835117a809c7124fe4ec989a",
+    decimals: 18,
+    type: "Equity",
+  },
+  TSLAx: {
+    symbol: "TSLAx",
+    name: "Tesla xStock",
+    address: "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+    decimals: 18,
+    type: "Equity",
+  },
+  USDG: {
+    symbol: "USDG",
+    name: "Global Dollar",
+    address: "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
+    decimals: 6,
+    type: "Cash",
+  },
+  USDC: {
+    symbol: "USDC",
+    name: "USD Coin",
+    address: "0xb6ceceab302e2e4948951ee7843fc24e92933061",
+    decimals: 6,
+    type: "Cash",
+  },
+} as const;
+
+/**
+ * Tradable Allowlist on BNB Smart Chain (Chain 56) bStocks
+ */
+export const BSC_BSTOCKS_ALLOWLIST = {
+  AAPLB: {
+    symbol: "AAPLB",
+    name: "Apple Inc.",
+    address: "0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A",
+    decimals: 18,
+  },
+  NVDAB: {
+    symbol: "NVDAB",
+    name: "NVIDIA Corp",
+    address: "0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436",
+    decimals: 18,
+  },
+  TSLAB: {
+    symbol: "TSLAB",
+    name: "Tesla, Inc.",
+    address: "0x5b1910eAaD6450E50f816082Aa078C41F10C292f",
+    decimals: 18,
+  },
+  MSFTB: {
+    symbol: "MSFTB",
+    name: "Microsoft Corp",
+    address: "0x80106cb3EAD06659A5ad19DF39D9b4733863B9b0",
+    decimals: 18,
+  },
+  AMZNB: {
+    symbol: "AMZNB",
+    name: "Amazon.com Inc.",
+    address: "0x1a4b499833A79A09ad7Cf1D42D7DacF71e92eb00",
+    decimals: 18,
+  },
+  GOOGLB: {
+    symbol: "GOOGLB",
+    name: "Alphabet Inc.",
+    address: "0x3F53De71c126BdaBAe20f9cD64848d317f6C3238",
+    decimals: 18,
+  },
+  METAB: {
+    symbol: "METAB",
+    name: "Meta Platforms",
+    address: "0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0",
+    decimals: 18,
+  },
+  SPYB: {
+    symbol: "SPYB",
+    name: "SPDR S&P 500 ETF",
+    address: "0x7138b48df7D98D7e3cc221BfE7192D0a178182D8",
+    decimals: 18,
+  },
+  QQQB: {
+    symbol: "QQQB",
+    name: "Invesco QQQ Trust",
+    address: "0x205812CdBed920aFf76C6580abD681a46D11efc7",
+    decimals: 18,
+  },
+} as const;
+
 export type PeggedStockConfig = {
   code: string;
   name: string;
@@ -33,7 +162,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "Apple Inc.",
     stellarAsset: "AAPL:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0x4dd8cb5f44e3f421be0d58852da0e28f32242186",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.AAPLB.address,
     backingSymbol: "AAPLB",
     pegRatio: "1:1",
   },
@@ -42,7 +171,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "NVIDIA Corp",
     stellarAsset: "NVDA:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0x02fca66c1d1afb4e2a7884261eb00f63598a7436",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.NVDAB.address,
     backingSymbol: "NVDAB",
     pegRatio: "1:1",
   },
@@ -51,7 +180,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "Tesla, Inc.",
     stellarAsset: "TSLA:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0x12bb94481d81fbe3237e1ba77a83d3170e59a6d8",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.TSLAB.address,
     backingSymbol: "TSLAB",
     pegRatio: "1:1",
   },
@@ -60,7 +189,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "Microsoft Corp",
     stellarAsset: "MSFT:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0x8929e083cbe9a296e8bc371c6fa611fe28114fcf",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.MSFTB.address,
     backingSymbol: "MSFTB",
     pegRatio: "1:1",
   },
@@ -69,7 +198,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "Amazon.com Inc.",
     stellarAsset: "AMZN:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0xa8417c8cf15239a5ec13e9a7e6b010f3c5b557fb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.AMZNB.address,
     backingSymbol: "AMZNB",
     pegRatio: "1:1",
   },
@@ -78,7 +207,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "Alphabet Inc. Cl A",
     stellarAsset: "GOOGL:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0x539591e6005cbbce4ebcc47cfdc3500d8ce20c6a",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.GOOGLB.address,
     backingSymbol: "GOOGLB",
     pegRatio: "1:1",
   },
@@ -87,7 +216,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "Meta Platforms Inc.",
     stellarAsset: "META:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "okx",
-    backingContract: "0x6f9bb49f0f9b33a5dd14088a2fdff2a9bbf6f5a3",
+    backingContract: XLAYER_XSTOCKS_ALLOWLIST.METAx.address,
     backingSymbol: "METAx",
     pegRatio: "1:1",
   },
@@ -96,7 +225,7 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     name: "SPDR S&P 500 ETF",
     stellarAsset: "SPY:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
     backingVenue: "bnb",
-    backingContract: "0x98f260340b3cb1c95116df14e8ee1c183bbd3257",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.SPYB.address,
     backingSymbol: "SPYB",
     pegRatio: "1:1",
   },
@@ -104,9 +233,9 @@ export const PEGGED_STOCK_MAP: Record<string, PeggedStockConfig> = {
     code: "QQQ",
     name: "Invesco QQQ Trust",
     stellarAsset: "QQQ:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-    backingVenue: "okx",
-    backingContract: "0x3344ccbb00112233445566778899aabbccddeeff",
-    backingSymbol: "QQQx",
+    backingVenue: "bnb",
+    backingContract: BSC_BSTOCKS_ALLOWLIST.QQQB.address,
+    backingSymbol: "QQQB",
     pegRatio: "1:1",
   },
 };
@@ -219,5 +348,19 @@ export function verify1to1PegProof(giftId: string, stockCode: string): {
     stockCode: config.code,
     reserveType: config.backingVenue === "bnb" ? "bStocks_Binance_Custody" : "xStocks_OKX_Custody",
   };
+}
+
+/**
+ * Returns all tradable xStocks on X Layer (chain 196).
+ */
+export function getXLayerStockAllowlist() {
+  return Object.values(XLAYER_XSTOCKS_ALLOWLIST);
+}
+
+/**
+ * Returns all tradable bStocks on BNB Smart Chain (chain 56).
+ */
+export function getBscStockAllowlist() {
+  return Object.values(BSC_BSTOCKS_ALLOWLIST);
 }
 

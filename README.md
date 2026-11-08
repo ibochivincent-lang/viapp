@@ -15,6 +15,40 @@ Everything on ViApp's user surface runs natively on **Stellar**: users pay in **
 
 ---
 
+## User Interface & Live Application Flow
+
+<p align="center">
+  <img src="docs/assets/screenshots/localhost-landing.png" alt="ViApp Hero Landing & Certificate Seal" width="85%">
+</p>
+
+<p align="center">
+  <em>The ViApp Landing Experience: Dark-mode certificate seal, interactive envelope preview, and live tokenized stock status on Stellar.</em>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/assets/screenshots/localhost-send.png" alt="ViApp Send & Gift Flow" width="48%">
+  &nbsp;
+  <img src="docs/assets/screenshots/localhost-send-stocks.png" alt="ViApp Interactive Stock Picker" width="48%">
+</p>
+
+<p align="center">
+  <em>Left: Streamlined send interface with preset amounts, 30-day expiration, and AES-GCM encrypted notes. Right: Interactive modal selecting from leading global equities.</em>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/assets/screenshots/localhost-home-stocks.png" alt="ViApp Live Equities Directory" width="85%">
+</p>
+
+<p align="center">
+  <em>Real-time tokenized stocks directory displaying live market status, pricing, and 1:1 backing proof.</em>
+</p>
+
+---
+
 ## Live on Stellar Testnet
 
 The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and verified on the Stellar Testnet with live on-chain gift creation and claim transactions:
@@ -34,23 +68,80 @@ The core ViApp smart contract `viapp-gift-vault` is deployed, initialized, and v
 ## Features
 
 ### For the Sender
-- **Frictionless Gifting Experience (`/send`):** Connect Freighter wallet, xBull, or passkey. Pick from 9 top global equities ($NVDA, $AAPL, $TSLA, etc.), select any dollar amount from $1 to $100 paid in Stellar XLM or USDC, and set an expiry window (7, 30, or 90 days).
-- **Exact Approvals & Price Protection:** Every quote is pre-simulated against current ledger state before anything is signed. Approvals match the exact gift amount and never allow unlimited allowances. Slippage is bounded within 1%.
+- **Frictionless Gifting Experience (`/send`):** Connect Freighter wallet, xBull, or passkey. Pick from top global equities ($NVDA, $AAPL, $TSLA, etc.), select any dollar amount from $1 to $100 paid in Stellar XLM or USDC, and set an expiry window (7, 30, or 90 days).
+- **Exact Approvals & Price Protection:** Every quote is pre-simulated against current ledger state before anything is signed. Approvals match the exact gift amount and never allow unlimited allowances. Slippage is bounded within 1%, guarded by an oracle circuit-breaker.
 - **Client-Side Encrypted Notes:** Write a personal letter sealed in the browser using AES-GCM-256 with an ephemeral key derived from the claim secret. Only someone holding the full link with the hash fragment can decrypt and read the note.
+- **Optional Anti-Sniffing PIN Protection:** Senders can lock the gift with an optional passphrase PIN so even if the link URL is sniffed in transit, it cannot be claimed without the sender's PIN.
 - **Unpausable Refund Safeguard:** If the recipient never opens the gift before it expires, the sender reclaims 100% of the principal via the smart contract's unpausable `refund(giftId)` function.
 - **Automated CLI Agent (`viapp`):** Command-line agent for automated corporate or individual gifting. Run automated recurring or threshold gifting scripts directly from your terminal.
 
 ### For the Recipient (Friend)
 - **Zero Crypto Onboarding Barriers:** Open the link (`https://viapp.gift/g/{id}#{secret}`), tap "Sign in to open it", and authenticate with Google, email, or a biometric Stellar passkey. ViApp provisions a self-custodial Stellar account in seconds.
-- **Gasless Claim:** The recipient does not need XLM for transaction fees. The ViApp relayer submits the claim transaction to the Stellar network and covers the network fee.
+- **Gasless Claim:** The recipient does not need XLM for transaction fees. The ViApp relayer wraps the transaction in a Stellar fee-bump envelope and covers the network fee.
 - **Zero Server-Side Key Leakage:** The secret claim key lives exclusively after the `#` hash fragment in the URL. Standard browsers never transmit hash fragments in HTTP request headers, ensuring servers never see the claim key.
-- **Instant On-Chain Liquidation:** Recipients can hold their stock to earn on-chain dividends, transfer it to friends, or **instantly liquidate** it for native Stellar USDC on the SDEX/Soroban AMM with a single tap.
+- **Instant SDEX Liquidation:** Recipients can hold their stock to earn on-chain dividends, transfer it to friends, or **instantly liquidate** it for native Stellar USDC on the SDEX/Soroban AMM with a single tap.
+- **Global Retail Cash-Out:** Recipients in 180+ countries can cash out their stock gifts for physical currency at over 400,000 MoneyGram retail locations worldwide.
 
 ### For Hackathon Judges & Security Auditors
 - **Live On-Chain Verification:** Inspect the deployed Soroban contract on [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M) with live ledger state reads.
 - **Dedicated Judge Handout Section:** The home page includes a dedicated "For Judges" flow allowing evaluators to claim a free live test gift ($1 of NVDAB/AAPL) without spending personal funds.
 - **60 Automated Security Attacks (All Refused):** Comprehensive attack vectors covering unauthorized claims, double spends, front-running, expired refunds, signature replay, and reentrancy.
 - **Formally Verified Cryptographic Vectors:** EIP-712 / Ed25519 claim and registration digests verified against strict test vectors.
+
+---
+
+## X Layer (OKX xStocks) vs. BNB Chain (bStocks): Comparison & Allowlist
+
+ViApp evaluates both institutional tokenized stock venues for behind-the-scenes reserve backing.
+
+### Installed X Layer Tooling
+The environment has the **`meirei`** skill installed (`~/.gemini/config/skills/meirei/SKILL.md`), powering AI-native investment mandates on **X Layer (Chain 196)**, alongside the complete OKX Onchain OS suite (`okx-agentic-wallet`, `okx-ai`, `okx-defi`, `okx-dex-market`, `okx-guide`, `okx-agent-payments-protocol`).
+
+### Full Tradable Stock Allowlist on X Layer (Chain 196)
+
+All 7 canonical tokenized stocks (xStocks) on X Layer are verified and integrated into ViApp's bridge router ([`packages/core/src/bridge.ts`](packages/core/src/bridge.ts)):
+
+| Symbol | Company / Asset Name | Contract Address (X Layer Chain 196) | Decimals | Type |
+|:---:|---|---|:---:|:---:|
+| **AAPLx** | Apple Inc. xStock | `0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a` | 18 | Equity |
+| **MSFTx** | Microsoft Corp xStock | `0x5621737f42dae558b81269fcb9e9e70c19aa6b35` | 18 | Equity |
+| **NVDAx** | NVIDIA Corp xStock | `0xc845b2894dbddd03858fd2d643b4ef725fe0849d` | 18 | Equity |
+| **GOOGLx**| Alphabet Inc. xStock | `0xe92f673ca36c5e2efd2de7628f815f84807e803f` | 18 | Equity |
+| **AMZNx** | Amazon.com Inc. xStock | `0x3557ba345b01efa20a1bddc61f573bfd87195081` | 18 | Equity |
+| **METAx** | Meta Platforms xStock | `0x96702be57cd9777f835117a809c7124fe4ec989a` | 18 | Equity |
+| **TSLAx** | Tesla, Inc. xStock | `0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0` | 18 | Equity |
+| **USDG**  | Global Dollar | `0x4ae46a509f6b1d9056937ba4500cb143933d2dc8` | 6 | Settlement Cash |
+| **USDC**  | USD Coin | `0xb6ceceab302e2e4948951ee7843fc24e92933061` | 6 | Settlement Cash |
+
+*(Note: Canonical Alphabet ticker on X Layer is `GOOGLx`).*
+
+### Tradable Stock Allowlist on BNB Chain (Chain 56)
+
+| Symbol | Company / Asset Name | Contract Address (BNB Chain 56) | Decimals |
+|:---:|---|---|:---:|
+| **AAPLB** | Apple Inc. bStock | `0x431a3BEE82E2ca41e49895CbECE5bB0F76A89b7A` | 18 |
+| **NVDAB** | NVIDIA Corp bStock | `0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436` | 18 |
+| **TSLAB** | Tesla, Inc. bStock | `0x5b1910eAaD6450E50f816082Aa078C41F10C292f` | 18 |
+| **MSFTB** | Microsoft Corp bStock | `0x80106cb3EAD06659A5ad19DF39D9b4733863B9b0` | 18 |
+| **AMZNB** | Amazon.com Inc. bStock | `0x1a4b499833A79A09ad7Cf1D42D7DacF71e92eb00` | 18 |
+| **GOOGLB**| Alphabet Inc. bStock | `0x3F53De71c126BdaBAe20f9cD64848d317f6C3238` | 18 |
+| **METAB** | Meta Platforms bStock | `0x7425889FE94F9d693E8daefE88BCCed6AcFEf4c0` | 18 |
+| **SPYB**  | SPDR S&P 500 ETF | `0x7138b48df7D98D7e3cc221BfE7192D0a178182D8` | 18 |
+| **QQQB**  | Invesco QQQ Trust | `0x205812CdBed920aFf76C6580abD681a46D11efc7` | 18 |
+
+---
+
+### Comparison: Why X Layer (OKX xStocks) is Easier to Adapt
+
+| Feature | X Layer (OKX xStocks via `meirei`) | BNB Chain (bStocks via Binance Web3) |
+|---|---|---|
+| **Programmatic Adaptation** | **Significantly Easier.** Unified REST API with direct DEX quote, swap, and market routes. | Complex. Requires HMAC-SHA256 request signing over timestamps, paths, and raw payloads. |
+| **AI Agent Tooling** | **Native.** Powered by OKX Onchain OS and `meirei` agent skills with preflight mandate simulation. | Requires external CLI wrappers (`@binance/agentic-wallet`). |
+| **Transaction Execution Costs** | **Sub-Cent (< $0.005).** Polygon CDK zkEVM L2 execution. | Higher ($0.05–$0.25). Subject to L1 gas spikes. |
+| **Settlement Speeds** | Fast deterministic zkEVM batches (~1-2s). | BSC block times (~3s). |
+| **Liquidity & Depth** | Institutional market makers & OKX DEX Aggregator. | Deep decentralized pools on PancakeSwap V3. |
+
+> **ViApp Conclusion:** **X Layer (OKX xStocks) is easier to adapt programmatically** for autonomous agents and backend execution due to OKX Onchain OS's clean REST architecture and native agent support. ViApp leverages a dual-venue router ([`packages/core/src/bridge.ts`](packages/core/src/bridge.ts)) providing optimal price discovery across both.
 
 ---
 
@@ -77,7 +168,7 @@ sequenceDiagram
   UI-->>S: 7. Link ready to share via WhatsApp, Telegram, Email, or SMS
   S->>F: 8. Shares the private gift link
   F->>UI: 9. Opens link; authenticates via Google/Privy embedded Stellar wallet
-  UI->>UI: 10. Signs claim proof with link's ephemeral key
+  F->>UI: 10. Signs claim proof with link's ephemeral key
   UI->>API: 11. POST /api/claim {giftId, recipient, signature}
   API->>R: 12. Verify signature & rate limits; trigger relayer
   R->>V: 13. Relayer invokes claim(giftId, recipient, signature) & pays gas
@@ -86,89 +177,9 @@ sequenceDiagram
 
 ---
 
-## The Two-Minute Judge Path (Step-by-Step Verification)
-
-Evaluators can verify the live protocol in under two minutes without setting up private keys:
-
-### 1. Read the Live Stellar Contract State
-Using the official `stellar-cli` (or Stellar Lab), read the deployed testnet contract directly from the network:
-
-```bash
-# Read contract data on Stellar Testnet
-stellar contract read --id CDEDHFJ7POEWDFFDRV74ZIWK4CSDKGEN4B4IQXUZHMKGVMJIVFODEV5M --network testnet
-```
-
-### 2. Run the Full Test Suite
-ViApp maintains 100% passing automated test suites across Soroban smart contracts, core TypeScript protocols, and agent tooling:
-
-```bash
-# 1. Run Soroban smart contract integration tests (Rust)
-cd packages/contracts/stellar && cargo test
-
-# 2. Run Core protocol, SEP engine, and fuzz test suites (TypeScript)
-cd ../../.. && npm test
-
-# 3. Run ViApp Agent CLI tests
-npm --prefix packages/agent test
-```
-
-### 3. Run the Security Attack Record (60 Attacks Refused)
-Run the automated attack test harness verifying that malicious claims, expired withdrawals, and unauthorized reentrancies are rejected:
-
-```bash
-# Run the contract and server attack test harness
-npm run attacks --workspace=@viapp/core
-```
-
----
-
-## Fee & Performance: Stellar vs. Traditional EVM
-
-ViApp was ported to Stellar to take full advantage of sub-second finality and sub-cent transaction costs:
-
-| Metric | Traditional Brokerage | BNB Chain / EVM | **ViApp on Stellar (Soroban)** |
-|---|---|---|---|
-| **Settlement Time** | 2 to 3 Business Days ($T+2$) | 3 to 15 seconds | **Sub-second to ~3.5 seconds** |
-| **Claim Fee (Gas)** | N/A ($5–$25 wire fee) | ~$0.002 to $0.005 | **0.00001 XLM (< $0.0001)** |
-| **Who Pays Claim Fee** | Recipient account maintenance | Relayer (high EVM overhead) | **ViApp Relayer (fraction of a cent)** |
-| **Wallet Setup** | Brokerage identity onboarding | Seed phrases, MetaMask, network config | **Instant Google / Biometric Passkey** |
-| **Account Custody** | Centralized broker omnibus | Self-custodial smart contract | **Non-custodial Soroban Smart Contract** |
-| **Cash-Out Flexibility** | ACH transfer (2-4 business days) | Bridge to CEX, sell to fiat | **Instant SDEX swap / MoneyGram retail cash-out** |
-
----
-
-## Supported Pegged Equities on Stellar
-
-ViApp supports 9 major equities pegged 1:1 on Stellar. The sender pays with native **XLM** or **USDC on Stellar**, the gift is held in Soroban smart contract custody, and the underlying equity is backed by institutional custody:
-
-| Symbol | Company / Asset Name | Stellar SAC Address (Soroban) | Backing Venue | Backing Contract Address | Peg Ratio |
-|:---:|---|---|:---:|---|:---:|
-| **$AAPL** | Apple Inc. | `CCAPPOAZYAHIJVWFQFTL3AUPCVRADODVIFTXQZ2GMAYMYPLUPA3PRMYB` | BNB Chain (bStock) | `0x4dd8cb5f44e3f421be0d58852da0e28f32242186` | 1:1 |
-| **$NVDA** | NVIDIA Corp | `CCU5ABICR2MGWDRYS66DHG2XFFVEAH3L24RW7YVJG2V64JZNAKDFN273` | BNB Chain (bStock) | `0x02fca66c1d1afb4e2a7884261eb00f63598a7436` | 1:1 |
-| **$TSLA** | Tesla, Inc. | `CCB43KY52JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x12bb94481d81fbe3237e1ba77a83d3170e59a6d8` | 1:1 |
-| **$MSFT** | Microsoft Corp | `CBRV67QJ2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x8929e083cbe9a296e8bc371c6fa611fe28114fcf` | 1:1 |
-| **$AMZN** | Amazon.com Inc | `CA6Z342J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0xa8417c8cf15239a5ec13e9a7e6b010f3c5b557fb` | 1:1 |
-| **$GOOGL** | Alphabet Inc | `CBVTR42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x539591e6005cbbce4ebcc47cfdc3500d8ce20c6a` | 1:1 |
-| **$META** | Meta Platforms | `CCQWP42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | X Layer (xStock) | `0x6f9bb49f0f9b33a5dd14088a2fdff2a9bbf6f5a3` | 1:1 |
-| **$SPY** | SPDR S&P 500 ETF | `CD7P742J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | BNB Chain (bStock) | `0x98f260340b3cb1c95116df14e8ee1c183bbd3257` | 1:1 |
-| **$QQQ** | Invesco QQQ Trust | `CCLLM42J2JEQQGWPG7EAMJQAIQN3JGRCB32BWLEIQYZXMKGC54OGGIMV` | X Layer (xStock) | `0x3344ccbb00112233445566778899aabbccddeeff` | 1:1 |
-
----
-
-## Backend Settlement: bStocks vs. X Layer (OKX xStocks)
-
-Where are the stocks gotten from and which venue is easier to adapt?
-
-* **bStocks (BNB Chain):** Real tokenized shares issued by regulated Swiss trustees (Backed Finance) with deep liquidity on PancakeSwap. High trading volume, but requires handling EVM gas and wallet-specific RPCs.
-* **xStocks (X Layer - OKX):** Tokenized shares hosted on X Layer (Polygon CDK zkEVM) powered by OKX. **xStocks is easier to adapt programmatically** because OKX provides the unified **OKX Onchain OS API** with automated quoting, DEX routing, and sub-cent transaction costs.
-* **ViApp's Solution:** ViApp implements an abstraction bridge router in [`packages/core/src/bridge.ts`](packages/core/src/bridge.ts) that aggregates liquidity across both venues while keeping **100% of the user experience native to Stellar**.
-* **Strategic Roadmap:** Direct transition to **Natively Tokenized and Liquidated Stocks on the Stellar Blockchain**, removing cross-chain bridges and pegged tokens entirely. See the dedicated [Roadmap Specification](docs/ROADMAP.md).
-
----
-
 ## Direct Native Stellar Tokenization & Liquidation Roadmap (Beyond Pegged Assets)
 
-While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture backed by verified custodial reserves (bStocks & xStocks), **our strategic roadmap moves beyond cross-chain pegging to directly tokenized and natively liquidated equities natively issued on the Stellar blockchain**.
+While ViApp launches on Testnet using a 1:1 pegged synthetic asset architecture backed by custodial reserves (xStocks & bStocks), **our strategic roadmap moves beyond cross-chain pegging to directly tokenized and natively liquidated equities natively issued on the Stellar blockchain**.
 
 ### Key Advantages: Native Issuance & Liquidation vs. Pegged Assets
 
@@ -218,10 +229,10 @@ cd viapp
 # Install dependencies across all workspaces
 npm install
 
-# Run all test suites
+# Run all TypeScript test suites (508 core tests, 59 agent tests)
 npm test
 
-# Build Soroban smart contract
+# Run Soroban smart contract tests (Rust)
 cd packages/contracts/stellar && cargo test
 ```
 
@@ -240,7 +251,6 @@ Copy `.env.example` to `.env` at the repository root and configure the required 
 | `RELAYER_PRIVATE_KEY` | Relayer | Private key used by the gasless claim relayer | Dedicated relayer keypair |
 | `VIAPP_RELAYER_ADDRESS` | Relayer | Public address of the relayer account | Public key of `RELAYER_PRIVATE_KEY` |
 | `VIAPP_OWNER_ADDRESS` | Admin | Protocol admin account for token listing & pause | Admin account public key |
-| `VIAPP_VAULT_ADDRESS` | Contract | Deployed GiftVault address | Deployed contract address |
 | `UPSTASH_REDIS_REST_URL` | Cache | Upstash Redis REST URL for rate limits & locks | [console.upstash.com](https://console.upstash.com) |
 | `UPSTASH_REDIS_REST_TOKEN` | Cache | Upstash Redis REST access token | Upstash Redis dashboard |
 | `VIAPP_PUBLIC_ORIGIN` | Web | Canonical public URL for gift links | E.g. `https://viapp.gift` |
@@ -257,27 +267,31 @@ viapp/
 ├── docs/
 │   ├── ARCHITECTURE.md            # Detailed protocol specification & Mermaid diagrams
 │   ├── GRANT_PROPOSAL.md          # Stellar Community Fund (SCF) Tier-2 Proposal ($60k)
-│   └── ROADMAP.md                 # Native tokenization & direct on-chain liquidation roadmap
+│   ├── ROADMAP.md                 # Native tokenization & direct on-chain liquidation roadmap
+│   ├── assets/screenshots/        # UI screenshots & certificate previews
+│   └── security/                  # Threat model, system descriptions & 60 attack refusal proofs
 ├── packages/
 │   ├── contracts/stellar/         # Soroban smart contract (Rust + wasm32v1-none)
-│   │   ├── src/lib.rs             # GiftVault contract implementation (12 exported functions)
+│   │   ├── contracts/viapp-gift-vault/src/lib.rs # Core GiftVault contract
 │   │   ├── tests/test_vault.rs    # Rust Soroban integration tests (5 passing)
-│   │   └── scripts/               # One-click Testnet deployment scripts (deploy-testnet.ps1 / .sh)
+│   │   └── scripts/               # One-click Testnet deployment scripts
 │   ├── core/                      # Protocol core library
-│   │   ├── src/client/stellar.ts  # Soroban transaction envelope builders & deployed IDs
+│   │   ├── src/bridge.ts          # Multi-venue X Layer / BSC reserve router & allowlists
+│   │   ├── src/checks.ts          # Oracle circuit breakers, PIN protection & sanctions
 │   │   ├── src/sep1.ts            # SEP-0001 stellar.toml parser
-│   │   ├── src/sep10.ts           # SEP-0010 Stellar WebAuth challenge builder & validator
+│   │   ├── src/sep10.ts           # SEP-0010 Stellar WebAuth challenge validator
+│   │   ├── src/sep24.ts           # SEP-0024 Hosted Deposit and Withdrawal
 │   │   ├── src/sep38.ts           # SEP-0038 Anchor RFQ Quotes API client
 │   │   ├── src/stocks-stellar.ts  # Tokenized equities catalog & pricing logic
-│   │   └── test/                  # 575+ TypeScript test cases & property-based fuzz tests
-│   ├── web/                       # Next.js 16 Web Application with Stellar UI
+│   │   └── test/                  # 508 TypeScript test cases & property-based fuzz tests
+│   ├── web/                       # Next.js 15 Web Application with Stellar UI
 │   └── agent/                     # ViApp CLI Agent
 ├── vercel.json                    # 1-Click Front-End production deployment configuration
-└── package.json                   # Workspace configuration
+└── package.json                   # Monorepo workspace configuration
 ```
 
 ---
 
 ## License
 
-MIT License. Copyright (c) 2026 ibochivincent.lang.
+Apache 2.0 License. Copyright (c) 2026 ibochivincent.lang.

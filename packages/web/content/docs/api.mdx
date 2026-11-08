@@ -240,7 +240,7 @@ One dispatcher, `route()` in `packages/core/src/http.ts`, serves all six endpoin
 | Waiting on Binance | 10 seconds for the Web3 API, and 25 seconds for each b402 call. One wrap request waits up to 25 seconds for a settlement before it answers `202`. |
 | Reading the chain | 5 seconds per call. |
 | Function time limit | 150 seconds for the API route on the host. |
-| Relayer spend | A gas price ceiling and a daily cap. The defaults are 3 gwei and 0.002 BNB a day. When the day's cap is reached the answer is `429 daily_cap`. |
+| Relayer spend | Transaction fee ceiling and a daily relayer budget (default 20 XLM a day). When the day's cap is reached the answer is `429 daily_cap`. |
 
 The client address and its country come only from the hosting platform's own headers, never from a header the caller chose.
 
